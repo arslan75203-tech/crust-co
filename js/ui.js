@@ -158,7 +158,7 @@ export function initLiveSearch() {
         matchingDeals.forEach((d) => {
           html += `
             <div class="p-3 hover:bg-[#F8F6F0] flex items-center justify-between gap-3 transition-colors">
-              <a href="/deals.html" class="flex items-center gap-3 flex-1 min-w-0">
+              <a href="./deals.html" class="flex items-center gap-3 flex-1 min-w-0">
                 <img src="${d.image}" alt="${d.title}" class="w-10 h-10 rounded-md object-cover bg-neutral-100 shrink-0" />
                 <div class="min-w-0">
                   <div class="text-xs font-bold text-[#12372A] truncate">${d.title}</div>
@@ -185,7 +185,7 @@ export function initLiveSearch() {
             <div class="p-3 hover:bg-[#F8F6F0] flex items-center justify-between gap-3 transition-colors ${
               isUnavailable ? 'opacity-60 bg-neutral-50' : ''
             }">
-              <a href="${isUnavailable ? '#' : `/product.html?slug=${p.slug}`}" class="flex items-center gap-3 flex-1 min-w-0">
+              <a href="${isUnavailable ? '#' : `./product.html?slug=${p.slug}`}" class="flex items-center gap-3 flex-1 min-w-0">
                 <img src="${p.image}" alt="${p.name}" class="w-10 h-10 rounded-md object-cover bg-neutral-100 shrink-0 ${isUnavailable ? 'grayscale' : ''}" />
                 <div class="min-w-0">
                   <div class="text-xs font-bold text-[#12372A] truncate flex items-center gap-1.5">
@@ -300,7 +300,7 @@ export function updateHeaderState() {
     if (user) {
       slot.innerHTML = `
         <div class="flex items-center gap-3">
-          <a href="/account.html" class="flex items-center gap-2 text-sm font-medium text-[#1C1C1C] hover:text-[#12372A] transition-colors whitespace-nowrap">
+          <a href="./account.html" class="flex items-center gap-2 text-sm font-medium text-[#1C1C1C] hover:text-[#12372A] transition-colors whitespace-nowrap">
             <span class="w-7 h-7 rounded-full bg-[#12372A] text-white flex items-center justify-center text-xs font-serif font-bold">
               ${user.name.charAt(0).toUpperCase()}
             </span>
@@ -313,7 +313,7 @@ export function updateHeaderState() {
       `;
     } else {
       slot.innerHTML = `
-        <a href="/login.html" class="text-sm font-medium text-[#1C1C1C] hover:text-[#12372A] transition-colors whitespace-nowrap">
+        <a href="./login.html" class="text-sm font-medium text-[#1C1C1C] hover:text-[#12372A] transition-colors whitespace-nowrap">
           Login / Sign Up
         </a>
       `;
@@ -327,7 +327,7 @@ export function updateHeaderState() {
       logout();
       showToast('Logged out successfully');
       setTimeout(() => {
-        window.location.href = '/index.html';
+        window.location.href = './index.html';
       }, 500);
     };
   });

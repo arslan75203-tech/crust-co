@@ -10,7 +10,31 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="/css/styles.css" />
+    <!-- Tailwind CSS (Instant standalone engine - renders fully in Live Server, cPanel, or local browser) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'crust-green': '#12372a',
+              'crust-green-mid': '#1f4d3a',
+              'crust-cream': '#f8f6f0',
+              'crust-gold': '#d4a72c',
+              'crust-text': '#1c1c1c',
+              'crust-muted': '#6b6b6b',
+              'crust-border': '#e8e5dc',
+            },
+            fontFamily: {
+              serif: ['"Playfair Display"', 'Georgia', 'serif'],
+              sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+
+    <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body class="bg-[#F8F6F0] text-[#1C1C1C] flex flex-col min-h-screen">
 
@@ -172,11 +196,11 @@
     </footer>
 
     <!-- App Scripts -->
-    <script type="module" src="/js/app.js"></script>
+    <script type="module" src="./js/app.js"></script>
     <script type="module">
-      import { DEALS, formatPrice } from '/js/products.js';
-      import { addToCart } from '/js/cart.js';
-      import { showToast } from '/js/ui.js';
+      import { DEALS, formatPrice } from './js/products.js';
+      import { addToCart } from './js/cart.js';
+      import { showToast } from './js/ui.js';
 
       const dealsContainer = document.getElementById('deals-container');
 

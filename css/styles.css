@@ -1,32 +1,28 @@
-@import "tailwindcss";
+:root {
+  --color-crust-green-dark: #12372a;
+  --color-crust-green-mid: #1f4d3a;
+  --color-crust-cream: #f8f6f0;
+  --color-crust-gold: #d4a72c;
+  --color-crust-text: #1c1c1c;
+  --color-crust-muted: #6b6b6b;
+  --color-crust-border: #e8e5dc;
+}
 
-@layer base {
-  :root {
-    --color-crust-green-dark: #12372a;
-    --color-crust-green-mid: #1f4d3a;
-    --color-crust-cream: #f8f6f0;
-    --color-crust-gold: #d4a72c;
-    --color-crust-text: #1c1c1c;
-    --color-crust-muted: #6b6b6b;
-    --color-crust-border: #e8e5dc;
-  }
+html {
+  scroll-behavior: smooth;
+}
 
-  html {
-    scroll-behavior: smooth;
-  }
+body {
+  background-color: #f8f6f0;
+  color: #1c1c1c;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
 
-  body {
-    background-color: var(--color-crust-cream);
-    color: var(--color-crust-text);
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-
-  h1, h2, h3, .font-editorial {
-    font-family: 'Playfair Display', Georgia, serif;
-    letter-spacing: -0.015em;
-  }
+h1, h2, h3, .font-editorial {
+  font-family: 'Playfair Display', Georgia, serif;
+  letter-spacing: -0.015em;
 }
 
 /* Custom Palette Utilities */
