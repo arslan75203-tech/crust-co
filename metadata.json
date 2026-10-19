@@ -1,0 +1,6 @@
+{
+  "name": "Crust & Co - Artisanal Restaurant & Food Ordering",
+  "description": "Crust & Co is a premier restaurant featuring stone-baked pizzas, gourmet crispy burgers, signature loaded sides, family deals, and seamless online ordering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

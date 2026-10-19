@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout - Crust & Co</title>
+    <meta name="description" content="Fast Cash on Delivery checkout for Crust & Co orders. No card required." />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="bg-[#F8F6F0] text-[#1C1C1C] flex flex-col min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#F8F6F0]/95 backdrop-blur-md border-b border-[#E8E5DC]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
+        <a href="/index.html" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0">
+          Crust & Co
+        </a>
+
+        <div class="flex items-center gap-2 text-xs text-[#6B6B6B]">
+          <span class="text-[#12372A] font-semibold">1. Cart</span>
+          <span>→</span>
+          <span class="text-[#12372A] font-bold">2. Checkout</span>
+          <span>→</span>
+          <span>3. Confirmation</span>
+        </div>
+
+        <div class="flex items-center gap-4 shrink-0">
+          <a href="/cart.html" class="text-xs font-semibold text-[#12372A] hover:underline">
+            Back to Cart
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+      <div id="checkout-root">
+        <!-- Rendered by JS -->
+      </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-[#12372A] text-white border-t border-[#1F4D3A] pt-12 pb-8 mt-16">
+      <div class="max-w-7xl mx-auto px-4 text-center text-xs text-white/60">
+        © 2026 Crust & Co. Cash on Delivery Restaurant Ordering.
+      </div>
+    </footer>
+
+    <!-- App Scripts -->
+    <script type="module" src="/js/app.js"></script>
+    <script type="module">
+      import { getCartSummary, clearCart } from '/js/cart.js';
+      import { getCurrentUser } from '/js/auth.js';
+      import { createOrder } from '/js/orders.js';
+      import { formatPrice } from '/js/products.js';
+      import { showToast } from '/js/ui.js';
+
+      const root = document.getElementById('checkout-root');
+      const currentUser = getCurrentUser();
+      const summary = getCartSummary();
+
+      function initCheckoutView() {
+        if (summary.items.length === 0) {
+          root.innerHTML = `
+            <div class="py-20 bg-white rounded-2xl border border-[#E8E5DC] text-center p-8 max-w-lg mx-auto">
+              <h2 class="text-2xl font-serif font-bold text-[#12372A]">No items in cart</h2>
+              <p class="text-xs text-[#6B6B6B] mt-2">Your cart is empty. Please add items before checking out.</p>
+              <a href="/menu.html" class="inline-block mt-5 px-6 py-3 bg-[#12372A] text-white text-xs font-semibold rounded-lg">
+                Explore Menu
+              </a>
+            </div>
+          `;
+          return;
+        }
+
+        root.innerHTML = `
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            
+            <!-- Left: Checkout Form -->
+            <div class="lg:col-span-7 space-y-8">
+              <div>
+                <h1 class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A]">Delivery Information</h1>
+                <p class="text-xs sm:text-sm text-[#6B6B6B] mt-1">
+                  ${
+                    currentUser
+                      ? `Ordering as <strong>${currentUser.name}</strong> (${currentUser.phone})`
+                      : `Checking out as Guest. Fill your delivery details to place order.`
+                  }
+                </p>
+              </div>
+
+              <form id="checkout-form" class="bg-white rounded-2xl border border-[#E8E5DC] p-6 sm:p-8 shadow-xs space-y-5">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label for="cust-name" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                      Full Name <span class="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="cust-name"
+                      required
+                      value="${currentUser?.name || ''}"
+                      placeholder="e.g. Tariq Khan"
+                      class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
+                    />
+                  </div>
+                  <div>
+                    <label for="cust-phone" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                      Phone Number <span class="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      id="cust-phone"
+                      required
+                      value="${currentUser?.phone || ''}"
+                      placeholder="e.g. 0300 1234567"
+                      class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label for="cust-address" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                    Complete Street Address <span class="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="cust-address"
+                    required
+                    value="${currentUser?.address || ''}"
+                    placeholder="e.g. House 42, Street 8, Block G"
+                    class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
+                  />
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label for="cust-area" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                      Area / Neighborhood <span class="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="cust-area"
+                      required
+                      value="${currentUser?.area || 'Gulberg III, Lahore'}"
+                      placeholder="e.g. Gulberg III / DHA Phase 5"
+                      class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
+                    />
+                  </div>
+                  <div>
+                    <label for="cust-landmark" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                      Nearest Landmark (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      id="cust-landmark"
+                      value="${currentUser?.landmark || ''}"
+                      placeholder="e.g. Opposite City Hospital"
+                      class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label for="order-notes" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                    Delivery Instructions / Notes
+                  </label>
+                  <textarea
+                    id="order-notes"
+                    rows="2"
+                    placeholder="e.g. Call when outside, leave with guard, extra ketchup..."
+                    class="w-full text-xs p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white resize-none"
+                  ></textarea>
+                </div>
+
+                <!-- Payment Method Section -->
+                <div class="pt-4 border-t border-[#E8E5DC]">
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-3">
+                    Payment Method
+                  </label>
+                  <div class="p-4 rounded-xl border border-[#12372A] bg-[#12372A]/5 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <div class="w-4 h-4 rounded-full bg-[#12372A] flex items-center justify-center">
+                        <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold text-[#12372A]">Cash on Delivery (COD)</div>
+                        <div class="text-[11px] text-[#6B6B6B]">Pay with exact cash or change directly upon delivery.</div>
+                      </div>
+                    </div>
+                    <span class="text-xs font-semibold text-[#12372A] bg-white px-2 py-1 rounded-md border border-[#E8E5DC]">Selected</span>
+                  </div>
+                </div>
+
+                <div class="pt-2">
+                  <button
+                    type="submit"
+                    class="w-full py-4 bg-[#12372A] hover:bg-[#1F4D3A] text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <span>Place Order (Cash on Delivery)</span>
+                    <span class="text-[#D4A72C] font-bold tabular-nums">· ${formatPrice(summary.grandTotal)}</span>
+                  </button>
+                </div>
+
+              </form>
+            </div>
+
+            <!-- Right: Order Summary Preview -->
+            <div class="lg:col-span-5">
+              <div class="bg-white rounded-2xl border border-[#E8E5DC] p-6 shadow-xs sticky top-28 space-y-5">
+                <h2 class="font-serif font-bold text-lg text-[#12372A]">Your Order (${summary.itemCount} items)</h2>
+                
+                <div class="space-y-3 max-h-72 overflow-y-auto pr-1 text-xs">
+                  ${summary.items
+                    .map(
+                      (item) => `
+                    <div class="flex justify-between items-start py-2 border-b border-[#E8E5DC]">
+                      <div class="pr-3">
+                        <div class="font-semibold text-[#1C1C1C]">${item.quantity}× ${item.name}</div>
+                        ${
+                          item.variant && item.variant.name !== 'Regular' && item.variant.name !== 'Combo Deal'
+                            ? `<div class="text-[11px] text-[#6B6B6B]">${item.variant.name}</div>`
+                            : ''
+                        }
+                        ${
+                          item.addOns && item.addOns.length > 0
+                            ? `<div class="text-[11px] text-[#6B6B6B]">+ ${item.addOns.map((a) => a.name).join(', ')}</div>`
+                            : ''
+                        }
+                      </div>
+                      <div class="font-semibold text-[#12372A] tabular-nums shrink-0">
+                        ${formatPrice(item.totalPrice)}
+                      </div>
+                    </div>
+                  `
+                    )
+                    .join('')}
+                </div>
+
+                <div class="space-y-2 text-xs pt-2">
+                  <div class="flex justify-between text-[#6B6B6B]">
+                    <span>Subtotal</span>
+                    <span class="text-[#1C1C1C] font-medium tabular-nums">${formatPrice(summary.subtotal)}</span>
+                  </div>
+                  <div class="flex justify-between text-[#6B6B6B]">
+                    <span>Delivery Charges</span>
+                    <span class="text-[#1C1C1C] font-medium tabular-nums">
+                      ${summary.deliveryCharge === 0 ? '<span class="text-emerald-700 font-semibold">FREE</span>' : formatPrice(summary.deliveryCharge)}
+                    </span>
+                  </div>
+                  <div class="flex justify-between text-base font-bold text-[#12372A] border-t border-[#E8E5DC] pt-3">
+                    <span>Grand Total</span>
+                    <span class="tabular-nums font-serif text-lg">${formatPrice(summary.grandTotal)}</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        `;
+
+        // Handle form submit
+        document.getElementById('checkout-form').onsubmit = (e) => {
+          e.preventDefault();
+
+          const name = document.getElementById('cust-name').value.trim();
+          const phone = document.getElementById('cust-phone').value.trim();
+          const address = document.getElementById('cust-address').value.trim();
+          const area = document.getElementById('cust-area').value.trim();
+          const landmark = document.getElementById('cust-landmark').value.trim();
+          const notes = document.getElementById('order-notes').value.trim();
+
+          if (!name || !phone || !address || !area) {
+            showToast('Please fill all required delivery fields.', 'error');
+            return;
+          }
+
+          const newOrder = createOrder({
+            items: summary.items,
+            subtotal: summary.subtotal,
+            deliveryCharge: summary.deliveryCharge,
+            total: summary.grandTotal,
+            customer: { name, phone, address, area, landmark },
+            notes,
+            userId: currentUser?.id || 'guest',
+          });
+
+          // Clear cart
+          clearCart();
+          showToast('Order confirmed! Arriving in 30–40 minutes');
+
+          // Render simple, clean confirmation view (No complex cycle bar, simple ETA time)
+          renderConfirmation(newOrder);
+        };
+      }
+
+      function renderConfirmation(order) {
+        root.innerHTML = `
+          <div class="max-w-2xl mx-auto bg-white rounded-2xl border border-[#E8E5DC] p-8 sm:p-12 shadow-sm text-center">
+            
+            <div class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto mb-4 border border-emerald-200">
+              <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            
+            <span class="text-xs uppercase font-semibold text-[#D4A72C] tracking-widest">Order Confirmed</span>
+            <h1 class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] mt-1">Thank You! Your Food is Being Prepared</h1>
+            
+            <!-- Simple Estimated Delivery Time Banner (as requested: in 30-40 minutes) -->
+            <div class="my-6 p-5 bg-[#12372A] text-white rounded-xl shadow-xs text-center space-y-1">
+              <div class="text-xs text-[#D4A72C] font-semibold uppercase tracking-wider">Estimated Delivery Time</div>
+              <div class="text-2xl sm:text-3xl font-serif font-bold text-white">30 – 40 Minutes</div>
+              <div class="text-xs text-white/80">Our rider will deliver your food fresh and hot to your door.</div>
+            </div>
+
+            <div class="p-4 bg-[#F8F6F0] rounded-xl border border-[#E8E5DC] text-xs text-[#1C1C1C] flex flex-wrap items-center justify-around gap-4 mb-6">
+              <div>
+                <span class="text-[#6B6B6B]">Payment Method:</span>
+                <strong class="ml-1 text-[#12372A]">Cash on Delivery</strong>
+              </div>
+              <div class="text-[#E8E5DC] hidden sm:inline">|</div>
+              <div>
+                <span class="text-[#6B6B6B]">Amount to Pay:</span>
+                <strong class="ml-1 text-base font-serif font-bold text-[#12372A]">${formatPrice(order.total)}</strong>
+              </div>
+            </div>
+
+            <!-- Delivery Summary -->
+            <div class="text-left border-t border-[#E8E5DC] pt-6 mb-8 text-xs text-[#1C1C1C] space-y-2 max-w-md mx-auto">
+              <div class="font-semibold text-[#12372A] mb-2 uppercase tracking-wider">Delivery Details</div>
+              <div>Recipient: <strong>${order.customer.name}</strong> (${order.customer.phone})</div>
+              <div>Address: <strong>${order.customer.address}, ${order.customer.area}</strong></div>
+              ${order.notes ? `<div>Notes: <em>"${order.notes}"</em></div>` : ''}
+              
+              <div class="pt-3 border-t border-[#E8E5DC] text-[11px] text-[#6B6B6B]">
+                Items ordered: ${order.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-4">
+              <a href="/index.html" class="px-6 py-3 bg-[#12372A] text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors">
+                Back to Home
+              </a>
+              <a href="/menu.html" class="px-6 py-3 border border-[#E8E5DC] text-[#1C1C1C] text-xs sm:text-sm font-semibold rounded-lg hover:bg-[#F8F6F0] transition-colors">
+                Order More Food
+              </a>
+            </div>
+          </div>
+        `;
+      }
+
+      initCheckoutView();
+    </script>
+  </body>
+</html>

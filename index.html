@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crust & Co - Artisanal Restaurant & Food Ordering</title>
+    <meta name="description" content="Crust & Co is a premier restaurant featuring stone-baked pizzas, gourmet crispy burgers, signature loaded sides, family deals, and seamless online ordering." />
+    <meta property="og:title" content="Crust & Co - Artisanal Restaurant & Food Ordering" />
+    <meta property="og:description" content="Crust & Co is a premier restaurant featuring stone-baked pizzas, gourmet crispy burgers, signature loaded sides, family deals, and seamless online ordering." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="bg-[#F8F6F0] text-[#1C1C1C] flex flex-col min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#F8F6F0]/95 backdrop-blur-md border-b border-[#E8E5DC] transition-all">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
+        
+        <!-- Zone 1: Brand wordmark -->
+        <a href="/index.html" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0 hover:opacity-90 transition-opacity">
+          Crust & Co
+        </a>
+
+        <!-- Zone 2: Navigation Links with Elastic Underline Animation -->
+        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-[#1C1C1C]">
+          <a href="/index.html" class="nav-elastic-link active-nav whitespace-nowrap shrink-0">Home</a>
+          <a href="/menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
+          <a href="/deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
+          <a href="/about.html" class="nav-elastic-link whitespace-nowrap shrink-0">About</a>
+          <a href="/contact.html" class="nav-elastic-link whitespace-nowrap shrink-0">Contact</a>
+        </nav>
+
+        <!-- Live Search Bar (Desktop) -->
+        <div class="search-wrapper relative hidden lg:block w-52 xl:w-64 shrink-0">
+          <div class="relative flex items-center">
+            <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search pizza, burger, deal..."
+              class="live-search-input w-full pl-9 pr-8 py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A] focus:ring-1 focus:ring-[#12372A] transition-all"
+            />
+            <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] hover:text-[#1C1C1C] p-0.5" aria-label="Clear search">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+        </div>
+
+        <!-- Zone 3: Account, Cart Badge & Primary CTA -->
+        <div class="flex items-center gap-3 sm:gap-5 shrink-0">
+          <div class="auth-slot hidden sm:block"></div>
+
+          <!-- Cart Icon Link with Counter -->
+          <a href="/cart.html" class="relative p-2 text-[#12372A] hover:opacity-80 transition-transform active:scale-95" aria-label="Shopping Cart">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span class="cart-badge hidden absolute top-0 right-0 w-5 h-5 bg-[#D4A72C] text-[#12372A] text-xs font-bold rounded-full flex items-center justify-center shadow-xs">0</span>
+          </a>
+
+          <!-- Order Now CTA -->
+          <a href="/menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 bg-[#12372A] text-white text-sm font-semibold rounded-lg hover:bg-[#1F4D3A] transition-all duration-200 shadow-sm hover:shadow-md active:scale-98 whitespace-nowrap">
+            Order Now
+          </a>
+
+          <!-- Mobile Hamburger Toggle -->
+          <button id="mobile-menu-toggle" class="md:hidden p-2 text-[#12372A]" aria-label="Open Navigation Menu">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Drawer & Backdrop -->
+    <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50"></div>
+    <div id="mobile-drawer" class="fixed top-0 right-0 bottom-0 w-4/5 max-w-sm bg-[#F8F6F0] z-50 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col p-6">
+      <div class="flex items-center justify-between pb-6 border-b border-[#E8E5DC]">
+        <span class="font-serif font-bold text-xl text-[#12372A]">Crust & Co</span>
+        <button id="mobile-menu-close" class="p-2 text-[#6B6B6B] hover:text-[#1C1C1C]">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Live Search Bar (Mobile) -->
+      <div class="search-wrapper relative py-4 border-b border-[#E8E5DC]">
+        <div class="relative flex items-center">
+          <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search pizza, burger, deals..."
+            class="live-search-input w-full pl-9 pr-8 py-2.5 text-xs rounded-lg border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
+          />
+          <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] p-1" aria-label="Clear search">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+      </div>
+
+      <div class="auth-slot py-4 border-b border-[#E8E5DC]"></div>
+
+      <nav class="flex flex-col gap-4 py-6 text-base font-medium">
+        <a href="/index.html" class="text-[#12372A] font-semibold">Home</a>
+        <a href="/menu.html" class="text-[#1C1C1C] hover:text-[#12372A]">Menu</a>
+        <a href="/deals.html" class="text-[#1C1C1C] hover:text-[#12372A]">Deals</a>
+        <a href="/about.html" class="text-[#1C1C1C] hover:text-[#12372A]">About</a>
+        <a href="/contact.html" class="text-[#1C1C1C] hover:text-[#12372A]">Contact</a>
+        <a href="/account.html" class="text-[#1C1C1C] hover:text-[#12372A]">My Account & Orders</a>
+      </nav>
+
+      <div class="mt-auto pt-6 border-t border-[#E8E5DC]">
+        <a href="/menu.html" class="w-full flex items-center justify-center px-4 py-3 bg-[#12372A] text-white text-sm font-semibold rounded-lg shadow-sm">
+          Order Online Now
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+
+      <!-- Full-Image Hero with Dark Atmospheric Scrim Overlay & Quote -->
+      <section class="relative min-h-[580px] lg:min-h-[660px] flex items-center justify-center text-white overflow-hidden">
+        <!-- Whole Background Image -->
+        <img
+          src="/src/assets/images/hero_crust_co_spread_1792406742006.jpg"
+          alt="Crust & Co spread"
+          class="absolute inset-0 w-full h-full object-cover scale-102 filter brightness-95"
+          referrerpolicy="no-referrer"
+        />
+
+        <!-- Atmospheric Dark Green/Black Tint Scrim Overlay -->
+        <div class="absolute inset-0 hero-scrim"></div>
+
+        <!-- Hero Content Layer -->
+        <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-6">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#D4A72C] text-xs font-semibold uppercase tracking-widest">
+            <span class="w-2 h-2 rounded-full bg-[#D4A72C]"></span>
+            <span>Artisanal Pizzeria & Handcrafted Burger Kitchen</span>
+          </div>
+
+          <!-- Main Quote & Headline -->
+          <h1 class="text-4xl sm:text-6xl lg:text-7xl font-serif font-bold text-white tracking-tight leading-tight drop-shadow-md">
+            Good Food. Good Mood.<br />
+            <span class="italic font-normal text-[#F8F6F0]/90">Great Moments.</span>
+          </h1>
+
+          <p class="text-white/85 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed drop-shadow-xs">
+            Freshly prepared favorites made for every craving. 48-hour cold fermented stone-oven sourdough pizzas and hand-dredged golden buttermilk crispy fillets.
+          </p>
+
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <a href="/menu.html" class="px-8 py-4 bg-[#D4A72C] text-[#12372A] font-bold text-sm rounded-lg hover:bg-yellow-400 transition-all shadow-lg hover:shadow-xl active:scale-98">
+              Explore Menu & Order
+            </a>
+            <a href="/deals.html" class="px-8 py-4 bg-white/15 hover:bg-white/25 text-white border border-white/30 backdrop-blur-md font-semibold text-sm rounded-lg transition-all active:scale-98">
+              View Today's Deals
+            </a>
+          </div>
+
+          <!-- Quick Trust Badges -->
+          <div class="pt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-12 text-xs text-white/80 border-t border-white/15 max-w-2xl mx-auto">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-[#D4A72C]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span>48h Slow Fermented Dough</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-[#D4A72C]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span>100% Fresh Halal Cuts</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-[#D4A72C]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span>Cash on Delivery</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Customer Favorites (Featured Products) - No Customize button, Unstocked items faded to grey -->
+      <section class="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-[#E8E5DC] gap-4">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-[#D4A72C]">Handcrafted Daily</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] mt-1">Our House Favorites</h2>
+            <p class="text-sm text-[#6B6B6B] mt-1">Selected crowd favorites from our kitchen. Tap any item to view details.</p>
+          </div>
+          <a href="/menu.html" class="text-sm font-semibold text-[#12372A] hover:text-[#1F4D3A] flex items-center gap-1.5 shrink-0 group">
+            View Complete Menu 
+            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+
+        <div id="featured-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Populated by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Deals Section in a Slider with View All Deals Button -->
+      <section class="py-16 bg-[#1F4D3A] text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-white/15 gap-4">
+            <div>
+              <span class="text-xs uppercase font-semibold text-[#D4A72C] tracking-widest">Special Offers</span>
+              <h2 class="text-2xl sm:text-3xl font-serif font-bold text-white mt-1">Featured Dining Deals</h2>
+              <p class="text-xs sm:text-sm text-white/75 mt-1">Curated feast bundles for friends and family at great savings.</p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <a href="/deals.html" class="px-4 py-2 bg-[#D4A72C] text-[#12372A] font-semibold text-xs rounded-lg hover:bg-yellow-400 transition-colors shadow-xs">
+                View All Deals
+              </a>
+              <div class="flex items-center gap-1">
+                <button id="deals-prev" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors" aria-label="Previous Deal">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <button id="deals-next" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors" aria-label="Next Deal">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deals Carousel Slider Container -->
+          <div id="deals-slider" class="flex gap-6 overflow-x-auto hide-scrollbar scroll-smooth pb-4 snap-x snap-mandatory">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Customer Reviews in Slider -->
+      <section class="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-[#E8E5DC] gap-4">
+          <div>
+            <span class="text-xs uppercase font-semibold text-[#D4A72C] tracking-widest">Customer Reviews</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] mt-1">What Diners Say</h2>
+            <p class="text-xs sm:text-sm text-[#6B6B6B] mt-1">Real feedback from verified food lovers.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="reviews-prev" class="w-9 h-9 rounded-full border border-[#E8E5DC] bg-white hover:bg-[#E8E5DC] flex items-center justify-center text-[#12372A] transition-colors" aria-label="Previous Review">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button id="reviews-next" class="w-9 h-9 rounded-full border border-[#E8E5DC] bg-white hover:bg-[#E8E5DC] flex items-center justify-center text-[#12372A] transition-colors" aria-label="Next Review">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Reviews Carousel Container -->
+        <div id="reviews-slider" class="flex gap-6 overflow-x-auto hide-scrollbar scroll-smooth pb-4 snap-x snap-mandatory">
+          <!-- Populated by JS -->
+        </div>
+
+        <div id="reviews-dots" class="flex justify-center items-center gap-2 mt-6">
+          <!-- Dots rendered by JS -->
+        </div>
+      </section>
+
+      <!-- Final Ordering CTA -->
+      <section class="py-16 bg-[#12372A] text-white text-center relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 space-y-4">
+          <span class="text-xs uppercase font-semibold text-[#D4A72C] tracking-widest">Hot Doorstep Delivery</span>
+          <h2 class="text-3xl sm:text-4xl font-serif font-bold text-white">
+            Craving Something Delicious Tonight?
+          </h2>
+          <p class="text-white/80 text-xs sm:text-base max-w-xl mx-auto leading-relaxed">
+            Order your favorite stone-baked pizza or crunchy zinger burger. Pay easily upon delivery with Cash on Delivery.
+          </p>
+          <div class="pt-4 flex justify-center">
+            <a href="/menu.html" class="px-8 py-3.5 bg-[#D4A72C] text-[#12372A] font-bold text-sm rounded-lg hover:bg-yellow-400 transition-all shadow-md active:scale-98">
+              Order Online Now
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-[#12372A] text-white border-t border-[#1F4D3A] pt-14 pb-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+          
+          <div class="space-y-4">
+            <span class="text-2xl font-serif font-bold tracking-tight text-white block">Crust & Co</span>
+            <p class="text-xs text-white/70 leading-relaxed">
+              Artisanal stone-baked pizzeria & gourmet burger kitchen. Crafted with 48h cold fermented sourdough, fresh chicken fillets, and genuine ingredients.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Quick Links</h4>
+            <ul class="space-y-2.5 text-xs text-white/80">
+              <li><a href="/index.html" class="hover:text-white transition-colors">Home</a></li>
+              <li><a href="/menu.html" class="hover:text-white transition-colors">Our Menu</a></li>
+              <li><a href="/deals.html" class="hover:text-white transition-colors">Exclusive Deals</a></li>
+              <li><a href="/about.html" class="hover:text-white transition-colors">Our Story & Craft</a></li>
+              <li><a href="/account.html" class="hover:text-white transition-colors">My Account & Orders</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Opening Hours</h4>
+            <ul class="space-y-2 text-xs text-white/80">
+              <li class="flex justify-between"><span>Mon - Thu:</span> <span>12:00 PM - 1:00 AM</span></li>
+              <li class="flex justify-between"><span>Fri:</span> <span>2:00 PM - 2:00 AM</span></li>
+              <li class="flex justify-between"><span>Sat - Sun:</span> <span>12:00 PM - 2:00 AM</span></li>
+              <li class="pt-2 text-[#D4A72C]">Hot delivery available all day</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Location & Delivery</h4>
+            <div class="space-y-2 text-xs text-white/80">
+              <p>Main Boulevard, Gulberg III, Lahore</p>
+              <p>Phone: <a href="tel:+923001234567" class="hover:underline">+92 300 1234567</a></p>
+              <p>WhatsApp: <a href="https://wa.me/923001234567" class="text-[#D4A72C] hover:underline">+92 300 1234567</a></p>
+              <p class="pt-2 text-white/60">Cash on Delivery accepted</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-white/60 gap-4">
+          <p>© 2026 Crust & Co. All rights reserved. WordPress & WooCommerce Ready.</p>
+          <div class="flex items-center gap-6">
+            <a href="/contact.html" class="hover:text-white">Help & Support</a>
+            <a href="/about.html" class="hover:text-white">Privacy</a>
+            <a href="/menu.html" class="hover:text-white">Order Online</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- App Scripts -->
+    <script type="module" src="/js/app.js"></script>
+    <script type="module">
+      import { PRODUCTS, DEALS, formatPrice } from '/js/products.js';
+      import { addToCart } from '/js/cart.js';
+      import { showToast } from '/js/ui.js';
+
+      // 1. Featured Products (No customize button, Unavailable items faded to grey)
+      const featuredGrid = document.getElementById('featured-grid');
+      // Include 4 items including 1 out of stock item to clearly show the faded grey state
+      const sampleItems = [PRODUCTS[0], PRODUCTS[1], PRODUCTS[2], PRODUCTS[4]];
+
+      if (featuredGrid) {
+        featuredGrid.innerHTML = sampleItems
+          .map((p) => {
+            const isOutOfStock = !p.available;
+            return `
+            <div class="bg-white rounded-xl border border-[#E8E5DC] overflow-hidden flex flex-col card-hover-effect ${
+              isOutOfStock ? 'item-unavailable' : ''
+            }">
+              <a href="${isOutOfStock ? '#' : `/product.html?slug=${p.slug}`}" class="block relative aspect-4/3 overflow-hidden bg-neutral-100">
+                <img
+                  src="${p.image}"
+                  alt="${p.name}"
+                  class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  referrerpolicy="no-referrer"
+                />
+                ${
+                  isOutOfStock
+                    ? `<span class="absolute top-3 left-3 bg-neutral-800 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md shadow-xs">Sold Out</span>`
+                    : p.badge
+                    ? `<span class="absolute top-3 left-3 bg-[#12372A] text-[#D4A72C] text-[11px] font-semibold px-2.5 py-1 rounded-md shadow-xs">${p.badge}</span>`
+                    : ''
+                }
+              </a>
+              <div class="p-5 flex flex-col flex-1 justify-between">
+                <div>
+                  <div class="text-[11px] font-semibold text-[#6B6B6B] uppercase tracking-wider mb-1">${p.category}</div>
+                  <h3 class="font-serif font-bold text-lg text-[#12372A] hover:text-[#1F4D3A] transition-colors">
+                    <a href="${isOutOfStock ? '#' : `/product.html?slug=${p.slug}`}">${p.name}</a>
+                  </h3>
+                  <p class="text-xs text-[#6B6B6B] mt-1.5 line-clamp-2 leading-relaxed">${p.shortDescription}</p>
+                </div>
+                <div class="mt-5 pt-4 border-t border-[#E8E5DC] flex items-center justify-between gap-3">
+                  <div class="text-base font-serif font-bold text-[#12372A] tabular-nums">${formatPrice(p.price)}</div>
+                  ${
+                    isOutOfStock
+                      ? `<button disabled class="px-4 py-2 text-xs font-semibold text-neutral-500 bg-neutral-200 rounded-lg cursor-not-allowed">Unavailable</button>`
+                      : `<button data-quick-add="${p.id}" class="px-4 py-2 text-xs font-semibold text-white bg-[#12372A] hover:bg-[#1F4D3A] rounded-lg transition-colors flex items-center gap-1.5 shadow-xs">
+                          <span>Add to Cart</span>
+                         </button>`
+                  }
+                </div>
+              </div>
+            </div>
+          `;
+          })
+          .join('');
+
+        featuredGrid.querySelectorAll('[data-quick-add]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            const id = e.currentTarget.getAttribute('data-quick-add');
+            const item = PRODUCTS.find((p) => p.id === id);
+            if (item && item.available) {
+              addToCart(item, {
+                variant: item.variants[0] || { name: 'Regular', priceAdjustment: 0 },
+                quantity: 1,
+              });
+              showToast(`Added ${item.name} to cart`);
+            }
+          });
+        });
+      }
+
+      // 2. Deals Slider Implementation
+      const dealsSlider = document.getElementById('deals-slider');
+      const dealsPrev = document.getElementById('deals-prev');
+      const dealsNext = document.getElementById('deals-next');
+
+      if (dealsSlider) {
+        dealsSlider.innerHTML = DEALS.map(
+          (d) => `
+          <div class="w-[300px] sm:w-[380px] shrink-0 bg-white text-[#1C1C1C] rounded-2xl overflow-hidden border border-white/20 shadow-md flex flex-col justify-between snap-start">
+            <div class="relative aspect-16/10 bg-neutral-100 overflow-hidden">
+              <img src="${d.image}" alt="${d.title}" class="w-full h-full object-cover" />
+              <span class="absolute top-3 left-3 bg-[#12372A] text-[#D4A72C] text-[11px] font-semibold px-2.5 py-1 rounded-md">Save ${formatPrice(d.savings)}</span>
+            </div>
+            <div class="p-5 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 class="font-serif font-bold text-lg text-[#12372A]">${d.title}</h3>
+                <p class="text-xs text-[#6B6B6B] mt-1 line-clamp-2">${d.shortDescription}</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-[#E8E5DC] flex items-center justify-between">
+                <div>
+                  <div class="text-base font-serif font-bold text-[#12372A] tabular-nums">${formatPrice(d.dealPrice)}</div>
+                  <div class="text-[11px] text-[#6B6B6B] line-through">${formatPrice(d.originalPrice)}</div>
+                </div>
+                <button data-add-deal="${d.id}" class="px-3.5 py-2 bg-[#12372A] hover:bg-[#1F4D3A] text-white text-xs font-semibold rounded-lg transition-colors">
+                  Order Deal
+                </button>
+              </div>
+            </div>
+          </div>
+        `
+        ).join('');
+
+        dealsSlider.querySelectorAll('[data-add-deal]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            const id = e.currentTarget.getAttribute('data-add-deal');
+            const deal = DEALS.find((d) => d.id === id);
+            if (deal) {
+              addToCart(
+                { id: deal.id, sku: deal.sku, name: deal.title, price: deal.dealPrice, image: deal.image },
+                { variant: { name: 'Combo Deal', priceAdjustment: 0 }, quantity: 1 }
+              );
+              showToast(`Added ${deal.title} to cart`);
+            }
+          });
+        });
+
+        if (dealsPrev && dealsNext) {
+          dealsPrev.onclick = () => {
+            dealsSlider.scrollBy({ left: -340, behavior: 'smooth' });
+          };
+          dealsNext.onclick = () => {
+            dealsSlider.scrollBy({ left: 340, behavior: 'smooth' });
+          };
+        }
+      }
+
+      // 3. Reviews Slider Implementation
+      const reviewsData = [
+        {
+          quote: "The sourdough pepperoni pizza has the crunchiest, most fragrant crust in town. The zinger burger was juicy and huge. Hands down our new weekend family ritual!",
+          name: "Zainab Khan",
+          area: "Gulberg III, Lahore",
+          rating: 5,
+        },
+        {
+          quote: "Ordering on the site took less than two minutes. The loaded fries were steaming hot with generous chicken and melted cheese. Cash on delivery was seamless.",
+          name: "Bilal Sheikh",
+          area: "DHA Phase 5, Lahore",
+          rating: 5,
+        },
+        {
+          quote: "The smash beef burger lace edges were so crispy and full of flavor. Finally a restaurant that takes both burgers and stone-oven pizzas seriously.",
+          name: "Ayesha Tariq",
+          area: "Model Town, Lahore",
+          rating: 5,
+        },
+        {
+          quote: "Delivery arrived in 35 minutes sharp. Hot and fresh packaging, exact change was handled smoothly. The grand family deal is unbeatable value.",
+          name: "Omar Farooq",
+          area: "Cantt, Lahore",
+          rating: 5,
+        },
+      ];
+
+      const reviewsSlider = document.getElementById('reviews-slider');
+      const reviewsPrev = document.getElementById('reviews-prev');
+      const reviewsNext = document.getElementById('reviews-next');
+      const reviewsDots = document.getElementById('reviews-dots');
+
+      if (reviewsSlider) {
+        reviewsSlider.innerHTML = reviewsData
+          .map(
+            (r) => `
+          <div class="w-[300px] sm:w-[380px] shrink-0 bg-white p-6 rounded-2xl border border-[#E8E5DC] shadow-xs flex flex-col justify-between snap-start">
+            <div>
+              <div class="flex text-[#D4A72C] text-sm mb-3">★★★★★</div>
+              <p class="text-xs sm:text-sm text-[#1C1C1C] italic leading-relaxed">
+                “${r.quote}”
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-[#E8E5DC] flex items-center justify-between text-xs">
+              <span class="font-bold text-[#12372A]">${r.name}</span>
+              <span class="text-[#6B6B6B]">${r.area}</span>
+            </div>
+          </div>
+        `
+          )
+          .join('');
+
+        if (reviewsDots) {
+          reviewsDots.innerHTML = reviewsData
+            .map((_, i) => `<span class="w-2 h-2 rounded-full transition-colors ${i === 0 ? 'bg-[#12372A]' : 'bg-[#E8E5DC]'}"></span>`)
+            .join('');
+        }
+
+        if (reviewsPrev && reviewsNext) {
+          reviewsPrev.onclick = () => {
+            reviewsSlider.scrollBy({ left: -340, behavior: 'smooth' });
+          };
+          reviewsNext.onclick = () => {
+            reviewsSlider.scrollBy({ left: 340, behavior: 'smooth' });
+          };
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customize Item - Crust & Co</title>
+    <meta name="description" content="Customize and configure your food item with variants, gourmet add-ons, and special instructions at Crust & Co." />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="bg-[#F8F6F0] text-[#1C1C1C] flex flex-col min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#F8F6F0]/95 backdrop-blur-md border-b border-[#E8E5DC]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
+        <a href="/index.html" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0">
+          Crust & Co
+        </a>
+
+        <!-- Zone 2: Navigation Links with Elastic Underline Animation -->
+        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-[#1C1C1C]">
+          <a href="/index.html" class="nav-elastic-link whitespace-nowrap shrink-0">Home</a>
+          <a href="/menu.html" class="nav-elastic-link active-nav whitespace-nowrap shrink-0">Menu</a>
+          <a href="/deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
+          <a href="/about.html" class="nav-elastic-link whitespace-nowrap shrink-0">About</a>
+          <a href="/contact.html" class="nav-elastic-link whitespace-nowrap shrink-0">Contact</a>
+        </nav>
+
+        <!-- Live Search Bar (Desktop) -->
+        <div class="search-wrapper relative hidden lg:block w-52 xl:w-64 shrink-0">
+          <div class="relative flex items-center">
+            <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search pizza, burger, deal..."
+              class="live-search-input w-full pl-9 pr-8 py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A] focus:ring-1 focus:ring-[#12372A] transition-all"
+            />
+            <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] hover:text-[#1C1C1C] p-0.5" aria-label="Clear search">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+        </div>
+
+        <div class="flex items-center gap-3 sm:gap-5 shrink-0">
+          <div class="auth-slot hidden sm:block"></div>
+          <a href="/cart.html" class="relative p-2 text-[#12372A] hover:opacity-80 transition-opacity" aria-label="Shopping Cart">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span class="cart-badge hidden absolute top-0 right-0 w-5 h-5 bg-[#D4A72C] text-[#12372A] text-xs font-bold rounded-full flex items-center justify-center">0</span>
+          </a>
+          <a href="/menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 bg-[#12372A] text-white text-sm font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
+            Order Now
+          </a>
+          <button id="mobile-menu-toggle" class="md:hidden p-2 text-[#12372A]" aria-label="Open Navigation Menu">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Drawer & Backdrop -->
+    <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-xs z-50"></div>
+    <div id="mobile-drawer" class="fixed top-0 right-0 bottom-0 w-4/5 max-w-sm bg-[#F8F6F0] z-50 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col p-6">
+      <div class="flex items-center justify-between pb-6 border-b border-[#E8E5DC]">
+        <span class="font-serif font-bold text-xl text-[#12372A]">Crust & Co</span>
+        <button id="mobile-menu-close" class="p-2 text-[#6B6B6B] hover:text-[#1C1C1C]">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Live Search Bar (Mobile) -->
+      <div class="search-wrapper relative py-4 border-b border-[#E8E5DC]">
+        <div class="relative flex items-center">
+          <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search pizza, burger, deals..."
+            class="live-search-input w-full pl-9 pr-8 py-2.5 text-xs rounded-lg border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
+          />
+          <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] p-1" aria-label="Clear search">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+      </div>
+      <div class="auth-slot py-4 border-b border-[#E8E5DC]"></div>
+      <nav class="flex flex-col gap-4 py-6 text-base font-medium">
+        <a href="/index.html" class="text-[#1C1C1C]">Home</a>
+        <a href="/menu.html" class="text-[#12372A] font-semibold">Menu</a>
+        <a href="/deals.html" class="text-[#1C1C1C]">Deals</a>
+        <a href="/about.html" class="text-[#1C1C1C]">About</a>
+        <a href="/contact.html" class="text-[#1C1C1C]">Contact</a>
+        <a href="/account.html" class="text-[#1C1C1C]">My Account & Orders</a>
+      </nav>
+      <div class="mt-auto pt-6 border-t border-[#E8E5DC]">
+        <a href="/cart.html" class="w-full flex items-center justify-center px-4 py-3 bg-[#12372A] text-white text-sm font-semibold rounded-lg shadow-sm">
+          View Shopping Cart
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-xs text-[#6B6B6B] mb-6">
+        <a href="/index.html" class="hover:text-[#12372A]">Home</a>
+        <span>/</span>
+        <a href="/menu.html" class="hover:text-[#12372A]">Menu</a>
+        <span>/</span>
+        <span id="breadcrumb-current" class="text-[#12372A] font-medium">Product</span>
+      </nav>
+
+      <!-- PDP Split Content -->
+      <div id="product-container" class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Related Products -->
+      <section class="mt-16 pt-12 border-t border-[#E8E5DC]">
+        <h3 class="text-xl sm:text-2xl font-serif font-bold text-[#12372A] mb-6">Pair It With</h3>
+        <div id="related-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-[#12372A] text-white border-t border-[#1F4D3A] pt-14 pb-8 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+          <div class="space-y-4">
+            <span class="text-2xl font-serif font-bold tracking-tight text-white block">Crust & Co</span>
+            <p class="text-xs text-white/70 leading-relaxed">
+              Artisanal stone-baked pizzeria & gourmet burger kitchen. Crafted with 48h cold fermented sourdough, fresh chicken fillets, and genuine ingredients.
+            </p>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Quick Links</h4>
+            <ul class="space-y-2.5 text-xs text-white/80">
+              <li><a href="/index.html" class="hover:text-white">Home</a></li>
+              <li><a href="/menu.html" class="hover:text-white">Our Menu</a></li>
+              <li><a href="/deals.html" class="hover:text-white">Exclusive Deals</a></li>
+              <li><a href="/about.html" class="hover:text-white">Our Story & Craft</a></li>
+              <li><a href="/account.html" class="hover:text-white">My Account & Orders</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Opening Hours</h4>
+            <ul class="space-y-2 text-xs text-white/80">
+              <li class="flex justify-between"><span>Mon - Thu:</span> <span>12:00 PM - 1:00 AM</span></li>
+              <li class="flex justify-between"><span>Fri:</span> <span>2:00 PM - 2:00 AM</span></li>
+              <li class="flex justify-between"><span>Sat - Sun:</span> <span>12:00 PM - 2:00 AM</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Delivery Hotline</h4>
+            <div class="space-y-2 text-xs text-white/80">
+              <p>Main Boulevard, Gulberg III, Lahore</p>
+              <p>Phone: <a href="tel:+923001234567" class="hover:underline">+92 300 1234567</a></p>
+              <p>WhatsApp: <a href="https://wa.me/923001234567" class="text-[#D4A72C] hover:underline">+92 300 1234567</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="pt-8 text-center text-xs text-white/60">
+          © 2026 Crust & Co. All rights reserved.
+        </div>
+      </div>
+    </footer>
+
+    <!-- App Scripts -->
+    <script type="module" src="/js/app.js"></script>
+    <script type="module">
+      import { PRODUCTS, getProductBySlug, getProductById, formatPrice } from '/js/products.js';
+      import { addToCart } from '/js/cart.js';
+      import { showToast } from '/js/ui.js';
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const slug = urlParams.get('slug') || 'zinger-burger';
+      const product = getProductBySlug(slug) || PRODUCTS[0];
+
+      document.title = `${product.name} - Crust & Co`;
+      document.getElementById('breadcrumb-current').textContent = product.name;
+
+      // Selection state
+      let selectedVariant = product.variants[0] || { name: 'Regular', priceAdjustment: 0 };
+      let selectedAddOns = [];
+      let quantity = 1;
+
+      function calculateCurrentTotal() {
+        const addOnSum = selectedAddOns.reduce((sum, item) => sum + item.price, 0);
+        const unit = product.price + (selectedVariant.priceAdjustment || 0) + addOnSum;
+        return unit * quantity;
+      }
+
+      function renderPDP() {
+        const container = document.getElementById('product-container');
+        const currentTotal = calculateCurrentTotal();
+
+        container.innerHTML = `
+          <!-- Left: Large Image & Badges -->
+          <div class="lg:col-span-6">
+            <div class="bg-white rounded-2xl border border-[#E8E5DC] p-3 shadow-xs overflow-hidden ${!product.available ? 'item-unavailable' : ''}">
+              <div class="relative aspect-4/3 rounded-xl overflow-hidden bg-neutral-100">
+                <img
+                  src="${product.image}"
+                  alt="${product.name}"
+                  class="w-full h-full object-cover"
+                  referrerpolicy="no-referrer"
+                />
+                ${
+                  !product.available
+                    ? `<span class="absolute top-4 left-4 bg-neutral-800 text-white text-xs font-semibold px-3 py-1 rounded-md shadow-xs">Sold Out</span>`
+                    : product.badge
+                    ? `<span class="absolute top-4 left-4 bg-[#12372A] text-[#D4A72C] text-xs font-semibold px-3 py-1 rounded-md shadow-xs">${product.badge}</span>`
+                    : ''
+                }
+              </div>
+            </div>
+
+            <!-- Prep Time & Sourcing Callout -->
+            <div class="mt-4 p-4 bg-white rounded-xl border border-[#E8E5DC] flex items-center justify-between text-xs text-[#6B6B6B]">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#12372A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Estimated Prep: <strong>${product.prepTime}</strong></span>
+              </div>
+              <div>
+                <span>Category: <strong class="uppercase text-[#12372A]">${product.category}</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Contiguous Purchase Module -->
+          <div class="lg:col-span-6 space-y-6">
+            <div>
+              <div class="text-xs uppercase font-semibold text-[#D4A72C] tracking-wider mb-1">${product.sku}</div>
+              <h1 class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A]">${product.name}</h1>
+              <p class="text-xs sm:text-sm text-[#6B6B6B] mt-3 leading-relaxed">${product.description}</p>
+            </div>
+
+            <div class="p-6 bg-white rounded-2xl border border-[#E8E5DC] shadow-xs space-y-6">
+              
+              <!-- 1. Variants Selection -->
+              ${
+                product.variants && product.variants.length > 0
+                  ? `
+                <div>
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-3">
+                    Choose Size / Variant <span class="text-[#D4A72C]">*</span>
+                  </label>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    ${product.variants
+                      .map((v) => {
+                        const isSelected = selectedVariant.name === v.name;
+                        return `
+                        <button
+                          type="button"
+                          data-variant-name="${v.name}"
+                          class="variant-btn flex items-center justify-between p-3 rounded-lg border text-xs font-medium text-left transition-all ${
+                            isSelected
+                              ? 'border-[#12372A] bg-[#12372A]/5 text-[#12372A] font-semibold ring-1 ring-[#12372A]'
+                              : 'border-[#E8E5DC] text-[#1C1C1C] hover:border-[#12372A]/40'
+                          }"
+                        >
+                          <span>${v.name}</span>
+                          <span class="tabular-nums ${v.priceAdjustment > 0 ? 'text-[#12372A]' : 'text-[#6B6B6B]'}">
+                            ${v.priceAdjustment > 0 ? `+${formatPrice(v.priceAdjustment)}` : 'Included'}
+                          </span>
+                        </button>
+                      `;
+                      })
+                      .join('')}
+                  </div>
+                </div>
+              `
+                  : ''
+              }
+
+              <!-- 2. Add-ons Selection -->
+              ${
+                product.addOns && product.addOns.length > 0
+                  ? `
+                <div>
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-3">
+                    Gourmet Add-ons (Optional)
+                  </label>
+                  <div class="space-y-2">
+                    ${product.addOns
+                      .map((a) => {
+                        const isChecked = selectedAddOns.some((item) => item.name === a.name);
+                        return `
+                        <label class="flex items-center justify-between p-3 rounded-lg border border-[#E8E5DC] hover:border-[#12372A]/30 cursor-pointer text-xs transition-colors ${
+                          isChecked ? 'bg-[#F8F6F0] border-[#12372A]/40 font-medium' : ''
+                        }">
+                          <div class="flex items-center gap-3">
+                            <input
+                              type="checkbox"
+                              data-addon-name="${a.name}"
+                              data-addon-price="${a.price}"
+                              class="addon-checkbox rounded border-[#E8E5DC] text-[#12372A] focus:ring-[#12372A] w-4 h-4 cursor-pointer"
+                              ${isChecked ? 'checked' : ''}
+                            />
+                            <span>${a.name}</span>
+                          </div>
+                          <span class="font-semibold text-[#12372A] tabular-nums">+${formatPrice(a.price)}</span>
+                        </label>
+                      `;
+                      })
+                      .join('')}
+                  </div>
+                </div>
+              `
+                  : ''
+              }
+
+              <!-- 3. Special Instructions -->
+              <div>
+                <label for="instructions" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Special Kitchen Instructions
+                </label>
+                <textarea
+                  id="instructions"
+                  rows="2"
+                  placeholder="e.g. Less spicy, extra sauce, well-toasted bun, no pickles..."
+                  class="w-full text-xs p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white resize-none"
+                ></textarea>
+              </div>
+
+              <!-- 4. Quantity Stepper & Add to Cart -->
+              <div class="pt-4 border-t border-[#E8E5DC] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                ${
+                  product.available
+                    ? `
+                  <div class="flex items-center border border-[#E8E5DC] rounded-lg bg-[#F8F6F0] self-start sm:self-auto">
+                    <button id="qty-minus" type="button" class="w-10 h-10 flex items-center justify-center text-[#1C1C1C] hover:bg-[#E8E5DC] rounded-l-lg font-bold text-sm" aria-label="Decrease quantity">
+                      –
+                    </button>
+                    <span id="qty-display" class="w-12 text-center text-sm font-semibold tabular-nums text-[#12372A]">
+                      ${quantity}
+                    </span>
+                    <button id="qty-plus" type="button" class="w-10 h-10 flex items-center justify-center text-[#1C1C1C] hover:bg-[#E8E5DC] rounded-r-lg font-bold text-sm" aria-label="Increase quantity">
+                      +
+                    </button>
+                  </div>
+
+                  <button
+                    id="add-to-cart-btn"
+                    type="button"
+                    class="flex-1 px-6 py-3.5 bg-[#12372A] hover:bg-[#1F4D3A] text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-between shadow-sm active:scale-98"
+                  >
+                    <span>Add to Order</span>
+                    <span id="cta-price" class="tabular-nums font-bold text-base text-[#D4A72C]">${formatPrice(currentTotal)}</span>
+                  </button>
+                `
+                    : `
+                  <div class="w-full p-4 bg-neutral-100 rounded-lg text-center text-xs font-semibold text-neutral-600">
+                    This item is currently sold out for today. Please explore our other dishes.
+                  </div>
+                `
+                }
+              </div>
+
+            </div>
+          </div>
+        `;
+
+        // Attach events
+        // Variants
+        container.querySelectorAll('.variant-btn').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            const vName = e.currentTarget.getAttribute('data-variant-name');
+            selectedVariant = product.variants.find((v) => v.name === vName);
+            renderPDP();
+          });
+        });
+
+        // Add-ons
+        container.querySelectorAll('.addon-checkbox').forEach((chk) => {
+          chk.addEventListener('change', (e) => {
+            const aName = e.currentTarget.getAttribute('data-addon-name');
+            const aPrice = Number(e.currentTarget.getAttribute('data-addon-price'));
+            if (e.currentTarget.checked) {
+              selectedAddOns.push({ name: aName, price: aPrice });
+            } else {
+              selectedAddOns = selectedAddOns.filter((item) => item.name !== aName);
+            }
+            renderPDP();
+          });
+        });
+
+        // Quantity
+        const minus = document.getElementById('qty-minus');
+        const plus = document.getElementById('qty-plus');
+        if (minus) {
+          minus.onclick = () => {
+            if (quantity > 1) {
+              quantity--;
+              renderPDP();
+            }
+          };
+        }
+        if (plus) {
+          plus.onclick = () => {
+            quantity++;
+            renderPDP();
+          };
+        }
+
+        // Add to cart action
+        const addBtn = document.getElementById('add-to-cart-btn');
+        if (addBtn) {
+          addBtn.onclick = () => {
+            const instr = document.getElementById('instructions')?.value || '';
+            addToCart(product, {
+              variant: selectedVariant,
+              addOns: selectedAddOns,
+              quantity,
+              specialInstructions: instr,
+            });
+            showToast(`Added ${quantity}× ${product.name} to cart`);
+            setTimeout(() => {
+              window.location.href = '/cart.html';
+            }, 600);
+          };
+        }
+      }
+
+      function renderRelated() {
+        const grid = document.getElementById('related-grid');
+        const relatedIds = product.relatedProducts || [];
+        const relatedItems = relatedIds
+          .map((id) => getProductById(id))
+          .filter(Boolean);
+
+        if (relatedItems.length === 0) {
+          document.querySelector('section:has(#related-grid)')?.classList.add('hidden');
+          return;
+        }
+
+        grid.innerHTML = relatedItems
+          .map(
+            (p) => `
+          <div class="bg-white rounded-xl border border-[#E8E5DC] p-4 flex gap-4 items-center">
+            <img src="${p.image}" alt="${p.name}" class="w-16 h-16 rounded-lg object-cover shrink-0 bg-neutral-100" />
+            <div class="flex-1 min-w-0">
+              <h4 class="font-serif font-bold text-sm text-[#12372A] truncate">
+                <a href="/product.html?slug=${p.slug}" class="hover:underline">${p.name}</a>
+              </h4>
+              <div class="text-xs font-semibold text-[#12372A] mt-1 tabular-nums">${formatPrice(p.price)}</div>
+            </div>
+            <a href="/product.html?slug=${p.slug}" class="px-3 py-1.5 text-xs font-semibold bg-[#F8F6F0] hover:bg-[#E8E5DC] text-[#12372A] rounded-md shrink-0">
+              Add
+            </a>
+          </div>
+        `
+          )
+          .join('');
+      }
+
+      renderPDP();
+      renderRelated();
+    </script>
+  </body>
+</html>

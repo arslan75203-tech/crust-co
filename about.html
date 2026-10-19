@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Us - Crust & Co Artisanal Kitchen</title>
+    <meta name="description" content="Discover the philosophy behind Crust & Co: 48-hour cold fermented pizza sourdough, stone-oven baking, and hand-dredged buttermilk fried chicken." />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="bg-[#F8F6F0] text-[#1C1C1C] flex flex-col min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#F8F6F0]/95 backdrop-blur-md border-b border-[#E8E5DC]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
+        <a href="/index.html" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0">
+          Crust & Co
+        </a>
+
+        <!-- Zone 2: Navigation Links with Elastic Underline Animation -->
+        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-[#1C1C1C]">
+          <a href="/index.html" class="nav-elastic-link whitespace-nowrap shrink-0">Home</a>
+          <a href="/menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
+          <a href="/deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
+          <a href="/about.html" class="nav-elastic-link active-nav whitespace-nowrap shrink-0">About</a>
+          <a href="/contact.html" class="nav-elastic-link whitespace-nowrap shrink-0">Contact</a>
+        </nav>
+
+        <!-- Live Search Bar (Desktop) -->
+        <div class="search-wrapper relative hidden lg:block w-52 xl:w-64 shrink-0">
+          <div class="relative flex items-center">
+            <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search pizza, burger, deal..."
+              class="live-search-input w-full pl-9 pr-8 py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A] focus:ring-1 focus:ring-[#12372A] transition-all"
+            />
+            <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] hover:text-[#1C1C1C] p-0.5" aria-label="Clear search">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+        </div>
+
+        <div class="flex items-center gap-3 sm:gap-5 shrink-0">
+          <div class="auth-slot hidden sm:block"></div>
+          <a href="/cart.html" class="relative p-2 text-[#12372A] hover:opacity-80 transition-opacity" aria-label="Shopping Cart">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span class="cart-badge hidden absolute top-0 right-0 w-5 h-5 bg-[#D4A72C] text-[#12372A] text-xs font-bold rounded-full flex items-center justify-center">0</span>
+          </a>
+          <a href="/menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 bg-[#12372A] text-white text-sm font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
+            Order Now
+          </a>
+          <button id="mobile-menu-toggle" class="md:hidden p-2 text-[#12372A]" aria-label="Open Navigation Menu">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Drawer & Backdrop -->
+    <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-xs z-50"></div>
+    <div id="mobile-drawer" class="fixed top-0 right-0 bottom-0 w-4/5 max-w-sm bg-[#F8F6F0] z-50 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col p-6">
+      <div class="flex items-center justify-between pb-6 border-b border-[#E8E5DC]">
+        <span class="font-serif font-bold text-xl text-[#12372A]">Crust & Co</span>
+        <button id="mobile-menu-close" class="p-2 text-[#6B6B6B] hover:text-[#1C1C1C]">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Live Search Bar (Mobile) -->
+      <div class="search-wrapper relative py-4 border-b border-[#E8E5DC]">
+        <div class="relative flex items-center">
+          <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search pizza, burger, deals..."
+            class="live-search-input w-full pl-9 pr-8 py-2.5 text-xs rounded-lg border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
+          />
+          <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] p-1" aria-label="Clear search">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+      </div>
+      <div class="auth-slot py-4 border-b border-[#E8E5DC]"></div>
+      <nav class="flex flex-col gap-4 py-6 text-base font-medium">
+        <a href="/index.html" class="text-[#1C1C1C]">Home</a>
+        <a href="/menu.html" class="text-[#1C1C1C]">Menu</a>
+        <a href="/deals.html" class="text-[#1C1C1C]">Deals</a>
+        <a href="/about.html" class="text-[#12372A] font-semibold">About</a>
+        <a href="/contact.html" class="text-[#1C1C1C]">Contact</a>
+        <a href="/account.html" class="text-[#1C1C1C]">My Account & Orders</a>
+      </nav>
+      <div class="mt-auto pt-6 border-t border-[#E8E5DC]">
+        <a href="/menu.html" class="w-full flex items-center justify-center px-4 py-3 bg-[#12372A] text-white text-sm font-semibold rounded-lg shadow-sm">
+          Browse Restaurant Menu
+        </a>
+      </div>
+    </div>
+
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-16">
+      <!-- Section 1: Introduction -->
+      <div class="max-w-3xl mx-auto text-center space-y-4">
+        <span class="text-xs uppercase font-semibold text-[#D4A72C] tracking-widest">Our Culinary Story</span>
+        <h1 class="text-3xl sm:text-5xl font-serif font-bold text-[#12372A] leading-tight">
+          Where Sourdough Pizzeria Meets Gourmet Burger Craft
+        </h1>
+        <p class="text-sm sm:text-base text-[#6B6B6B] leading-relaxed">
+          Founded with a simple conviction: fast food doesn’t have to mean compromised ingredients. At Crust & Co, we take timeless baking traditions and artisanal frying techniques to create unforgettable dining moments.
+        </p>
+      </div>
+
+      <!-- Section 2: Visual Story Split -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-6 rounded-2xl overflow-hidden shadow-sm aspect-4/3 bg-neutral-100">
+          <img
+            src="/src/assets/images/product_artisan_pizza_1792406742861.jpg"
+            alt="Hand-stretched artisanal pizza baking in oven"
+            class="w-full h-full object-cover"
+            referrerpolicy="no-referrer"
+          />
+        </div>
+        <div class="lg:col-span-6 space-y-5">
+          <span class="text-xs uppercase font-semibold text-[#D4A72C] tracking-wider">The Secret in the Dough</span>
+          <h2 class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A]">
+            48 Hours of Slow Cold Fermentation
+          </h2>
+          <p class="text-xs sm:text-sm text-[#6B6B6B] leading-relaxed">
+            Unlike commercial fast-food pizza dough rushed with artificial yeast, our dough is mixed with unbleached organic flour, spring water, sea salt, and a 5-year-old mother starter.
+          </p>
+          <p class="text-xs sm:text-sm text-[#6B6B6B] leading-relaxed">
+            The dough rests in climate-controlled coolers for two full days. This breaks down complex starches, producing exceptional digestibility, complex aromatic flavor, and that iconic honeycomb blister when fired at 450°C.
+          </p>
+          <div class="grid grid-cols-2 gap-4 pt-2 text-xs">
+            <div class="p-3 bg-white rounded-lg border border-[#E8E5DC]">
+              <div class="font-bold text-[#12372A]">Zero Synthetic Dough Conditioners</div>
+              <div class="text-[#6B6B6B] mt-0.5">Pure flour, water, yeast, and salt.</div>
+            </div>
+            <div class="p-3 bg-white rounded-lg border border-[#E8E5DC]">
+              <div class="font-bold text-[#12372A]">Italian Volcanic Stone Deck</div>
+              <div class="text-[#6B6B6B] mt-0.5">Charred micro-blistered crust edges.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Fried Chicken Craft -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-6 space-y-5 order-2 lg:order-1">
+          <span class="text-xs uppercase font-semibold text-[#D4A72C] tracking-wider">The Golden Fillet</span>
+          <h2 class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A]">
+            Real Whole-Muscle Poultry, Never Processed
+          </h2>
+          <p class="text-xs sm:text-sm text-[#6B6B6B] leading-relaxed">
+            Every zinger fillet starts with fresh, never-frozen whole chicken breast. We steep each cut in spiced cultured buttermilk for 12 hours so the meat remains tender and brimming with juice.
+          </p>
+          <p class="text-xs sm:text-sm text-[#6B6B6B] leading-relaxed">
+            Upon order, it gets dredged by hand in our proprietary 11-spice flour coating and dropped into pure high-smoke vegetable oil for an ultra-crunchy, jagged golden exterior.
+          </p>
+          <div class="pt-2">
+            <a href="/menu.html?cat=burgers" class="inline-flex items-center gap-2 text-xs font-semibold text-[#12372A] hover:underline">
+              Explore Our Burger Lineup →
+            </a>
+          </div>
+        </div>
+        <div class="lg:col-span-6 rounded-2xl overflow-hidden shadow-sm aspect-4/3 bg-neutral-100 order-1 lg:order-2">
+          <img
+            src="/src/assets/images/product_zinger_burger_1792406743675.jpg"
+            alt="Hand-dredged buttermilk fried chicken fillet burger"
+            class="w-full h-full object-cover"
+            referrerpolicy="no-referrer"
+          />
+        </div>
+      </div>
+
+      <!-- Section 4: Call to Action -->
+      <div class="p-8 sm:p-12 bg-[#12372A] text-white rounded-2xl text-center space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-serif font-bold text-white">Experience Crust & Co Today</h2>
+        <p class="text-xs sm:text-sm text-white/80 max-w-lg mx-auto">
+          Taste the difference patience, premium ingredients, and artisan baking make. Order straight to your door with Cash on Delivery.
+        </p>
+        <div class="pt-2">
+          <a href="/menu.html" class="inline-block px-7 py-3 bg-[#D4A72C] text-[#12372A] font-semibold text-xs sm:text-sm rounded-lg hover:bg-yellow-400 transition-colors">
+            Order Online Now
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-[#12372A] text-white border-t border-[#1F4D3A] pt-14 pb-8 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+          <div class="space-y-4">
+            <span class="text-2xl font-serif font-bold tracking-tight text-white block">Crust & Co</span>
+            <p class="text-xs text-white/70 leading-relaxed">
+              Artisanal stone-baked pizzeria & gourmet burger kitchen. Crafted with 48h cold fermented sourdough, fresh chicken fillets, and genuine ingredients.
+            </p>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Quick Links</h4>
+            <ul class="space-y-2.5 text-xs text-white/80">
+              <li><a href="/index.html" class="hover:text-white">Home</a></li>
+              <li><a href="/menu.html" class="hover:text-white">Our Menu</a></li>
+              <li><a href="/deals.html" class="hover:text-white">Exclusive Deals</a></li>
+              <li><a href="/about.html" class="hover:text-white">Our Story & Craft</a></li>
+              <li><a href="/account.html" class="hover:text-white">My Account & Orders</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Opening Hours</h4>
+            <ul class="space-y-2 text-xs text-white/80">
+              <li class="flex justify-between"><span>Mon - Thu:</span> <span>12:00 PM - 1:00 AM</span></li>
+              <li class="flex justify-between"><span>Fri:</span> <span>2:00 PM - 2:00 AM</span></li>
+              <li class="flex justify-between"><span>Sat - Sun:</span> <span>12:00 PM - 2:00 AM</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Delivery Hotline</h4>
+            <div class="space-y-2 text-xs text-white/80">
+              <p>Main Boulevard, Gulberg III, Lahore</p>
+              <p>Phone: <a href="tel:+923001234567" class="hover:underline">+92 300 1234567</a></p>
+              <p>WhatsApp: <a href="https://wa.me/923001234567" class="text-[#D4A72C] hover:underline">+92 300 1234567</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="pt-8 text-center text-xs text-white/60">
+          © 2026 Crust & Co. All rights reserved.
+        </div>
+      </div>
+    </footer>
+
+    <!-- App Scripts -->
+    <script type="module" src="/js/app.js"></script>
+  </body>
+</html>

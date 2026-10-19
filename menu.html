@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menu - Crust & Co Artisanal Kitchen</title>
+    <meta name="description" content="Explore the handcrafted menu at Crust & Co: stone-baked sourdough pizzas, crunchy zinger burgers, smash beef burgers, loaded fries, and refreshing coolers." />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="bg-[#F8F6F0] text-[#1C1C1C] flex flex-col min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#F8F6F0]/95 backdrop-blur-md border-b border-[#E8E5DC]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
+        <a href="/index.html" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0">
+          Crust & Co
+        </a>
+
+        <!-- Zone 2: Navigation Links with Elastic Underline Animation -->
+        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-[#1C1C1C]">
+          <a href="/index.html" class="nav-elastic-link whitespace-nowrap shrink-0">Home</a>
+          <a href="/menu.html" class="nav-elastic-link active-nav whitespace-nowrap shrink-0">Menu</a>
+          <a href="/deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
+          <a href="/about.html" class="nav-elastic-link whitespace-nowrap shrink-0">About</a>
+          <a href="/contact.html" class="nav-elastic-link whitespace-nowrap shrink-0">Contact</a>
+        </nav>
+
+        <!-- Live Search Bar (Desktop) -->
+        <div class="search-wrapper relative hidden lg:block w-52 xl:w-64 shrink-0">
+          <div class="relative flex items-center">
+            <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search pizza, burger, deal..."
+              class="live-search-input w-full pl-9 pr-8 py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A] focus:ring-1 focus:ring-[#12372A] transition-all"
+            />
+            <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] hover:text-[#1C1C1C] p-0.5" aria-label="Clear search">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+        </div>
+
+        <div class="flex items-center gap-3 sm:gap-5 shrink-0">
+          <div class="auth-slot hidden sm:block"></div>
+          <a href="/cart.html" class="relative p-2 text-[#12372A] hover:opacity-80 transition-opacity" aria-label="Shopping Cart">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span class="cart-badge hidden absolute top-0 right-0 w-5 h-5 bg-[#D4A72C] text-[#12372A] text-xs font-bold rounded-full flex items-center justify-center">0</span>
+          </a>
+          <a href="/menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 bg-[#12372A] text-white text-sm font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
+            Order Now
+          </a>
+          <button id="mobile-menu-toggle" class="md:hidden p-2 text-[#12372A]" aria-label="Open Navigation Menu">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Drawer & Backdrop -->
+    <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-xs z-50"></div>
+    <div id="mobile-drawer" class="fixed top-0 right-0 bottom-0 w-4/5 max-w-sm bg-[#F8F6F0] z-50 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col p-6">
+      <div class="flex items-center justify-between pb-6 border-b border-[#E8E5DC]">
+        <span class="font-serif font-bold text-xl text-[#12372A]">Crust & Co</span>
+        <button id="mobile-menu-close" class="p-2 text-[#6B6B6B] hover:text-[#1C1C1C]">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Live Search Bar (Mobile) -->
+      <div class="search-wrapper relative py-4 border-b border-[#E8E5DC]">
+        <div class="relative flex items-center">
+          <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search pizza, burger, deals..."
+            class="live-search-input w-full pl-9 pr-8 py-2.5 text-xs rounded-lg border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
+          />
+          <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] p-1" aria-label="Clear search">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+      </div>
+      <div class="auth-slot py-4 border-b border-[#E8E5DC]"></div>
+      <nav class="flex flex-col gap-4 py-6 text-base font-medium">
+        <a href="/index.html" class="text-[#1C1C1C] hover:text-[#12372A]">Home</a>
+        <a href="/menu.html" class="text-[#12372A] font-semibold">Menu</a>
+        <a href="/deals.html" class="text-[#1C1C1C] hover:text-[#12372A]">Deals</a>
+        <a href="/about.html" class="text-[#1C1C1C] hover:text-[#12372A]">About</a>
+        <a href="/contact.html" class="text-[#1C1C1C] hover:text-[#12372A]">Contact</a>
+        <a href="/account.html" class="text-[#1C1C1C] hover:text-[#12372A]">My Account & Orders</a>
+      </nav>
+      <div class="mt-auto pt-6 border-t border-[#E8E5DC]">
+        <a href="/cart.html" class="w-full flex items-center justify-center px-4 py-3 bg-[#12372A] text-white text-sm font-semibold rounded-lg shadow-sm">
+          View Shopping Cart
+        </a>
+      </div>
+    </div>
+
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+      <!-- Page Header -->
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-xs uppercase font-semibold text-[#D4A72C] tracking-widest">Handcrafted Kitchen</span>
+        <h1 class="text-3xl sm:text-4xl font-serif font-bold text-[#12372A] mt-1">The Crust & Co Menu</h1>
+        <p class="text-sm text-[#6B6B6B] mt-2 leading-relaxed">
+          Pizzas baked on Italian stone, freshly hand-breaded chicken burgers, and loaded fries.
+        </p>
+      </div>
+
+      <!-- Modern Category Selection (Mobile Dropdown & Wrap Pills with Zero Scrollbars) -->
+      <div class="mb-8">
+        <!-- Mobile Experience (< sm): Clean Dropdown Selector + Wrap-Friendly Pill Badges -->
+        <div class="sm:hidden space-y-3">
+          <!-- Mobile Custom Dropdown Selector -->
+          <div class="bg-white rounded-xl p-3 border border-[#E8E5DC] shadow-xs">
+            <div class="flex items-center justify-between text-xs text-[#6B6B6B] mb-2 font-medium">
+              <span class="flex items-center gap-1.5 font-bold text-[#12372A]">
+                <svg class="w-4 h-4 text-[#D4A72C]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+                </svg>
+                Select Category
+              </span>
+              <span id="mobile-category-count" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#F8F6F0] text-[#12372A] border border-[#E8E5DC]">
+                All Menu (12)
+              </span>
+            </div>
+            
+            <div class="relative">
+              <select
+                id="mobile-category-select"
+                class="w-full bg-[#F8F6F0] border border-[#E8E5DC] text-[#12372A] font-semibold text-sm rounded-lg px-3.5 py-2.5 pr-10 appearance-none focus:outline-hidden focus:border-[#12372A] focus:ring-1 focus:ring-[#12372A] transition-all cursor-pointer"
+                aria-label="Filter menu items by category"
+              >
+                <!-- Populated dynamically -->
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-[#12372A]">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Quick Tap Category Pills (Naturally wrapped, NO overflow, NO scrollbar) -->
+          <div id="mobile-category-pills" class="flex flex-wrap items-center gap-1.5 pt-1">
+            <!-- Populated dynamically with category badges -->
+          </div>
+        </div>
+
+        <!-- Desktop Experience (sm:block): Wide Tab Strip with subtle counts -->
+        <div class="hidden sm:block">
+          <div id="desktop-category-tabs" class="flex flex-wrap items-center gap-2 border-b border-[#E8E5DC] pb-3">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-menu" class="hidden text-center py-20 bg-white rounded-xl border border-[#E8E5DC] p-8">
+        <h3 class="font-serif font-bold text-lg text-[#12372A]">No dishes in this category</h3>
+        <p class="text-xs text-[#6B6B6B] mt-1">Please select another category to explore our food.</p>
+        <button id="reset-filter-btn" class="mt-4 px-4 py-2 bg-[#12372A] text-white text-xs font-semibold rounded-lg">
+          View All Menu
+        </button>
+      </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-[#12372A] text-white border-t border-[#1F4D3A] pt-14 pb-8 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+          <div class="space-y-4">
+            <span class="text-2xl font-serif font-bold tracking-tight text-white block">Crust & Co</span>
+            <p class="text-xs text-white/70 leading-relaxed">
+              Artisanal stone-baked pizzeria & gourmet burger kitchen. Crafted with 48h cold fermented sourdough, fresh chicken fillets, and genuine ingredients.
+            </p>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Quick Links</h4>
+            <ul class="space-y-2.5 text-xs text-white/80">
+              <li><a href="/index.html" class="hover:text-white">Home</a></li>
+              <li><a href="/menu.html" class="hover:text-white">Our Menu</a></li>
+              <li><a href="/deals.html" class="hover:text-white">Exclusive Deals</a></li>
+              <li><a href="/about.html" class="hover:text-white">Our Story & Craft</a></li>
+              <li><a href="/account.html" class="hover:text-white">My Account & Orders</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Opening Hours</h4>
+            <ul class="space-y-2 text-xs text-white/80">
+              <li class="flex justify-between"><span>Mon - Thu:</span> <span>12:00 PM - 1:00 AM</span></li>
+              <li class="flex justify-between"><span>Fri:</span> <span>2:00 PM - 2:00 AM</span></li>
+              <li class="flex justify-between"><span>Sat - Sun:</span> <span>12:00 PM - 2:00 AM</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Delivery Hotline</h4>
+            <div class="space-y-2 text-xs text-white/80">
+              <p>Main Boulevard, Gulberg III, Lahore</p>
+              <p>Phone: <a href="tel:+923001234567" class="hover:underline">+92 300 1234567</a></p>
+              <p>WhatsApp: <a href="https://wa.me/923001234567" class="text-[#D4A72C] hover:underline">+92 300 1234567</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="pt-8 text-center text-xs text-white/60">
+          © 2026 Crust & Co. All rights reserved.
+        </div>
+      </div>
+    </footer>
+
+    <!-- App Scripts -->
+    <script type="module" src="/js/app.js"></script>
+    <script type="module">
+      import { CATEGORIES, PRODUCTS, getProducts, formatPrice } from '/js/products.js';
+      import { addToCart } from '/js/cart.js';
+      import { showToast } from '/js/ui.js';
+
+      const mobileSelect = document.getElementById('mobile-category-select');
+      const mobilePillsContainer = document.getElementById('mobile-category-pills');
+      const mobileCount = document.getElementById('mobile-category-count');
+      const desktopTabsContainer = document.getElementById('desktop-category-tabs');
+
+      const menuGrid = document.getElementById('menu-grid');
+      const emptyState = document.getElementById('empty-menu');
+      const resetBtn = document.getElementById('reset-filter-btn');
+
+      const urlParams = new URLSearchParams(window.location.search);
+      let activeCategory = urlParams.get('cat') || 'all';
+
+      function getCategoryCount(catId) {
+        if (!catId || catId === 'all') return PRODUCTS.length;
+        return PRODUCTS.filter((p) => p.category === catId).length;
+      }
+
+      function renderCategoryControls() {
+        // 1. Mobile Dropdown Options
+        if (mobileSelect) {
+          mobileSelect.innerHTML = CATEGORIES.map((c) => {
+            const count = getCategoryCount(c.id);
+            const isSelected = activeCategory === c.id;
+            return `<option value="${c.id}" ${isSelected ? 'selected' : ''}>${c.icon ? c.icon + ' ' : ''}${c.name} (${count})</option>`;
+          }).join('');
+        }
+
+        // 2. Mobile Active Count Label
+        if (mobileCount) {
+          const currentCat = CATEGORIES.find((c) => c.id === activeCategory) || CATEGORIES[0];
+          const count = getCategoryCount(activeCategory);
+          mobileCount.textContent = `${currentCat.name} (${count})`;
+        }
+
+        // 3. Mobile Pills (Clean flex-wrap with ZERO horizontal scrollbar!)
+        if (mobilePillsContainer) {
+          mobilePillsContainer.innerHTML = CATEGORIES.map((c) => {
+            const isSelected = activeCategory === c.id;
+            const count = getCategoryCount(c.id);
+            return `
+              <button
+                type="button"
+                data-cat="${c.id}"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all active:scale-95 ${
+                  isSelected
+                    ? 'bg-[#12372A] text-white shadow-xs'
+                    : 'bg-white text-[#1C1C1C] border border-[#E8E5DC] hover:border-[#12372A]/40'
+                }"
+              >
+                <span>${c.icon || ''}</span>
+                <span>${c.name}</span>
+                <span class="text-[10px] ${isSelected ? 'text-[#D4A72C]' : 'text-[#6B6B6B]'} font-normal">(${count})</span>
+              </button>
+            `;
+          }).join('');
+
+          mobilePillsContainer.querySelectorAll('[data-cat]').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+              activeCategory = e.currentTarget.getAttribute('data-cat');
+              renderCategoryControls();
+              renderProducts();
+            });
+          });
+        }
+
+        // 4. Desktop Tabs
+        if (desktopTabsContainer) {
+          desktopTabsContainer.innerHTML = CATEGORIES.map((c) => {
+            const isSelected = activeCategory === c.id;
+            const count = getCategoryCount(c.id);
+            return `
+              <button
+                type="button"
+                data-cat="${c.id}"
+                class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
+                  isSelected
+                    ? 'bg-[#12372A] text-white shadow-sm'
+                    : 'text-[#6B6B6B] hover:text-[#12372A] hover:bg-[#E8E5DC]/50'
+                }"
+              >
+                <span>${c.icon || ''}</span>
+                <span>${c.name}</span>
+                <span class="text-[10px] ${isSelected ? 'text-[#D4A72C]' : 'text-[#6B6B6B]'} font-normal">(${count})</span>
+              </button>
+            `;
+          }).join('');
+
+          desktopTabsContainer.querySelectorAll('[data-cat]').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+              activeCategory = e.currentTarget.getAttribute('data-cat');
+              renderCategoryControls();
+              renderProducts();
+            });
+          });
+        }
+      }
+
+      if (mobileSelect) {
+        mobileSelect.addEventListener('change', (e) => {
+          activeCategory = e.target.value;
+          renderCategoryControls();
+          renderProducts();
+        });
+      }
+
+      function renderProducts() {
+        const items = getProducts(activeCategory);
+
+        if (items.length === 0) {
+          menuGrid.classList.add('hidden');
+          emptyState.classList.remove('hidden');
+          return;
+        }
+
+        menuGrid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+
+        menuGrid.innerHTML = items
+          .map((p) => {
+            const isOutOfStock = !p.available;
+            return `
+            <div class="bg-white rounded-xl border border-[#E8E5DC] overflow-hidden flex flex-col card-hover-effect ${
+              isOutOfStock ? 'item-unavailable' : ''
+            }">
+              <a href="${isOutOfStock ? '#' : `/product.html?slug=${p.slug}`}" class="block relative aspect-4/3 overflow-hidden bg-neutral-100">
+                <img
+                  src="${p.image}"
+                  alt="${p.name}"
+                  class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  referrerpolicy="no-referrer"
+                />
+                ${
+                  isOutOfStock
+                    ? `<span class="absolute top-3 left-3 bg-neutral-800 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md shadow-xs">Sold Out</span>`
+                    : p.badge
+                    ? `<span class="absolute top-3 left-3 bg-[#12372A] text-[#D4A72C] text-[11px] font-semibold px-2.5 py-1 rounded-md shadow-xs">${p.badge}</span>`
+                    : ''
+                }
+              </a>
+              <div class="p-5 flex flex-col flex-1 justify-between">
+                <div>
+                  <div class="flex items-center justify-between text-[11px] font-medium text-[#6B6B6B] mb-1">
+                    <span class="uppercase tracking-wider font-semibold">${p.category}</span>
+                    <span>${p.prepTime || '15 mins'}</span>
+                  </div>
+                  <h3 class="font-serif font-bold text-lg text-[#12372A] hover:text-[#1F4D3A] transition-colors">
+                    <a href="${isOutOfStock ? '#' : `/product.html?slug=${p.slug}`}">${p.name}</a>
+                  </h3>
+                  <p class="text-xs text-[#6B6B6B] mt-1.5 line-clamp-2 leading-relaxed">${p.shortDescription}</p>
+                </div>
+                
+                <!-- Bottom bar: Price and Add to Cart ONLY (no Customize button) -->
+                <div class="mt-5 pt-4 border-t border-[#E8E5DC] flex items-center justify-between gap-3">
+                  <div class="text-base font-serif font-bold text-[#12372A] tabular-nums">${formatPrice(p.price)}</div>
+                  ${
+                    isOutOfStock
+                      ? `<button disabled class="px-4 py-2 text-xs font-semibold text-neutral-500 bg-neutral-200 rounded-lg cursor-not-allowed">Unavailable</button>`
+                      : `<button data-quick-add="${p.id}" class="px-4 py-2 text-xs font-semibold text-white bg-[#12372A] hover:bg-[#1F4D3A] rounded-lg transition-colors flex items-center gap-1 shadow-xs active:scale-95">
+                          <span>Add to Cart</span>
+                         </button>`
+                  }
+                </div>
+              </div>
+            </div>
+          `;
+          })
+          .join('');
+
+        menuGrid.querySelectorAll('[data-quick-add]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            const id = e.currentTarget.getAttribute('data-quick-add');
+            const item = items.find((p) => p.id === id);
+            if (item && item.available) {
+              addToCart(item, {
+                variant: item.variants[0] || { name: 'Regular', priceAdjustment: 0 },
+                quantity: 1,
+              });
+              showToast(`Added ${item.name} to cart`);
+            }
+          });
+        });
+      }
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          activeCategory = 'all';
+          renderCategoryControls();
+          renderProducts();
+        });
+      }
+
+      renderCategoryControls();
+      renderProducts();
+    </script>
+  </body>
+</html>

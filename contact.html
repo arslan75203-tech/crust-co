@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact & Locations - Crust & Co</title>
+    <meta name="description" content="Get in touch with Crust & Co for orders, inquiries, WhatsApp delivery, and dine-in reservations in Lahore." />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="bg-[#F8F6F0] text-[#1C1C1C] flex flex-col min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#F8F6F0]/95 backdrop-blur-md border-b border-[#E8E5DC]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
+        <a href="/index.html" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0">
+          Crust & Co
+        </a>
+
+        <!-- Zone 2: Navigation Links with Elastic Underline Animation -->
+        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-[#1C1C1C]">
+          <a href="/index.html" class="nav-elastic-link whitespace-nowrap shrink-0">Home</a>
+          <a href="/menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
+          <a href="/deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
+          <a href="/about.html" class="nav-elastic-link whitespace-nowrap shrink-0">About</a>
+          <a href="/contact.html" class="nav-elastic-link active-nav whitespace-nowrap shrink-0">Contact</a>
+        </nav>
+
+        <!-- Live Search Bar (Desktop) -->
+        <div class="search-wrapper relative hidden lg:block w-52 xl:w-64 shrink-0">
+          <div class="relative flex items-center">
+            <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search pizza, burger, deal..."
+              class="live-search-input w-full pl-9 pr-8 py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A] focus:ring-1 focus:ring-[#12372A] transition-all"
+            />
+            <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] hover:text-[#1C1C1C] p-0.5" aria-label="Clear search">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+        </div>
+
+        <div class="flex items-center gap-3 sm:gap-5 shrink-0">
+          <div class="auth-slot hidden sm:block"></div>
+          <a href="/cart.html" class="relative p-2 text-[#12372A] hover:opacity-80 transition-opacity" aria-label="Shopping Cart">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span class="cart-badge hidden absolute top-0 right-0 w-5 h-5 bg-[#D4A72C] text-[#12372A] text-xs font-bold rounded-full flex items-center justify-center">0</span>
+          </a>
+          <a href="/menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 bg-[#12372A] text-white text-sm font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
+            Order Now
+          </a>
+          <button id="mobile-menu-toggle" class="md:hidden p-2 text-[#12372A]" aria-label="Open Navigation Menu">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Drawer & Backdrop -->
+    <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-xs z-50"></div>
+    <div id="mobile-drawer" class="fixed top-0 right-0 bottom-0 w-4/5 max-w-sm bg-[#F8F6F0] z-50 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col p-6">
+      <div class="flex items-center justify-between pb-6 border-b border-[#E8E5DC]">
+        <span class="font-serif font-bold text-xl text-[#12372A]">Crust & Co</span>
+        <button id="mobile-menu-close" class="p-2 text-[#6B6B6B] hover:text-[#1C1C1C]">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Live Search Bar (Mobile) -->
+      <div class="search-wrapper relative py-4 border-b border-[#E8E5DC]">
+        <div class="relative flex items-center">
+          <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search pizza, burger, deals..."
+            class="live-search-input w-full pl-9 pr-8 py-2.5 text-xs rounded-lg border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
+          />
+          <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] p-1" aria-label="Clear search">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+      </div>
+      <div class="auth-slot py-4 border-b border-[#E8E5DC]"></div>
+      <nav class="flex flex-col gap-4 py-6 text-base font-medium">
+        <a href="/index.html" class="text-[#1C1C1C]">Home</a>
+        <a href="/menu.html" class="text-[#1C1C1C]">Menu</a>
+        <a href="/deals.html" class="text-[#1C1C1C]">Deals</a>
+        <a href="/about.html" class="text-[#1C1C1C]">About</a>
+        <a href="/contact.html" class="text-[#12372A] font-semibold">Contact</a>
+        <a href="/account.html" class="text-[#1C1C1C]">My Account & Orders</a>
+      </nav>
+      <div class="mt-auto pt-6 border-t border-[#E8E5DC]">
+        <a href="/menu.html" class="w-full flex items-center justify-center px-4 py-3 bg-[#12372A] text-white text-sm font-semibold rounded-lg shadow-sm">
+          Browse Restaurant Menu
+        </a>
+      </div>
+    </div>
+
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs uppercase font-semibold text-[#D4A72C] tracking-widest">Connect With Us</span>
+        <h1 class="text-3xl sm:text-4xl font-serif font-bold text-[#12372A] mt-2">Get in Touch</h1>
+        <p class="text-sm text-[#6B6B6B] mt-2 leading-relaxed">
+          Have an inquiry, feedback on your recent meal, or interested in bulk catering? Our team is at your service.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <!-- Contact Details & Hours (5 cols) -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="bg-white rounded-2xl border border-[#E8E5DC] p-6 sm:p-8 shadow-xs space-y-6">
+            <div>
+              <h3 class="font-serif font-bold text-lg text-[#12372A] mb-3">Restaurant Location</h3>
+              <p class="text-xs sm:text-sm text-[#6B6B6B] leading-relaxed">
+                Plot 14-C, Main Boulevard, Gulberg III<br />
+                Lahore, Punjab, Pakistan
+              </p>
+              <div class="mt-2 text-xs text-[#12372A] font-medium">Near Mini Market roundabout</div>
+            </div>
+
+            <div class="pt-4 border-t border-[#E8E5DC]">
+              <h3 class="font-serif font-bold text-lg text-[#12372A] mb-3">Phone & Direct WhatsApp</h3>
+              <div class="space-y-2 text-xs sm:text-sm">
+                <div>
+                  <span class="text-[#6B6B6B]">Delivery Hotline:</span>
+                  <a href="tel:+923001234567" class="text-[#12372A] font-semibold hover:underline ml-1">
+                    +92 300 1234567
+                  </a>
+                </div>
+                <div>
+                  <span class="text-[#6B6B6B]">WhatsApp Ordering:</span>
+                  <a href="https://wa.me/923001234567" target="_blank" rel="noopener noreferrer" class="text-emerald-700 font-semibold hover:underline ml-1">
+                    Chat on WhatsApp
+                  </a>
+                </div>
+                <div>
+                  <span class="text-[#6B6B6B]">Email:</span>
+                  <a href="mailto:hello@crustco.pk" class="text-[#12372A] hover:underline ml-1">
+                    hello@crustco.pk
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-[#E8E5DC]">
+              <h3 class="font-serif font-bold text-lg text-[#12372A] mb-3">Kitchen & Dine-in Hours</h3>
+              <ul class="space-y-1.5 text-xs text-[#6B6B6B]">
+                <li class="flex justify-between"><span>Monday - Thursday</span> <span class="font-medium text-[#1C1C1C]">12:00 PM – 1:00 AM</span></li>
+                <li class="flex justify-between"><span>Friday</span> <span class="font-medium text-[#1C1C1C]">2:00 PM – 2:00 AM</span></li>
+                <li class="flex justify-between"><span>Saturday & Sunday</span> <span class="font-medium text-[#1C1C1C]">12:00 PM – 2:00 AM</span></li>
+              </ul>
+            </div>
+
+            <div class="pt-4 border-t border-[#E8E5DC]">
+              <h3 class="font-serif font-bold text-lg text-[#12372A] mb-2">Delivery Coverage</h3>
+              <p class="text-xs text-[#6B6B6B] leading-relaxed">
+                Gulberg I-III, DHA Phases 1–6, Model Town, Garden Town, Cavalry Ground, Cantt, and surrounding sectors.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form (7 cols) -->
+        <div class="lg:col-span-7">
+          <div class="bg-white rounded-2xl border border-[#E8E5DC] p-6 sm:p-8 shadow-xs">
+            <h3 class="font-serif font-bold text-xl text-[#12372A] mb-1">Send a Message</h3>
+            <p class="text-xs text-[#6B6B6B] mb-6">We respond to all customer feedback and catering inquiries within 2 hours.</p>
+
+            <form id="contact-form" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="name" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                    Your Name <span class="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    required
+                    placeholder="e.g. Asad Ali"
+                    class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
+                  />
+                </div>
+                <div>
+                  <label for="phone" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                    Phone Number <span class="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    required
+                    placeholder="e.g. 0300 9876543"
+                    class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="e.g. asad@gmail.com"
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
+                />
+              </div>
+
+              <div>
+                <label for="subject" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Inquiry Topic
+                </label>
+                <select id="subject" class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white">
+                  <option value="General Question">General Question</option>
+                  <option value="Delivery Order Feedback">Delivery Order Feedback</option>
+                  <option value="Party or Office Catering">Party or Office Catering</option>
+                  <option value="Dine-in Table Booking">Dine-in Table Booking</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="message" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Message Details <span class="text-rose-500">*</span>
+                </label>
+                <textarea
+                  id="message"
+                  required
+                  rows="4"
+                  placeholder="How can we assist you with your dining experience?"
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white resize-none"
+                ></textarea>
+              </div>
+
+              <div class="pt-2">
+                <button
+                  type="submit"
+                  class="px-8 py-3.5 bg-[#12372A] hover:bg-[#1F4D3A] text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors shadow-sm"
+                >
+                  Send Inquiry
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-[#12372A] text-white border-t border-[#1F4D3A] pt-14 pb-8 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+          <div class="space-y-4">
+            <span class="text-2xl font-serif font-bold tracking-tight text-white block">Crust & Co</span>
+            <p class="text-xs text-white/70 leading-relaxed">
+              Artisanal stone-baked pizzeria & gourmet burger kitchen. Crafted with 48h cold fermented sourdough, fresh chicken fillets, and genuine ingredients.
+            </p>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Quick Links</h4>
+            <ul class="space-y-2.5 text-xs text-white/80">
+              <li><a href="/index.html" class="hover:text-white">Home</a></li>
+              <li><a href="/menu.html" class="hover:text-white">Our Menu</a></li>
+              <li><a href="/deals.html" class="hover:text-white">Exclusive Deals</a></li>
+              <li><a href="/about.html" class="hover:text-white">Our Story & Craft</a></li>
+              <li><a href="/account.html" class="hover:text-white">My Account & Orders</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Opening Hours</h4>
+            <ul class="space-y-2 text-xs text-white/80">
+              <li class="flex justify-between"><span>Mon - Thu:</span> <span>12:00 PM - 1:00 AM</span></li>
+              <li class="flex justify-between"><span>Fri:</span> <span>2:00 PM - 2:00 AM</span></li>
+              <li class="flex justify-between"><span>Sat - Sun:</span> <span>12:00 PM - 2:00 AM</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Delivery Hotline</h4>
+            <div class="space-y-2 text-xs text-white/80">
+              <p>Main Boulevard, Gulberg III, Lahore</p>
+              <p>Phone: <a href="tel:+923001234567" class="hover:underline">+92 300 1234567</a></p>
+              <p>WhatsApp: <a href="https://wa.me/923001234567" class="text-[#D4A72C] hover:underline">+92 300 1234567</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="pt-8 text-center text-xs text-white/60">
+          © 2026 Crust & Co. All rights reserved.
+        </div>
+      </div>
+    </footer>
+
+    <!-- App Scripts -->
+    <script type="module" src="/js/app.js"></script>
+    <script type="module">
+      import { showToast } from '/js/ui.js';
+
+      const contactForm = document.getElementById('contact-form');
+      if (contactForm) {
+        contactForm.onsubmit = (e) => {
+          e.preventDefault();
+          showToast('Thank you! Your message has been sent to our kitchen desk.');
+          contactForm.reset();
+        };
+      }
+    </script>
+  </body>
+</html>

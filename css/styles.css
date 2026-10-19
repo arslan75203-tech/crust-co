@@ -1,0 +1,196 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-crust-green-dark: #12372a;
+    --color-crust-green-mid: #1f4d3a;
+    --color-crust-cream: #f8f6f0;
+    --color-crust-gold: #d4a72c;
+    --color-crust-text: #1c1c1c;
+    --color-crust-muted: #6b6b6b;
+    --color-crust-border: #e8e5dc;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-crust-cream);
+    color: var(--color-crust-text);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, .font-editorial {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.015em;
+  }
+}
+
+/* Custom Palette Utilities */
+.bg-crust-green {
+  background-color: #12372a;
+}
+.bg-crust-green-mid {
+  background-color: #1f4d3a;
+}
+.bg-crust-cream {
+  background-color: #f8f6f0;
+}
+.bg-crust-gold {
+  background-color: #d4a72c;
+}
+.text-crust-green {
+  color: #12372a;
+}
+.text-crust-gold {
+  color: #d4a72c;
+}
+.border-crust-border {
+  border-color: #e8e5dc;
+}
+.border-crust-gold {
+  border-color: #d4a72c;
+}
+
+/* Page Transition Progress Bar */
+#page-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #12372a, #d4a72c, #1f4d3a);
+  width: 0%;
+  z-index: 99999;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  pointer-events: none;
+  box-shadow: 0 1px 8px rgba(212, 167, 44, 0.6);
+}
+
+/* Elastic Navbar Underline Animation (Starts Left to Right with Spring) */
+.nav-elastic-link {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
+  transition: color 0.25s ease;
+}
+
+.nav-elastic-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2.5px;
+  background: #12372a;
+  border-radius: 9999px;
+  transform: scaleX(0);
+  transform-origin: left bottom;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nav-elastic-link:hover::after,
+.nav-elastic-link.active-nav::after {
+  transform: scaleX(1);
+}
+
+.nav-elastic-link.active-nav {
+  color: #12372a;
+  font-weight: 700;
+}
+
+/* Subtle Shimmer & Glow Effects */
+.gold-glow {
+  box-shadow: 0 4px 20px -2px rgba(212, 167, 44, 0.25);
+}
+
+.card-hover-effect {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -8px rgba(18, 55, 42, 0.12);
+  border-color: rgba(18, 55, 42, 0.3);
+}
+
+/* Out of Stock Faded Grey State */
+.item-unavailable {
+  filter: grayscale(100%);
+  opacity: 0.55;
+  position: relative;
+  user-select: none;
+}
+
+/* Universal Hide Scrollbar Utilities */
+.hide-scrollbar,
+.no-scrollbar,
+[data-no-scrollbar] {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+.hide-scrollbar::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar,
+[data-no-scrollbar]::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Hero Ken Burns & Overlay */
+.hero-scrim {
+  background: linear-gradient(
+    135deg,
+    rgba(10, 30, 22, 0.92) 0%,
+    rgba(18, 55, 42, 0.82) 45%,
+    rgba(10, 30, 22, 0.75) 100%
+  );
+}
+
+/* Search Dropdown Animation */
+.search-dropdown {
+  transform-origin: top;
+  animation: searchDropdownEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes searchDropdownEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Toast container */
+#toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(10px);
+  opacity: 0;
+}
+
+.toast.toast-show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+  background-color: rgba(18, 55, 42, 0.45);
+}

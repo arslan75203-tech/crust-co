@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Orders & Account - Crust & Co</title>
+    <meta name="description" content="View active food order status, past order history, and delivery details at Crust & Co." />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="bg-[#F8F6F0] text-[#1C1C1C] flex flex-col min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#F8F6F0]/95 backdrop-blur-md border-b border-[#E8E5DC]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
+        <a href="/index.html" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0">
+          Crust & Co
+        </a>
+
+        <!-- Zone 2: Navigation Links with Elastic Underline Animation -->
+        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-[#1C1C1C]">
+          <a href="/index.html" class="nav-elastic-link whitespace-nowrap shrink-0">Home</a>
+          <a href="/menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
+          <a href="/deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
+          <a href="/about.html" class="nav-elastic-link whitespace-nowrap shrink-0">About</a>
+          <a href="/contact.html" class="nav-elastic-link whitespace-nowrap shrink-0">Contact</a>
+        </nav>
+
+        <!-- Live Search Bar (Desktop) -->
+        <div class="search-wrapper relative hidden lg:block w-52 xl:w-64 shrink-0">
+          <div class="relative flex items-center">
+            <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search pizza, burger, deal..."
+              class="live-search-input w-full pl-9 pr-8 py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A] focus:ring-1 focus:ring-[#12372A] transition-all"
+            />
+            <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] hover:text-[#1C1C1C] p-0.5" aria-label="Clear search">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+        </div>
+
+        <div class="flex items-center gap-3 sm:gap-5 shrink-0">
+          <div class="auth-slot hidden sm:block"></div>
+          <a href="/cart.html" class="relative p-2 text-[#12372A] hover:opacity-80 transition-opacity" aria-label="Shopping Cart">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span class="cart-badge hidden absolute top-0 right-0 w-5 h-5 bg-[#D4A72C] text-[#12372A] text-xs font-bold rounded-full flex items-center justify-center">0</span>
+          </a>
+          <a href="/menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 bg-[#12372A] text-white text-sm font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
+            Order Now
+          </a>
+          <button id="mobile-menu-toggle" class="md:hidden p-2 text-[#12372A]" aria-label="Open Navigation Menu">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Drawer & Backdrop -->
+    <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-xs z-50"></div>
+    <div id="mobile-drawer" class="fixed top-0 right-0 bottom-0 w-4/5 max-w-sm bg-[#F8F6F0] z-50 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col p-6">
+      <div class="flex items-center justify-between pb-6 border-b border-[#E8E5DC]">
+        <span class="font-serif font-bold text-xl text-[#12372A]">Crust & Co</span>
+        <button id="mobile-menu-close" class="p-2 text-[#6B6B6B] hover:text-[#1C1C1C]">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Live Search Bar (Mobile) -->
+      <div class="search-wrapper relative py-4 border-b border-[#E8E5DC]">
+        <div class="relative flex items-center">
+          <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search pizza, burger, deals..."
+            class="live-search-input w-full pl-9 pr-8 py-2.5 text-xs rounded-lg border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
+          />
+          <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] p-1" aria-label="Clear search">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+      </div>
+      <div class="auth-slot py-4 border-b border-[#E8E5DC]"></div>
+      <nav class="flex flex-col gap-4 py-6 text-base font-medium">
+        <a href="/index.html" class="text-[#1C1C1C]">Home</a>
+        <a href="/menu.html" class="text-[#1C1C1C]">Menu</a>
+        <a href="/deals.html" class="text-[#1C1C1C]">Deals</a>
+        <a href="/about.html" class="text-[#1C1C1C]">About</a>
+        <a href="/contact.html" class="text-[#1C1C1C]">Contact</a>
+        <a href="/account.html" class="text-[#12372A] font-semibold">My Account & Orders</a>
+      </nav>
+      <div class="mt-auto pt-6 border-t border-[#E8E5DC]">
+        <a href="/menu.html" class="w-full flex items-center justify-center px-4 py-3 bg-[#12372A] text-white text-sm font-semibold rounded-lg shadow-sm">
+          Browse Restaurant Menu
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-10">
+      <div id="account-root">
+        <!-- Rendered by JS -->
+      </div>
+    </main>
+
+    <!-- Order Details Modal -->
+    <div id="order-modal-backdrop" class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl border border-[#E8E5DC] shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative">
+        <button id="modal-close-btn" class="absolute top-5 right-5 p-2 text-[#6B6B6B] hover:text-[#1C1C1C]">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <div id="modal-content">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Footer -->
+    <footer class="bg-[#12372A] text-white border-t border-[#1F4D3A] pt-14 pb-8 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+          <div class="space-y-4">
+            <span class="text-2xl font-serif font-bold tracking-tight text-white block">Crust & Co</span>
+            <p class="text-xs text-white/70 leading-relaxed">
+              Artisanal stone-baked pizzeria & gourmet burger kitchen. Crafted with 48h cold fermented sourdough, fresh chicken fillets, and genuine ingredients.
+            </p>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Quick Links</h4>
+            <ul class="space-y-2.5 text-xs text-white/80">
+              <li><a href="/index.html" class="hover:text-white">Home</a></li>
+              <li><a href="/menu.html" class="hover:text-white">Our Menu</a></li>
+              <li><a href="/deals.html" class="hover:text-white">Exclusive Deals</a></li>
+              <li><a href="/about.html" class="hover:text-white">Our Story & Craft</a></li>
+              <li><a href="/account.html" class="hover:text-white">My Account & Orders</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Opening Hours</h4>
+            <ul class="space-y-2 text-xs text-white/80">
+              <li class="flex justify-between"><span>Mon - Thu:</span> <span>12:00 PM - 1:00 AM</span></li>
+              <li class="flex justify-between"><span>Fri:</span> <span>2:00 PM - 2:00 AM</span></li>
+              <li class="flex justify-between"><span>Sat - Sun:</span> <span>12:00 PM - 2:00 AM</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Delivery Hotline</h4>
+            <div class="space-y-2 text-xs text-white/80">
+              <p>Main Boulevard, Gulberg III, Lahore</p>
+              <p>Phone: <a href="tel:+923001234567" class="hover:underline">+92 300 1234567</a></p>
+              <p>WhatsApp: <a href="https://wa.me/923001234567" class="text-[#D4A72C] hover:underline">+92 300 1234567</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="pt-8 text-center text-xs text-white/60">
+          © 2026 Crust & Co. All rights reserved.
+        </div>
+      </div>
+    </footer>
+
+    <!-- App Scripts -->
+    <script type="module" src="/js/app.js"></script>
+    <script type="module">
+      import { getCurrentUser, updateProfile, logout } from '/js/auth.js';
+      import { getUserOrders, getOrderById } from '/js/orders.js';
+      import { formatPrice } from '/js/products.js';
+      import { showToast } from '/js/ui.js';
+
+      const root = document.getElementById('account-root');
+      const modal = document.getElementById('order-modal-backdrop');
+      const modalContent = document.getElementById('modal-content');
+      const modalClose = document.getElementById('modal-close-btn');
+
+      function renderAccount() {
+        const user = getCurrentUser();
+
+        if (!user) {
+          const guestOrders = getUserOrders('guest');
+          root.innerHTML = `
+            <div class="bg-white rounded-2xl border border-[#E8E5DC] p-8 max-w-xl mx-auto text-center space-y-4">
+              <div class="w-12 h-12 rounded-full bg-[#12372A]/10 text-[#12372A] flex items-center justify-center mx-auto">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <h2 class="text-2xl font-serif font-bold text-[#12372A]">Customer Account</h2>
+              <p class="text-xs sm:text-sm text-[#6B6B6B]">
+                Log in to view saved delivery addresses and past orders, or place orders directly as a guest.
+              </p>
+              <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
+                <a href="/login.html" class="px-6 py-2.5 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A]">
+                  Log In
+                </a>
+                <a href="/signup.html" class="px-6 py-2.5 border border-[#E8E5DC] text-[#1C1C1C] text-xs font-semibold rounded-lg hover:bg-[#F8F6F0]">
+                  Create Account
+                </a>
+              </div>
+
+              ${
+                guestOrders.length > 0
+                  ? `
+                <div class="pt-6 border-t border-[#E8E5DC] text-left">
+                  <h3 class="text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-3">Recent Orders Placed in this Browser</h3>
+                  <div class="space-y-2">
+                    ${guestOrders
+                      .map(
+                        (o) => `
+                      <div class="p-3.5 rounded-lg border border-[#E8E5DC] flex items-center justify-between text-xs bg-[#F8F6F0]">
+                        <div>
+                          <strong class="text-[#12372A]">Estimated Delivery: 30–40 mins</strong>
+                          <div class="text-[11px] text-[#6B6B6B] mt-0.5">${o.items.length} items · ${formatPrice(o.total)} (COD)</div>
+                        </div>
+                        <button data-view-order="${o.id}" class="text-[#12372A] underline font-semibold">View Details</button>
+                      </div>
+                    `
+                      )
+                      .join('')}
+                  </div>
+                </div>
+              `
+                  : ''
+              }
+            </div>
+          `;
+          attachOrderViewListeners();
+          return;
+        }
+
+        const orders = getUserOrders(user.id);
+        const activeOrder = orders.find((o) => o.status !== 'delivered' && o.status !== 'cancelled');
+
+        root.innerHTML = `
+          <!-- Header greeting -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E8E5DC]">
+            <div>
+              <span class="text-xs font-semibold uppercase tracking-wider text-[#D4A72C]">Customer Account</span>
+              <h1 class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] mt-1">Welcome back, ${user.name}</h1>
+              <p class="text-xs text-[#6B6B6B] mt-0.5">Manage your delivery profile and dining history.</p>
+            </div>
+            <button id="account-logout" class="self-start sm:self-auto text-xs px-4 py-2 border border-[#E8E5DC] text-[#1C1C1C] hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 rounded-lg transition-colors font-medium">
+              Log Out
+            </button>
+          </div>
+
+          <!-- Active Order Summary with Clean 30-40 min ETA (No complex cycle bar) -->
+          ${
+            activeOrder
+              ? `
+            <div class="bg-white rounded-2xl border-2 border-[#12372A]/20 p-6 sm:p-8 shadow-xs space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div class="inline-flex items-center gap-2 text-xs font-bold text-[#12372A] uppercase tracking-wider">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-ping"></span>
+                    <span>Active Food Order in Kitchen</span>
+                  </div>
+                  <h2 class="text-xl sm:text-2xl font-serif font-bold text-[#12372A] mt-1">
+                    Arriving in 30 – 40 Minutes
+                  </h2>
+                </div>
+                <div class="text-left sm:text-right">
+                  <div class="text-xs text-[#6B6B6B]">Payment Method</div>
+                  <div class="text-lg font-serif font-bold text-[#12372A] tabular-nums">${formatPrice(activeOrder.total)} (Cash on Delivery)</div>
+                </div>
+              </div>
+
+              <div class="p-4 bg-[#F8F6F0] rounded-xl border border-[#E8E5DC] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#1C1C1C]">
+                <div>
+                  <strong>Order items:</strong> ${activeOrder.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}
+                </div>
+                <button data-view-order="${activeOrder.id}" class="px-4 py-2 bg-[#12372A] text-white rounded-lg hover:bg-[#1F4D3A] font-semibold text-xs shrink-0">
+                  View Full Receipt
+                </button>
+              </div>
+            </div>
+          `
+              : `
+            <div class="bg-white rounded-xl border border-[#E8E5DC] p-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+              <div>
+                <h3 class="font-serif font-bold text-base text-[#12372A]">No Active Kitchen Orders</h3>
+                <p class="text-xs text-[#6B6B6B] mt-0.5">Explore our menu to place a delicious lunch or dinner order.</p>
+              </div>
+              <a href="/menu.html" class="px-5 py-2.5 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A]">
+                Browse Menu
+              </a>
+            </div>
+          `
+          }
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <!-- Order History (7 cols) -->
+            <div class="lg:col-span-7 space-y-4">
+              <h2 class="text-xl font-serif font-bold text-[#12372A]">Order History</h2>
+
+              ${
+                orders.length === 0
+                  ? `<div class="p-8 bg-white rounded-xl border border-[#E8E5DC] text-center text-xs text-[#6B6B6B]">You have not placed any orders yet.</div>`
+                  : `
+                <div class="space-y-3">
+                  ${orders
+                    .map(
+                      (o) => `
+                    <div class="bg-white rounded-xl border border-[#E8E5DC] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <div class="text-xs font-bold text-[#12372A]">
+                          ${new Date(o.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · Cash on Delivery
+                        </div>
+                        <div class="text-xs text-[#1C1C1C] mt-2 line-clamp-1">
+                          ${o.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}
+                        </div>
+                      </div>
+
+                      <div class="flex items-center sm:flex-col sm:items-end justify-between border-t sm:border-t-0 pt-3 sm:pt-0 border-[#E8E5DC]">
+                        <div class="font-serif font-bold text-[#12372A] text-base tabular-nums">${formatPrice(o.total)}</div>
+                        <button data-view-order="${o.id}" class="text-xs text-[#12372A] hover:underline font-semibold mt-1">
+                          View Order
+                        </button>
+                      </div>
+                    </div>
+                  `
+                    )
+                    .join('')}
+                </div>
+              `
+              }
+            </div>
+
+            <!-- Customer Profile (5 cols) -->
+            <div class="lg:col-span-5">
+              <div class="bg-white rounded-2xl border border-[#E8E5DC] p-6 shadow-xs space-y-5">
+                <h2 class="text-xl font-serif font-bold text-[#12372A]">Delivery Profile</h2>
+                <form id="profile-form" class="space-y-4 text-xs">
+                  <div>
+                    <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Full Name</label>
+                    <input type="text" id="prof-name" value="${user.name}" class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
+                  </div>
+                  <div>
+                    <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Phone Number</label>
+                    <input type="tel" id="prof-phone" value="${user.phone}" class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
+                  </div>
+                  <div>
+                    <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Email</label>
+                    <input type="email" id="prof-email" value="${user.email}" disabled class="w-full p-2.5 rounded-lg border border-[#E8E5DC] bg-neutral-100 text-[#6B6B6B]" />
+                  </div>
+                  <div>
+                    <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Default Address</label>
+                    <input type="text" id="prof-address" value="${user.address || ''}" placeholder="House, Street, Block" class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
+                  </div>
+                  <div>
+                    <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Area / Sector</label>
+                    <input type="text" id="prof-area" value="${user.area || ''}" placeholder="Gulberg III, DHA, etc." class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
+                  </div>
+                  <div>
+                    <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Landmark</label>
+                    <input type="text" id="prof-landmark" value="${user.landmark || ''}" placeholder="Nearby market, mosque, park" class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
+                  </div>
+                  <button type="submit" class="w-full py-2.5 bg-[#12372A] text-white font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors mt-2">
+                    Save Profile Changes
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Profile update
+        const profileForm = document.getElementById('profile-form');
+        if (profileForm) {
+          profileForm.onsubmit = (e) => {
+            e.preventDefault();
+            const name = document.getElementById('prof-name').value.trim();
+            const phone = document.getElementById('prof-phone').value.trim();
+            const address = document.getElementById('prof-address').value.trim();
+            const area = document.getElementById('prof-area').value.trim();
+            const landmark = document.getElementById('prof-landmark').value.trim();
+
+            updateProfile({ name, phone, address, area, landmark });
+            showToast('Profile details updated successfully');
+            renderAccount();
+          };
+        }
+
+        // Logout
+        const logoutBtn = document.getElementById('account-logout');
+        if (logoutBtn) {
+          logoutBtn.onclick = () => {
+            logout();
+            showToast('Logged out');
+            renderAccount();
+          };
+        }
+
+        attachOrderViewListeners();
+      }
+
+      function attachOrderViewListeners() {
+        document.querySelectorAll('[data-view-order]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            const id = e.currentTarget.getAttribute('data-view-order');
+            const order = getOrderById(id);
+            if (order) {
+              openOrderModal(order);
+            }
+          });
+        });
+      }
+
+      function openOrderModal(order) {
+        modalContent.innerHTML = `
+          <div>
+            <div class="text-xs uppercase font-semibold text-[#D4A72C]">Order Receipt</div>
+            <h3 class="text-2xl font-serif font-bold text-[#12372A] mt-1">Delivery in 30–40 Minutes</h3>
+            <div class="text-xs text-[#6B6B6B] mt-1">
+              Placed on ${new Date(order.date).toLocaleString()} · Cash on Delivery
+            </div>
+
+            <!-- Itemized List -->
+            <div class="mt-6 border-t border-b border-[#E8E5DC] py-4 space-y-3">
+              ${order.items
+                .map(
+                  (item) => `
+                <div class="flex justify-between items-start text-xs">
+                  <div>
+                    <div class="font-semibold text-[#1C1C1C]">${item.quantity}× ${item.name}</div>
+                    ${
+                      item.variant && item.variant.name !== 'Regular' && item.variant.name !== 'Combo Deal'
+                        ? `<div class="text-[11px] text-[#6B6B6B]">Size: ${item.variant.name}</div>`
+                        : ''
+                    }
+                    ${
+                      item.addOns && item.addOns.length > 0
+                        ? `<div class="text-[11px] text-[#6B6B6B]">Add-ons: ${item.addOns.map((a) => a.name).join(', ')}</div>`
+                        : ''
+                    }
+                    ${
+                      item.specialInstructions
+                        ? `<div class="text-[11px] text-[#12372A] italic">"${item.specialInstructions}"</div>`
+                        : ''
+                    }
+                  </div>
+                  <div class="font-semibold text-[#12372A] tabular-nums">
+                    ${formatPrice(item.totalPrice)}
+                  </div>
+                </div>
+              `
+                )
+                .join('')}
+            </div>
+
+            <!-- Financials -->
+            <div class="py-4 space-y-2 text-xs border-b border-[#E8E5DC]">
+              <div class="flex justify-between text-[#6B6B6B]">
+                <span>Subtotal</span>
+                <span class="tabular-nums text-[#1C1C1C] font-medium">${formatPrice(order.subtotal)}</span>
+              </div>
+              <div class="flex justify-between text-[#6B6B6B]">
+                <span>Delivery</span>
+                <span class="tabular-nums text-[#1C1C1C] font-medium">
+                  ${order.deliveryCharge === 0 ? 'FREE' : formatPrice(order.deliveryCharge)}
+                </span>
+              </div>
+              <div class="flex justify-between text-sm font-bold text-[#12372A] pt-1">
+                <span>Total Amount to Pay</span>
+                <span class="tabular-nums font-serif text-base">${formatPrice(order.total)}</span>
+              </div>
+            </div>
+
+            <!-- Delivery & Payment Meta -->
+            <div class="pt-4 text-xs space-y-1.5 text-[#6B6B6B]">
+              <div>Recipient: <strong class="text-[#1C1C1C]">${order.customer.name}</strong> (${order.customer.phone})</div>
+              <div>Address: <strong class="text-[#1C1C1C]">${order.customer.address}, ${order.customer.area}</strong></div>
+              ${order.customer.landmark ? `<div>Landmark: <span class="text-[#1C1C1C]">${order.customer.landmark}</span></div>` : ''}
+              <div>Payment: <strong class="text-[#12372A]">Cash on Delivery</strong></div>
+              ${order.notes ? `<div>Instructions: <em class="text-[#1C1C1C]">"${order.notes}"</em></div>` : ''}
+            </div>
+          </div>
+        `;
+        modal.classList.remove('hidden');
+      }
+
+      if (modalClose) {
+        modalClose.onclick = () => {
+          modal.classList.add('hidden');
+        };
+      }
+
+      modal.onclick = (e) => {
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+        }
+      };
+
+      renderAccount();
+    </script>
+  </body>
+</html>
