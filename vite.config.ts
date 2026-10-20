@@ -22,6 +22,8 @@ export default defineConfig(() => {
           about: path.resolve(__dirname, 'about.html'),
           contact: path.resolve(__dirname, 'contact.html'),
           account: path.resolve(__dirname, 'account.html'),
+          reserve: path.resolve(__dirname, 'reserve.html'),
+          admin: path.resolve(__dirname, 'admin.html'),
           login: path.resolve(__dirname, 'login.html'),
           signup: path.resolve(__dirname, 'signup.html'),
         },

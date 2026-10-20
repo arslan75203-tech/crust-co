@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reserve a Table - Crust & Co Artisanal Dining</title>
+    <meta name="description" content="Reserve a dining table in advance at Crust & Co. Stone-baked pizzas, gourmet smash burgers, and comfortable family seating." />
+
+    <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS (Instant standalone engine) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'crust-green': '#12372a',
+              'crust-green-mid': '#1f4d3a',
+              'crust-cream': '#f8f6f0',
+              'crust-gold': '#d4a72c',
+              'crust-text': '#1c1c1c',
+              'crust-muted': '#6b6b6b',
+              'crust-border': '#e8e5dc',
+            },
+            fontFamily: {
+              serif: ['"Playfair Display"', 'Georgia', 'serif'],
+              sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body class="bg-[#F8F6F0] text-[#1C1C1C] flex flex-col min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#F8F6F0]/95 backdrop-blur-md border-b border-[#E8E5DC] transition-all">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
+        
+        <!-- Brand wordmark -->
+        <a href="./index.html" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0 hover:opacity-90 transition-opacity">
+          Crust & Co
+        </a>
+
+        <!-- Navigation Links with Elastic Underline Animation -->
+        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-[#1C1C1C]">
+          <a href="./index.html" class="nav-elastic-link whitespace-nowrap shrink-0">Home</a>
+          <a href="./menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
+          <a href="./deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
+          <a href="./reserve.html" class="nav-elastic-link active-nav text-[#12372A] font-semibold whitespace-nowrap shrink-0">Reserve Table</a>
+          <a href="./about.html" class="nav-elastic-link whitespace-nowrap shrink-0">About</a>
+          <a href="./contact.html" class="nav-elastic-link whitespace-nowrap shrink-0">Contact</a>
+        </nav>
+
+        <!-- Live Search Bar -->
+        <div class="search-wrapper relative hidden lg:block w-52 xl:w-60 shrink-0">
+          <div class="relative flex items-center">
+            <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search pizza, burger..."
+              class="live-search-input w-full pl-9 pr-8 py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
+            />
+          </div>
+          <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+        </div>
+
+        <div class="flex items-center gap-3 sm:gap-4 shrink-0">
+          <div class="auth-slot hidden sm:block"></div>
+
+          <a href="./cart.html" class="relative p-2 text-[#12372A] hover:opacity-80 transition-opacity" aria-label="Shopping Cart">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span class="cart-badge hidden absolute top-0 right-0 w-5 h-5 bg-[#D4A72C] text-[#12372A] text-xs font-bold rounded-full flex items-center justify-center">0</span>
+          </a>
+
+          <a href="./menu.html" class="hidden sm:inline-flex items-center justify-center px-4 py-2 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm">
+            Order Food
+          </a>
+
+          <button id="mobile-menu-toggle" class="md:hidden p-2 text-[#12372A]" aria-label="Open Navigation Menu">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Drawer & Backdrop -->
+    <div id="mobile-backdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-xs z-50"></div>
+    <div id="mobile-drawer" class="fixed top-0 right-0 bottom-0 w-4/5 max-w-sm bg-[#F8F6F0] z-50 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col p-6">
+      <div class="flex items-center justify-between pb-6 border-b border-[#E8E5DC]">
+        <span class="font-serif font-bold text-xl text-[#12372A]">Crust & Co</span>
+        <button id="mobile-menu-close" class="p-2 text-[#6B6B6B] hover:text-[#1C1C1C]">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <nav class="flex flex-col gap-4 py-6 text-base font-medium">
+        <a href="./index.html" class="text-[#1C1C1C]">Home</a>
+        <a href="./menu.html" class="text-[#1C1C1C]">Menu</a>
+        <a href="./deals.html" class="text-[#1C1C1C]">Deals</a>
+        <a href="./reserve.html" class="text-[#12372A] font-semibold">Reserve a Table</a>
+        <a href="./about.html" class="text-[#1C1C1C]">About</a>
+        <a href="./contact.html" class="text-[#1C1C1C]">Contact</a>
+        <a href="./account.html" class="text-[#1C1C1C]">My Account & Bookings</a>
+      </nav>
+      <div class="mt-auto pt-6 border-t border-[#E8E5DC]">
+        <a href="./reserve.html" class="w-full flex items-center justify-center px-4 py-3 bg-[#12372A] text-white text-sm font-semibold rounded-lg shadow-sm">
+          Book Table Now
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-10">
+      
+      <!-- Page Header -->
+      <div class="text-center max-w-3xl mx-auto space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#12372A]/10 text-[#12372A] text-xs font-semibold uppercase tracking-wider">
+          <svg class="w-3.5 h-3.5 text-[#D4A72C]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span>Dine-In Table Reservation</span>
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-serif font-bold text-[#12372A] tracking-tight">
+          Reserve Your Table
+        </h1>
+        <p class="text-xs sm:text-sm text-[#6B6B6B] max-w-2xl mx-auto leading-relaxed">
+          Planning a meal with family or friends? Select your date, start time, and duration. We’ll find the optimal table arrangement. Pay the reservation advance securely via <strong class="text-[#12372A]">JazzCash</strong> or <strong class="text-[#12372A]">EasyPaisa</strong>.
+        </p>
+
+        <!-- Current Operating Hours Banner -->
+        <div id="hours-status-banner" class="pt-2"></div>
+      </div>
+
+      <!-- Main Interactive Booking & Payment Card -->
+      <div class="bg-white rounded-2xl border border-[#E8E5DC] shadow-xs overflow-hidden">
+        <form id="reservation-form" class="p-6 sm:p-10 space-y-10">
+
+          <!-- SECTION 1: Booking Preferences -->
+          <div class="space-y-6">
+            <div class="flex items-center justify-between pb-3 border-b border-[#E8E5DC]">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-[#12372A] text-white text-xs font-bold flex items-center justify-center">1</span>
+                <h2 class="text-lg font-serif font-bold text-[#12372A]">Select Date, Time & Guests</h2>
+              </div>
+              <span class="text-xs text-[#6B6B6B] hidden sm:inline">*Advance table reservation rate: PKR 50 / 30 mins / table</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              <!-- Date Picker -->
+              <div>
+                <label for="res-date" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Reservation Date <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  id="res-date"
+                  required
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-[#F8F6F0]/40 font-medium"
+                />
+              </div>
+
+              <!-- Start Time Selector -->
+              <div>
+                <label for="res-time" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Start Time <span class="text-rose-500">*</span>
+                </label>
+                <select
+                  id="res-time"
+                  required
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white font-medium"
+                >
+                  <!-- Populated by JS based on selected date's opening hours -->
+                </select>
+              </div>
+
+              <!-- Duration Selector (30-min increments) -->
+              <div>
+                <label for="res-duration" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Duration <span class="text-rose-500">*</span>
+                </label>
+                <select
+                  id="res-duration"
+                  required
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white font-medium"
+                >
+                  <option value="30">30 Minutes (1 unit)</option>
+                  <option value="60">1 Hour (2 units)</option>
+                  <option value="90">1.5 Hours (3 units)</option>
+                  <option value="120" selected>2 Hours (4 units)</option>
+                  <option value="150">2.5 Hours (5 units)</option>
+                  <option value="180">3 Hours (6 units)</option>
+                  <option value="240">4 Hours (8 units)</option>
+                </select>
+              </div>
+
+              <!-- Number of Guests -->
+              <div>
+                <label for="res-guests" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Number of Guests <span class="text-rose-500">*</span>
+                </label>
+                <select
+                  id="res-guests"
+                  required
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white font-medium"
+                >
+                  <option value="1">1 Guest (1 Table · 4 Seats)</option>
+                  <option value="2">2 Guests (1 Table · 4 Seats)</option>
+                  <option value="3">3 Guests (1 Table · 4 Seats)</option>
+                  <option value="4">4 Guests (1 Table · 4 Seats)</option>
+                  <option value="5" selected>5 Guests (2 Tables · 8 Seats)</option>
+                  <option value="6">6 Guests (2 Tables · 8 Seats)</option>
+                  <option value="7">7 Guests (2 Tables · 8 Seats)</option>
+                  <option value="8">8 Guests (2 Tables · 8 Seats)</option>
+                  <option value="9">9 Guests (3 Tables · 12 Seats)</option>
+                  <option value="10">10 Guests (3 Tables · 12 Seats)</option>
+                  <option value="12">12 Guests (3 Tables · 12 Seats)</option>
+                  <option value="14">14 Guests (4 Tables · 16 Seats)</option>
+                  <option value="16">16 Guests (4 Tables · 16 Seats)</option>
+                </select>
+              </div>
+
+              <!-- Number of Tables (Auto or Explicit Selection) -->
+              <div>
+                <label for="res-tables" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5 flex items-center justify-between">
+                  <span>Tables to Reserve <span class="text-rose-500">*</span></span>
+                </label>
+                <select
+                  id="res-tables"
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white font-medium"
+                >
+                  <option value="0">Auto (Based on Guests · 4 seats/table)</option>
+                  <option value="1">1 Table (4 Seats · PKR 50 / 30m)</option>
+                  <option value="2">2 Tables (8 Seats · PKR 100 / 30m)</option>
+                  <option value="3">3 Tables (12 Seats · PKR 150 / 30m)</option>
+                  <option value="4">4 Tables (16 Seats · PKR 200 / 30m)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Dining Section: ONLY Family Hall and Open Dining -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-2">
+              <div>
+                <label for="res-section" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Dining Section Preference
+                </label>
+                <select
+                  id="res-section"
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white font-medium"
+                >
+                  <option value="ALL">All Sections (Family & Open Dining)</option>
+                  <option value="FAMILY">Family Hall (Family)</option>
+                  <option value="OPEN">Open Dining (Open)</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="res-occasion" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Special Occasion (Optional)
+                </label>
+                <input
+                  type="text"
+                  id="res-occasion"
+                  placeholder="e.g. Birthday, Anniversary, Business"
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white"
+                />
+              </div>
+
+              <div>
+                <label for="res-requests" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Special Seating Requests
+                </label>
+                <input
+                  type="text"
+                  id="res-requests"
+                  placeholder="e.g. Baby high chair, quiet corner"
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: Dynamic System Table Assignment & Pricing Summary -->
+          <div class="space-y-4">
+            <div class="flex items-center gap-2 pb-3 border-b border-[#E8E5DC]">
+              <span class="w-6 h-6 rounded-full bg-[#12372A] text-white text-xs font-bold flex items-center justify-center">2</span>
+              <h2 class="text-lg font-serif font-bold text-[#12372A]">Available Table Arrangement & Pricing Breakdown</h2>
+            </div>
+
+            <!-- Table Arrangement & Availability Banner (Filled by JS) -->
+            <div id="availability-result" class="transition-all"></div>
+
+            <!-- Financial Calculation Breakdown (Strictly Read-Only, System Controlled) -->
+            <div id="pricing-breakdown" class="p-5 sm:p-6 bg-[#F8F6F0] rounded-xl border border-[#E8E5DC] space-y-4">
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                <div>
+                  <span class="text-[#6B6B6B] block">End Time (Auto)</span>
+                  <span id="summary-end-time" class="font-bold text-[#12372A] text-sm sm:text-base">--:--</span>
+                </div>
+                <div>
+                  <span class="text-[#6B6B6B] block">Reserved Tables</span>
+                  <span id="summary-table-count" class="font-bold text-[#12372A] text-sm sm:text-base">--</span>
+                </div>
+                <div>
+                  <span class="text-[#6B6B6B] block">30-Min Billing Units</span>
+                  <span id="summary-billing-units" class="font-bold text-[#12372A] text-sm sm:text-base">--</span>
+                </div>
+                <div>
+                  <span class="text-[#6B6B6B] block">Configured Base Rate</span>
+                  <span id="summary-unit-rate" class="font-bold text-[#12372A] text-sm sm:text-base">PKR 50 / unit / table</span>
+                </div>
+              </div>
+
+              <!-- Transparent Math Formula Box -->
+              <div class="p-3.5 bg-white rounded-lg border border-[#E8E5DC] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                  <span class="font-semibold text-[#12372A]">Pricing Rule:</span>
+                  <span class="text-[#6B6B6B]" id="summary-rate-rule">PKR 50 per table for each 30-min slot (2 tables = PKR 100 / 30m)</span>
+                </div>
+                <div id="summary-formula-callout" class="font-mono font-bold text-[#12372A] bg-[#F8F6F0] px-3 py-1.5 rounded border border-[#E8E5DC] text-xs">
+                  --
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-[#E8E5DC] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <span class="text-xs uppercase tracking-wider font-semibold text-[#D4A72C]">Total Advance Payment Required</span>
+                  <p class="text-[11px] text-[#6B6B6B]">Advance table fee guarantees your private reservation and table setup.</p>
+                </div>
+                <div class="text-left sm:text-right">
+                  <span id="summary-total-charge" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tabular-nums">
+                    PKR --
+                  </span>
+                  <span class="block text-[11px] text-emerald-800 font-medium">Read-Only Authoritative Price</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: Payment via JazzCash or EasyPaisa -->
+          <div id="payment-section" class="space-y-6">
+            <div class="flex items-center gap-2 pb-3 border-b border-[#E8E5DC]">
+              <span class="w-6 h-6 rounded-full bg-[#12372A] text-white text-xs font-bold flex items-center justify-center">3</span>
+              <h2 class="text-lg font-serif font-bold text-[#12372A]">Advance Payment Evidence (JazzCash / EasyPaisa)</h2>
+            </div>
+
+            <!-- Payment Method Selection -->
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-2.5">
+                Select Mobile Banking Method <span class="text-rose-500">*</span>
+              </label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label class="payment-method-card relative flex items-start gap-3 p-4 rounded-xl border-2 border-[#12372A] bg-[#12372A]/5 cursor-pointer transition-all">
+                  <input type="radio" name="pay-method" value="jazzcash" checked class="mt-1 text-[#12372A] focus:ring-[#12372A]" />
+                  <div>
+                    <strong class="text-sm text-[#12372A] block font-semibold">JazzCash</strong>
+                    <span class="text-xs text-[#6B6B6B]">Account Title: <span id="jc-account-title" class="font-medium text-[#1C1C1C]">Crust & Co</span></span>
+                    <span class="block text-xs text-[#12372A] font-bold mt-0.5" id="jc-account-num">0300-1234567</span>
+                  </div>
+                </label>
+
+                <label class="payment-method-card relative flex items-start gap-3 p-4 rounded-xl border-2 border-[#E8E5DC] hover:border-[#12372A] bg-white cursor-pointer transition-all">
+                  <input type="radio" name="pay-method" value="easypaisa" class="mt-1 text-[#12372A] focus:ring-[#12372A]" />
+                  <div>
+                    <strong class="text-sm text-[#12372A] block font-semibold">EasyPaisa</strong>
+                    <span class="text-xs text-[#6B6B6B]">Account Title: <span id="ep-account-title" class="font-medium text-[#1C1C1C]">Crust & Co</span></span>
+                    <span class="block text-xs text-[#12372A] font-bold mt-0.5" id="ep-account-num">0300-7654321</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Payment Instructions Alert -->
+            <div id="payment-instructions" class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-3">
+              <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <strong>Payment Instructions:</strong> Transfer the exact advance amount of <span id="instr-amount" class="font-bold text-[#12372A]">PKR 400</span> to the selected merchant account. After sending, enter your Transaction ID (TID) and upload the payment receipt below.
+              </div>
+            </div>
+
+            <!-- Customer & Transaction Details -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              <div>
+                <label for="cust-name" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Customer Name <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="cust-name"
+                  required
+                  placeholder="e.g. Hamza Farooq"
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white font-medium"
+                />
+              </div>
+
+              <div>
+                <label for="cust-phone" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Mobile Number <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  type="tel"
+                  id="cust-phone"
+                  required
+                  placeholder="e.g. 0300 1234567"
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white font-medium"
+                />
+              </div>
+
+              <div>
+                <label for="txn-id" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                  Transaction ID / Reference <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="txn-id"
+                  required
+                  placeholder="e.g. JC-9874561230"
+                  class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white font-mono uppercase"
+                />
+              </div>
+            </div>
+
+            <!-- Receipt Upload & Live Preview -->
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                Upload Payment Screenshot / Receipt <span class="text-rose-500">*</span>
+              </label>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                <div class="border-2 border-dashed border-[#E8E5DC] hover:border-[#12372A] rounded-xl p-5 text-center bg-[#F8F6F0]/50 transition-colors">
+                  <input type="file" id="receipt-file" accept="image/*" required class="hidden" />
+                  <label for="receipt-file" class="cursor-pointer flex flex-col items-center justify-center gap-2">
+                    <svg class="w-8 h-8 text-[#6B6B6B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="text-xs font-semibold text-[#12372A]">Choose Receipt File or Drag Here</span>
+                    <span class="text-[11px] text-[#6B6B6B]">JPG, PNG or Screenshot (max 5MB)</span>
+                  </label>
+                </div>
+
+                <!-- Live Image Preview Container -->
+                <div id="receipt-preview-container" class="hidden relative h-36 bg-neutral-100 rounded-xl overflow-hidden border border-[#E8E5DC]">
+                  <img id="receipt-preview-img" src="" alt="Payment Receipt" class="w-full h-full object-contain p-2" />
+                  <button type="button" id="receipt-clear-btn" class="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-black" title="Remove Receipt">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-4 border-t border-[#E8E5DC] flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-xs text-[#6B6B6B] text-center sm:text-left">
+              <span>Status upon submission:</span>
+              <span class="font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 ml-1">Payment Under Review</span>
+              <p class="text-[11px] mt-0.5">Verified by restaurant staff within 15–30 minutes.</p>
+            </div>
+
+            <button
+              type="submit"
+              id="submit-reservation-btn"
+              class="w-full sm:w-auto px-8 py-3.5 bg-[#12372A] hover:bg-[#1F4D3A] text-white text-xs sm:text-sm font-bold rounded-lg transition-all shadow-md active:scale-98 flex items-center justify-center gap-2"
+            >
+              <span>Submit Table Reservation</span>
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </main>
+
+    <!-- Reservation Success Modal -->
+    <div id="res-success-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl border border-[#E8E5DC] shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-5 text-center">
+        <div class="w-14 h-14 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mx-auto">
+          <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+
+        <div>
+          <span class="text-xs uppercase font-semibold text-[#D4A72C] tracking-wider">Booking Submitted</span>
+          <h2 class="text-2xl font-serif font-bold text-[#12372A] mt-1" id="modal-booking-title">Booking #BK-10245</h2>
+          <div class="inline-block mt-2 px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 text-xs font-semibold rounded-full">
+            Payment Status: Pending Verification
+          </div>
+        </div>
+
+        <div id="modal-booking-details" class="p-4 bg-[#F8F6F0] rounded-xl border border-[#E8E5DC] text-xs text-left space-y-2">
+          <!-- Populated by JS -->
+        </div>
+
+        <p class="text-xs text-[#6B6B6B] leading-relaxed">
+          Your payment evidence has been forwarded to our restaurant desk. Your reservation will be marked as <strong class="text-emerald-700">Confirmed</strong> immediately upon verification.
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <a href="./account.html" class="px-6 py-2.5 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-xs">
+            View My Reservations
+          </a>
+          <button id="modal-close-reset-btn" class="px-6 py-2.5 border border-[#E8E5DC] text-[#1C1C1C] text-xs font-semibold rounded-lg hover:bg-neutral-100">
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Footer -->
+    <footer class="bg-[#12372A] text-white border-t border-[#1F4D3A] pt-14 pb-8 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+          <div class="space-y-4">
+            <span class="text-2xl font-serif font-bold tracking-tight text-white block">Crust & Co</span>
+            <p class="text-xs text-white/70 leading-relaxed">
+              Artisanal stone-baked pizzeria & gourmet burger kitchen. Crafted with 48h cold fermented sourdough, fresh chicken fillets, and genuine ingredients.
+            </p>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Quick Links</h4>
+            <ul class="space-y-2.5 text-xs text-white/80">
+              <li><a href="./index.html" class="hover:text-white">Home</a></li>
+              <li><a href="./menu.html" class="hover:text-white">Our Menu</a></li>
+              <li><a href="./deals.html" class="hover:text-white">Exclusive Deals</a></li>
+              <li><a href="./reserve.html" class="hover:text-white font-medium text-[#D4A72C]">Reserve a Table</a></li>
+              <li><a href="./account.html" class="hover:text-white">My Account & Bookings</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Opening Hours</h4>
+            <ul class="space-y-2 text-xs text-white/80">
+              <li class="flex justify-between"><span>Mon - Thu:</span> <span>12:00 PM - 1:00 AM</span></li>
+              <li class="flex justify-between"><span>Fri:</span> <span>2:00 PM - 2:00 AM</span></li>
+              <li class="flex justify-between"><span>Sat - Sun:</span> <span>12:00 PM - 2:00 AM</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Staff & Support</h4>
+            <div class="space-y-2 text-xs text-white/80">
+              <p>Main Boulevard, Gulberg III, Lahore</p>
+              <p>Hotline: <a href="tel:+923001234567" class="hover:underline">+92 300 1234567</a></p>
+              <p class="pt-2"><a href="./admin.html" class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 hover:bg-white/20 text-[#D4A72C] rounded text-[11px] font-semibold border border-white/10">Staff Control Panel →</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="pt-8 text-center text-xs text-white/60">
+          © 2026 Crust & Co. All rights reserved.
+        </div>
+      </div>
+    </footer>
+
+    <!-- App Scripts -->
+    <script type="module" src="./js/app.js"></script>
+    <script type="module">
+      import { getCurrentUser } from './js/auth.js';
+      import {
+        getBookingConfig,
+        calculateEndTime,
+        calculateBillingUnits,
+        calculateReservationPrice,
+        validateRestaurantHours,
+        findAvailableTableCombinations,
+        queryTableAvailabilityDatabase,
+        createReservation,
+        isRestaurantOpenNow,
+        formatTime12h,
+        formatDurationLabel,
+      } from './js/reservations.js';
+      import { formatPrice } from './js/products.js';
+      import { showToast } from './js/ui.js';
+
+      // DOM Elements
+      const dateInput = document.getElementById('res-date');
+      const timeSelect = document.getElementById('res-time');
+      const durationSelect = document.getElementById('res-duration');
+      const guestsSelect = document.getElementById('res-guests');
+      const tablesSelect = document.getElementById('res-tables');
+      const sectionSelect = document.getElementById('res-section');
+      const occasionInput = document.getElementById('res-occasion');
+      const requestsInput = document.getElementById('res-requests');
+
+      const availResult = document.getElementById('availability-result');
+      const summaryEndTime = document.getElementById('summary-end-time');
+      const summaryTableCount = document.getElementById('summary-table-count');
+      const summaryBillingUnits = document.getElementById('summary-billing-units');
+      const summaryUnitRate = document.getElementById('summary-unit-rate');
+      const summaryFormulaCallout = document.getElementById('summary-formula-callout');
+      const summaryTotalCharge = document.getElementById('summary-total-charge');
+      const instrAmount = document.getElementById('instr-amount');
+
+      const custNameInput = document.getElementById('cust-name');
+      const custPhoneInput = document.getElementById('cust-phone');
+      const txnIdInput = document.getElementById('txn-id');
+      const receiptFileInput = document.getElementById('receipt-file');
+      const receiptPreviewContainer = document.getElementById('receipt-preview-container');
+      const receiptPreviewImg = document.getElementById('receipt-preview-img');
+      const receiptClearBtn = document.getElementById('receipt-clear-btn');
+      const form = document.getElementById('reservation-form');
+      const submitBtn = document.getElementById('submit-reservation-btn');
+
+      const successModal = document.getElementById('res-success-modal');
+      const modalBookingTitle = document.getElementById('modal-booking-title');
+      const modalBookingDetails = document.getElementById('modal-booking-details');
+      const modalCloseResetBtn = document.getElementById('modal-close-reset-btn');
+      const hoursStatusBanner = document.getElementById('hours-status-banner');
+
+      // Merchant Account details
+      const config = getBookingConfig();
+      document.getElementById('jc-account-title').textContent = config.paymentSettings.jazzcash.accountTitle;
+      document.getElementById('jc-account-num').textContent = config.paymentSettings.jazzcash.accountNumber;
+      document.getElementById('ep-account-title').textContent = config.paymentSettings.easypaisa.accountTitle;
+      document.getElementById('ep-account-num').textContent = config.paymentSettings.easypaisa.accountNumber;
+
+      let currentUploadedReceiptBase64 = '';
+      let currentSelectedArrangement = null;
+      let currentCalculatedPricing = null;
+
+      // Initialize Date restrictions (min today, max +30 days)
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+      const maxDate = new Date();
+      maxDate.setDate(maxDate.getDate() + 30);
+      const maxDateStr = maxDate.toISOString().split('T')[0];
+
+      dateInput.min = todayStr;
+      dateInput.max = maxDateStr;
+
+      // Pre-fill query parameters if navigated from home page
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramDate = urlParams.get('date');
+      const paramGuests = urlParams.get('guests');
+      const paramTime = urlParams.get('time');
+      const paramTables = urlParams.get('tables');
+
+      dateInput.value = paramDate || todayStr;
+      if (paramGuests) guestsSelect.value = paramGuests;
+      if (paramTables && tablesSelect.querySelector(`option[value="${paramTables}"]`)) {
+        tablesSelect.value = paramTables;
+      }
+
+      // Pre-fill customer info if logged in
+      const currentUser = getCurrentUser();
+      if (currentUser) {
+        custNameInput.value = currentUser.name;
+        custPhoneInput.value = currentUser.phone;
+      }
+
+      // Check current open status
+      const openStatus = isRestaurantOpenNow();
+      if (!openStatus.open) {
+        hoursStatusBanner.innerHTML = `
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-900 border border-amber-200 rounded-lg text-xs">
+            <svg class="w-4 h-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Online table reservations are currently closed for immediate seating. Reservations open at <strong>${openStatus.opensAt}</strong>. You can book upcoming time slots or future dates below.</span>
+          </div>
+        `;
+      }
+
+      // Populate Start Time Dropdown based on business hours
+      function populateTimeSlots() {
+        const selectedDate = dateInput.value;
+        const currentVal = timeSelect.value;
+        timeSelect.innerHTML = '';
+
+        // Generate 30-min interval time options from 12:00 to 23:30
+        const times = [];
+        for (let h = 12; h <= 23; h++) {
+          times.push(`${String(h).padStart(2, '0')}:00`);
+          times.push(`${String(h).padStart(2, '0')}:30`);
+        }
+
+        times.forEach((t) => {
+          const opt = document.createElement('option');
+          opt.value = t;
+          opt.textContent = formatTime12h(t);
+          timeSelect.appendChild(opt);
+        });
+
+        if (paramTime && times.includes(paramTime)) {
+          timeSelect.value = paramTime;
+        } else if (currentVal && times.includes(currentVal)) {
+          timeSelect.value = currentVal;
+        } else {
+          timeSelect.value = '19:00'; // Default 7:00 PM
+        }
+      }
+
+      // Real-time Availability & Pricing Recalculation
+      function recalculate() {
+        const date = dateInput.value;
+        const startTime = timeSelect.value;
+        const duration = Number(durationSelect.value);
+        const guests = Number(guestsSelect.value);
+        const sectionId = sectionSelect.value;
+
+        if (!date || !startTime || !duration) return;
+
+        // 1. Calculate End Time
+        const endTime = calculateEndTime(startTime, duration);
+        summaryEndTime.textContent = formatTime12h(endTime);
+
+        // 2. Validate Restaurant Hours & Closing Time
+        const hoursCheck = validateRestaurantHours(date, startTime, endTime);
+        if (!hoursCheck.valid) {
+          availResult.innerHTML = `
+            <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-900 flex items-start gap-3">
+              <svg class="w-5 h-5 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <div>
+                <strong class="block font-semibold">Hours Restriction:</strong>
+                <span>${hoursCheck.message}</span>
+              </div>
+            </div>
+          `;
+          submitBtn.disabled = true;
+          submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          currentSelectedArrangement = null;
+          return;
+        }
+
+        // 3. Find Table Arrangement (supports explicit table count e.g. 2 tables = PKR 100 / 30m)
+        const requestedTables = Number(tablesSelect.value) || 0;
+        const comboResult = findAvailableTableCombinations(guests, date, startTime, endTime, sectionId, requestedTables);
+
+        // Helper function to build the live interactive table matrix
+        const renderTableStatusMatrix = (assignedIds = []) => {
+          const reports = comboResult.dbResult?.tableReports || [];
+          if (reports.length === 0) return '';
+
+          return `
+            <div class="mt-4 pt-4 border-t border-[#E8E5DC] space-y-3">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                  <strong class="text-xs uppercase tracking-wider text-[#12372A]">Real-Time Floor Table Status (100% 4-Seater Tables)</strong>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 text-[11px] text-[#6B6B6B]">
+                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-600"></span> Free & Available</span>
+                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Physically Seated</span>
+                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Reserved in DB</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
+                ${reports
+                  .map((r) => {
+                    const isAssigned = assignedIds.includes(r.table.id);
+                    let badge = '';
+                    let cardStyle = '';
+
+                    if (isAssigned) {
+                      cardStyle = 'border-2 border-emerald-600 bg-emerald-50/90 ring-2 ring-emerald-600/20';
+                      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-700 text-white">✓ Selected (4 Seats)</span>`;
+                    } else if (r.isAvailable) {
+                      cardStyle = 'border border-emerald-200 bg-white hover:border-emerald-500';
+                      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">● Available (4 Seats)</span>`;
+                    } else if (r.reason === 'occupied_physical') {
+                      cardStyle = 'border border-amber-300 bg-amber-50/70 opacity-90 cursor-not-allowed';
+                      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900 flex items-center gap-1">⚠️ Diners Seated</span>`;
+                    } else if (r.reason === 'reserved_advance') {
+                      cardStyle = 'border border-rose-200 bg-rose-50/70 opacity-85 cursor-not-allowed';
+                      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">🔒 Reserved in DB</span>`;
+                    } else if (r.reason === 'cleaning') {
+                      cardStyle = 'border border-yellow-200 bg-yellow-50/70 opacity-85 cursor-not-allowed';
+                      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-yellow-100 text-yellow-800">🧹 Cleaning</span>`;
+                    } else {
+                      cardStyle = 'border border-neutral-200 bg-neutral-100 opacity-60 cursor-not-allowed';
+                      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-neutral-200 text-neutral-700">Blocked</span>`;
+                    }
+
+                    return `
+                    <div class="p-2.5 rounded-lg text-xs flex flex-col justify-between transition-all ${cardStyle}" title="${r.reasonLabel}">
+                      <div class="flex items-center justify-between gap-1 mb-1">
+                        <strong class="font-bold text-[#12372A] truncate text-[11px] sm:text-xs">${r.table.name}</strong>
+                        <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded bg-black/5">4s</span>
+                      </div>
+                      <div class="text-[10px] text-[#6B6B6B] truncate mb-1.5">
+                        ${r.table.sectionName}
+                      </div>
+                      <div class="mt-auto">
+                        ${badge}
+                      </div>
+                    </div>
+                  `;
+                  })
+                  .join('')}
+              </div>
+
+              <div class="p-2.5 bg-blue-50/70 border border-blue-200 rounded-lg text-[11px] text-blue-900 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <span class="flex items-center gap-1.5 font-medium">
+                  <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  <span><strong>Database Detection Engine:</strong> Checks real-time physical diners on the floor + active database reservations overlapping with your time window.</span>
+                </span>
+                <span class="font-mono text-xs font-bold shrink-0 text-blue-950">${comboResult.dbResult?.availableCount || 0} / ${comboResult.dbResult?.totalTables || 0} Free in Section</span>
+              </div>
+            </div>
+          `;
+        };
+
+        if (!comboResult.success) {
+          availResult.innerHTML = `
+            <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-3">
+              <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <div>
+                <strong class="block font-semibold">No Tables Available:</strong>
+                <span>${comboResult.message}</span>
+              </div>
+            </div>
+            ${renderTableStatusMatrix([])}
+          `;
+          submitBtn.disabled = true;
+          submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          currentSelectedArrangement = null;
+          return;
+        }
+
+        // Arrangement Found!
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        currentSelectedArrangement = comboResult.recommended;
+
+        // Render Table Arrangement Cards
+        availResult.innerHTML = `
+          <div class="p-4 sm:p-5 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-950 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                <strong class="text-sm font-serif font-bold text-emerald-950">
+                  ${currentSelectedArrangement.isSingleTable ? 'Single Table Reserved (4 Seats)' : `${currentSelectedArrangement.tableCount} Tables Combined (${currentSelectedArrangement.combinedCapacity} Seats Total)`}
+                </strong>
+              </div>
+              <span class="text-emerald-800 font-medium">Combined Capacity: <strong>${currentSelectedArrangement.combinedCapacity} Guests</strong> (party of ${guests})</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
+              ${currentSelectedArrangement.tables
+                .map(
+                  (t) => `
+                <div class="p-3 bg-white rounded-lg border-2 border-emerald-500 shadow-2xs flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-[#12372A]">${t.name}</div>
+                    <div class="text-[11px] text-[#6B6B6B]">${t.sectionName}</div>
+                  </div>
+                  <span class="px-2.5 py-1 rounded bg-[#12372A]/10 text-[#12372A] font-semibold text-xs">
+                    4 Seats
+                  </span>
+                </div>
+              `
+                )
+                .join('')}
+            </div>
+            
+            <p class="text-[11px] text-emerald-800 pt-1">
+              ${currentSelectedArrangement.tableCount > 1 ? `Multi-table reservation: ${currentSelectedArrangement.tableCount} standard 4-seater tables will be joined together for your party.` : `Comfortable dedicated 4-seater table with prompt table-side service.`}
+            </p>
+
+            ${renderTableStatusMatrix(currentSelectedArrangement.tableIds)}
+          </div>
+        `;
+
+        // 4. Calculate Financials (Strictly Read-Only, Per-table Per-30m)
+        currentCalculatedPricing = calculateReservationPrice(
+          currentSelectedArrangement.tableCount,
+          duration
+        );
+
+        summaryTableCount.textContent = `${currentCalculatedPricing.tableCount} Table${currentCalculatedPricing.tableCount > 1 ? 's' : ''}`;
+        summaryBillingUnits.textContent = `${currentCalculatedPricing.billingUnits} (${formatDurationLabel(duration)})`;
+        summaryUnitRate.textContent = `PKR ${currentCalculatedPricing.ratePerTablePerUnit} / 30m / table`;
+        summaryTotalCharge.textContent = formatPrice(currentCalculatedPricing.reservationCharge);
+        instrAmount.textContent = formatPrice(currentCalculatedPricing.advanceRequired);
+
+        if (summaryFormulaCallout) {
+          summaryFormulaCallout.innerHTML = `
+            <span>${currentCalculatedPricing.tableCount} Table${currentCalculatedPricing.tableCount > 1 ? 's' : ''} × ${currentCalculatedPricing.billingUnits} Unit${currentCalculatedPricing.billingUnits > 1 ? 's' : ''} (${duration}m) @ PKR ${currentCalculatedPricing.ratePerTablePerUnit} =</span>
+            <span class="text-emerald-800 ml-1 font-bold text-sm sm:text-base">${formatPrice(currentCalculatedPricing.reservationCharge)}</span>
+          `;
+        }
+
+        const rateRuleEl = document.getElementById('summary-rate-rule');
+        if (rateRuleEl) {
+          rateRuleEl.textContent = `PKR ${currentCalculatedPricing.ratePerTablePerUnit} per table / 30 mins (${currentCalculatedPricing.tableCount} table${currentCalculatedPricing.tableCount > 1 ? 's' : ''} = PKR ${currentCalculatedPricing.per30mTotal} / 30m)`;
+        }
+      }
+
+      // Handle Payment Method visual toggle
+      document.querySelectorAll('input[name="pay-method"]').forEach((radio) => {
+        radio.addEventListener('change', (e) => {
+          document.querySelectorAll('.payment-method-card').forEach((card) => {
+            card.classList.remove('border-[#12372A]', 'bg-[#12372A]/5');
+            card.classList.add('border-[#E8E5DC]', 'bg-white');
+          });
+          const activeCard = e.target.closest('.payment-method-card');
+          activeCard.classList.remove('border-[#E8E5DC]', 'bg-white');
+          activeCard.classList.add('border-[#12372A]', 'bg-[#12372A]/5');
+        });
+      });
+
+      // Receipt Upload & Live Base64 Preview
+      receiptFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+          showToast('Please upload an image receipt (JPG or PNG)', 'error');
+          receiptFileInput.value = '';
+          return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('File size must be under 5MB', 'error');
+          receiptFileInput.value = '';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          currentUploadedReceiptBase64 = evt.target.result;
+          receiptPreviewImg.src = currentUploadedReceiptBase64;
+          receiptPreviewContainer.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      });
+
+      receiptClearBtn.addEventListener('click', () => {
+        currentUploadedReceiptBase64 = '';
+        receiptFileInput.value = '';
+        receiptPreviewImg.src = '';
+        receiptPreviewContainer.classList.add('hidden');
+      });
+
+      // Event Listeners for Recalculation
+      dateInput.addEventListener('change', () => {
+        populateTimeSlots();
+        recalculate();
+      });
+      timeSelect.addEventListener('change', recalculate);
+      durationSelect.addEventListener('change', recalculate);
+      tablesSelect.addEventListener('change', recalculate);
+      guestsSelect.addEventListener('change', () => {
+        const g = Number(guestsSelect.value);
+        const t = Number(tablesSelect.value);
+        if (t === 1 && g > 4) {
+          const needed = g > 8 ? 3 : 2;
+          tablesSelect.value = String(needed);
+          showToast(`Party of ${g} guests requires ${needed} tables (PKR ${needed * 50} / 30m).`);
+        }
+        recalculate();
+      });
+      sectionSelect.addEventListener('change', recalculate);
+
+      // Form Submission
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        if (!currentSelectedArrangement || !currentCalculatedPricing) {
+          showToast('Please choose an available table slot first', 'error');
+          return;
+        }
+
+        const txnId = txnIdInput.value.trim();
+        if (!txnId) {
+          showToast('Please enter the Transaction ID / Reference', 'error');
+          txnIdInput.focus();
+          return;
+        }
+
+        if (!currentUploadedReceiptBase64) {
+          showToast('Please upload your payment screenshot/receipt', 'error');
+          receiptFileInput.focus();
+          return;
+        }
+
+        const selectedPayMethod = document.querySelector('input[name="pay-method"]:checked').value;
+        const user = getCurrentUser();
+
+        // Submit reservation to data layer
+        const newRes = createReservation({
+          userId: user ? user.id : 'guest',
+          customer: {
+            name: custNameInput.value.trim(),
+            phone: custPhoneInput.value.trim(),
+            email: user ? user.email : '',
+          },
+          reservation: {
+            date: dateInput.value,
+            startTime: timeSelect.value,
+            endTime: calculateEndTime(timeSelect.value, durationSelect.value),
+            durationMinutes: Number(durationSelect.value),
+            guests: Number(guestsSelect.value),
+            sectionId: sectionSelect.value,
+            tableIds: currentSelectedArrangement.tableIds,
+            assignedTableNames: currentSelectedArrangement.tableNames,
+            combinedCapacity: currentSelectedArrangement.combinedCapacity,
+          },
+          payment: {
+            method: selectedPayMethod,
+            transactionId: txnId,
+            customerName: custNameInput.value.trim(),
+            customerPhone: custPhoneInput.value.trim(),
+            receiptImage: currentUploadedReceiptBase64,
+          },
+          specialOccasion: occasionInput.value.trim(),
+          specialRequests: requestsInput.value.trim(),
+        });
+
+        // Show Success Modal
+        modalBookingTitle.textContent = `Booking #${newRes.id}`;
+        modalBookingDetails.innerHTML = `
+          <div class="flex justify-between"><span>Date:</span> <strong class="text-[#12372A]">${newRes.reservation.date}</strong></div>
+          <div class="flex justify-between"><span>Time:</span> <strong class="text-[#12372A]">${formatTime12h(newRes.reservation.startTime)} – ${formatTime12h(newRes.reservation.endTime)} (${formatDurationLabel(newRes.reservation.durationMinutes)})</strong></div>
+          <div class="flex justify-between"><span>Party Size:</span> <strong class="text-[#12372A]">${newRes.reservation.guests} Guests</strong></div>
+          <div class="flex justify-between"><span>Tables:</span> <strong class="text-[#12372A]">${newRes.reservation.tableIds.join(', ')} (${newRes.pricing.tableCount} Table${newRes.pricing.tableCount > 1 ? 's' : ''})</strong></div>
+          <div class="flex justify-between"><span>Advance Required:</span> <strong class="text-[#12372A]">${formatPrice(newRes.pricing.advanceRequired)}</strong></div>
+          <div class="flex justify-between"><span>Payment Method:</span> <strong class="text-[#12372A] capitalize">${newRes.payment.method}</strong></div>
+          <div class="flex justify-between"><span>Transaction ID:</span> <span class="font-mono text-[#12372A]">${newRes.payment.transactionId}</span></div>
+        `;
+
+        successModal.classList.remove('hidden');
+        showToast('Table reservation submitted! Payment verification pending.');
+      });
+
+      modalCloseResetBtn.addEventListener('click', () => {
+        successModal.classList.add('hidden');
+        form.reset();
+        receiptClearBtn.click();
+        recalculate();
+      });
+
+      // Initial boot
+      populateTimeSlots();
+      recalculate();
+    </script>
+  </body>
+</html>

@@ -47,11 +47,12 @@
 
         <!-- Zone 2: Navigation Links with Elastic Underline Animation -->
         <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-[#1C1C1C]">
-          <a href="/index.html" class="nav-elastic-link whitespace-nowrap shrink-0">Home</a>
-          <a href="/menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
-          <a href="/deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
-          <a href="/about.html" class="nav-elastic-link whitespace-nowrap shrink-0">About</a>
-          <a href="/contact.html" class="nav-elastic-link whitespace-nowrap shrink-0">Contact</a>
+          <a href="./index.html" class="nav-elastic-link whitespace-nowrap shrink-0">Home</a>
+          <a href="./menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
+          <a href="./deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
+          <a href="./reserve.html" class="nav-elastic-link whitespace-nowrap shrink-0">Reserve Table</a>
+          <a href="./about.html" class="nav-elastic-link whitespace-nowrap shrink-0">About</a>
+          <a href="./contact.html" class="nav-elastic-link whitespace-nowrap shrink-0">Contact</a>
         </nav>
 
         <!-- Live Search Bar (Desktop) -->
@@ -123,12 +124,13 @@
       </div>
       <div class="auth-slot py-4 border-b border-[#E8E5DC]"></div>
       <nav class="flex flex-col gap-4 py-6 text-base font-medium">
-        <a href="/index.html" class="text-[#1C1C1C]">Home</a>
-        <a href="/menu.html" class="text-[#1C1C1C]">Menu</a>
-        <a href="/deals.html" class="text-[#1C1C1C]">Deals</a>
-        <a href="/about.html" class="text-[#1C1C1C]">About</a>
-        <a href="/contact.html" class="text-[#1C1C1C]">Contact</a>
-        <a href="/account.html" class="text-[#12372A] font-semibold">My Account & Orders</a>
+        <a href="./index.html" class="text-[#1C1C1C]">Home</a>
+        <a href="./menu.html" class="text-[#1C1C1C]">Menu</a>
+        <a href="./deals.html" class="text-[#1C1C1C]">Deals</a>
+        <a href="./reserve.html" class="text-[#1C1C1C]">Reserve a Table</a>
+        <a href="./about.html" class="text-[#1C1C1C]">About</a>
+        <a href="./contact.html" class="text-[#1C1C1C]">Contact</a>
+        <a href="./account.html" class="text-[#12372A] font-semibold">My Account & Bookings</a>
       </nav>
       <div class="mt-auto pt-6 border-t border-[#E8E5DC]">
         <a href="/menu.html" class="w-full flex items-center justify-center px-4 py-3 bg-[#12372A] text-white text-sm font-semibold rounded-lg shadow-sm">
@@ -206,6 +208,14 @@
     <script type="module">
       import { getCurrentUser, updateProfile, logout } from './js/auth.js';
       import { getUserOrders, getOrderById } from './js/orders.js';
+      import {
+        getUserReservations,
+        getReservationById,
+        cancelReservation,
+        resubmitPayment,
+        formatTime12h,
+        formatDurationLabel,
+      } from './js/reservations.js';
       import { formatPrice } from './js/products.js';
       import { showToast } from './js/ui.js';
 
@@ -214,11 +224,16 @@
       const modalContent = document.getElementById('modal-content');
       const modalClose = document.getElementById('modal-close-btn');
 
+      let activeTab = 'reservations'; // 'reservations' | 'orders' | 'profile'
+      let reservationFilter = 'all'; // 'all' | 'upcoming' | 'past' | 'cancelled'
+
       function renderAccount() {
         const user = getCurrentUser();
 
         if (!user) {
           const guestOrders = getUserOrders('guest');
+          const guestReservations = getUserReservations('guest');
+
           root.innerHTML = `
             <div class="bg-white rounded-2xl border border-[#E8E5DC] p-8 max-w-xl mx-auto text-center space-y-4">
               <div class="w-12 h-12 rounded-full bg-[#12372A]/10 text-[#12372A] flex items-center justify-center mx-auto">
@@ -228,22 +243,50 @@
               </div>
               <h2 class="text-2xl font-serif font-bold text-[#12372A]">Customer Account</h2>
               <p class="text-xs sm:text-sm text-[#6B6B6B]">
-                Log in to view saved delivery addresses and past orders, or place orders directly as a guest.
+                Log in to view saved delivery addresses, table reservations, and order history, or manage bookings placed in this browser.
               </p>
               <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
-                <a href="/login.html" class="px-6 py-2.5 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A]">
+                <a href="./login.html" class="px-6 py-2.5 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A]">
                   Log In
                 </a>
-                <a href="/signup.html" class="px-6 py-2.5 border border-[#E8E5DC] text-[#1C1C1C] text-xs font-semibold rounded-lg hover:bg-[#F8F6F0]">
+                <a href="./signup.html" class="px-6 py-2.5 border border-[#E8E5DC] text-[#1C1C1C] text-xs font-semibold rounded-lg hover:bg-[#F8F6F0]">
                   Create Account
                 </a>
+                <a href="./reserve.html" class="px-6 py-2.5 bg-[#D4A72C] text-[#12372A] text-xs font-bold rounded-lg hover:bg-yellow-400">
+                  Book a Table
+                </a>
               </div>
+
+              ${
+                guestReservations.length > 0
+                  ? `
+                <div class="pt-6 border-t border-[#E8E5DC] text-left">
+                  <h3 class="text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-3">Recent Table Reservations (This Device)</h3>
+                  <div class="space-y-2">
+                    ${guestReservations
+                      .map(
+                        (r) => `
+                      <div class="p-3.5 rounded-lg border border-[#E8E5DC] flex items-center justify-between text-xs bg-[#F8F6F0]">
+                        <div>
+                          <strong class="text-[#12372A]">Booking #${r.id} · ${r.reservation.date}</strong>
+                          <div class="text-[11px] text-[#6B6B6B] mt-0.5">${formatTime12h(r.reservation.startTime)} (${r.reservation.guests} Guests · ${r.reservation.tableIds.join(', ')})</div>
+                        </div>
+                        <button data-view-reservation="${r.id}" class="text-[#12372A] underline font-semibold">View Details</button>
+                      </div>
+                    `
+                      )
+                      .join('')}
+                  </div>
+                </div>
+              `
+                  : ''
+              }
 
               ${
                 guestOrders.length > 0
                   ? `
                 <div class="pt-6 border-t border-[#E8E5DC] text-left">
-                  <h3 class="text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-3">Recent Orders Placed in this Browser</h3>
+                  <h3 class="text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-3">Recent Food Orders (This Device)</h3>
                   <div class="space-y-2">
                     ${guestOrders
                       .map(
@@ -266,144 +309,338 @@
             </div>
           `;
           attachOrderViewListeners();
+          attachReservationViewListeners();
           return;
         }
 
         const orders = getUserOrders(user.id);
-        const activeOrder = orders.find((o) => o.status !== 'delivered' && o.status !== 'cancelled');
+        const reservations = getUserReservations(user.id);
+
+        const pendingResCount = reservations.filter(
+          (r) => r.payment.status === 'pending_verification' && r.status !== 'cancelled'
+        ).length;
+
+        // Categorize reservations
+        const todayStr = new Date().toISOString().split('T')[0];
+        const filteredReservations = reservations.filter((r) => {
+          if (reservationFilter === 'upcoming') {
+            return r.status !== 'cancelled' && r.reservation.date >= todayStr;
+          }
+          if (reservationFilter === 'past') {
+            return r.status !== 'cancelled' && r.reservation.date < todayStr;
+          }
+          if (reservationFilter === 'cancelled') {
+            return r.status === 'cancelled';
+          }
+          return true; // all
+        });
 
         root.innerHTML = `
-          <!-- Header greeting -->
+          <!-- Header Greeting & Actions -->
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E8E5DC]">
             <div>
-              <span class="text-xs font-semibold uppercase tracking-wider text-[#D4A72C]">Customer Account</span>
+              <span class="text-xs font-semibold uppercase tracking-wider text-[#D4A72C]">Customer Account Portal</span>
               <h1 class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] mt-1">Welcome back, ${user.name}</h1>
-              <p class="text-xs text-[#6B6B6B] mt-0.5">Manage your delivery profile and dining history.</p>
+              <p class="text-xs text-[#6B6B6B] mt-0.5">Manage your dine-in table reservations, food delivery orders, and saved addresses.</p>
             </div>
-            <button id="account-logout" class="self-start sm:self-auto text-xs px-4 py-2 border border-[#E8E5DC] text-[#1C1C1C] hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 rounded-lg transition-colors font-medium">
-              Log Out
+            <div class="flex items-center gap-3">
+              <a href="./reserve.html" class="px-4 py-2 bg-[#12372A] hover:bg-[#1F4D3A] text-white text-xs font-bold rounded-lg transition-colors shadow-xs">
+                + Book a Table
+              </a>
+              <button id="account-logout" class="text-xs px-3.5 py-2 border border-[#E8E5DC] text-[#1C1C1C] hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 rounded-lg transition-colors font-medium">
+                Log Out
+              </button>
+            </div>
+          </div>
+
+          <!-- Section Tabs Navigation -->
+          <div class="flex border-b border-[#E8E5DC] gap-6 text-sm font-semibold">
+            <button
+              class="account-tab-btn pb-3 relative transition-colors ${
+                activeTab === 'reservations'
+                  ? 'text-[#12372A] border-b-2 border-[#12372A]'
+                  : 'text-[#6B6B6B] hover:text-[#1C1C1C]'
+              }"
+              data-tab="reservations"
+            >
+              <span>My Table Reservations</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs rounded-full ${
+                pendingResCount > 0 ? 'bg-amber-100 text-amber-800 font-bold' : 'bg-neutral-100 text-[#6B6B6B]'
+              }">
+                ${reservations.length}
+              </span>
+            </button>
+
+            <button
+              class="account-tab-btn pb-3 relative transition-colors ${
+                activeTab === 'orders'
+                  ? 'text-[#12372A] border-b-2 border-[#12372A]'
+                  : 'text-[#6B6B6B] hover:text-[#1C1C1C]'
+              }"
+              data-tab="orders"
+            >
+              <span>Food Delivery Orders</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-neutral-100 text-[#6B6B6B]">
+                ${orders.length}
+              </span>
+            </button>
+
+            <button
+              class="account-tab-btn pb-3 relative transition-colors ${
+                activeTab === 'profile'
+                  ? 'text-[#12372A] border-b-2 border-[#12372A]'
+                  : 'text-[#6B6B6B] hover:text-[#1C1C1C]'
+              }"
+              data-tab="profile"
+            >
+              <span>Delivery Profile & Addresses</span>
             </button>
           </div>
 
-          <!-- Active Order Summary with Clean 30-40 min ETA (No complex cycle bar) -->
-          ${
-            activeOrder
-              ? `
-            <div class="bg-white rounded-2xl border-2 border-[#12372A]/20 p-6 sm:p-8 shadow-xs space-y-4">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <div class="inline-flex items-center gap-2 text-xs font-bold text-[#12372A] uppercase tracking-wider">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-ping"></span>
-                    <span>Active Food Order in Kitchen</span>
-                  </div>
-                  <h2 class="text-xl sm:text-2xl font-serif font-bold text-[#12372A] mt-1">
-                    Arriving in 30 – 40 Minutes
-                  </h2>
-                </div>
-                <div class="text-left sm:text-right">
-                  <div class="text-xs text-[#6B6B6B]">Payment Method</div>
-                  <div class="text-lg font-serif font-bold text-[#12372A] tabular-nums">${formatPrice(activeOrder.total)} (Cash on Delivery)</div>
-                </div>
+          <!-- TAB 1: Table Reservations Panel -->
+          <div id="tab-reservations" class="${activeTab === 'reservations' ? '' : 'hidden'} space-y-6">
+            
+            <!-- Filter Bar -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+              <div class="flex items-center gap-2 text-xs">
+                <span class="text-[#6B6B6B] font-medium">Filter:</span>
+                <button data-res-filter="all" class="px-3 py-1 rounded-full border text-xs font-semibold ${
+                  reservationFilter === 'all'
+                    ? 'bg-[#12372A] text-white border-[#12372A]'
+                    : 'bg-white text-[#1C1C1C] border-[#E8E5DC] hover:bg-[#F8F6F0]'
+                }">All (${reservations.length})</button>
+
+                <button data-res-filter="upcoming" class="px-3 py-1 rounded-full border text-xs font-semibold ${
+                  reservationFilter === 'upcoming'
+                    ? 'bg-[#12372A] text-white border-[#12372A]'
+                    : 'bg-white text-[#1C1C1C] border-[#E8E5DC] hover:bg-[#F8F6F0]'
+                }">Upcoming</button>
+
+                <button data-res-filter="past" class="px-3 py-1 rounded-full border text-xs font-semibold ${
+                  reservationFilter === 'past'
+                    ? 'bg-[#12372A] text-white border-[#12372A]'
+                    : 'bg-white text-[#1C1C1C] border-[#E8E5DC] hover:bg-[#F8F6F0]'
+                }">Past History</button>
+
+                <button data-res-filter="cancelled" class="px-3 py-1 rounded-full border text-xs font-semibold ${
+                  reservationFilter === 'cancelled'
+                    ? 'bg-[#12372A] text-white border-[#12372A]'
+                    : 'bg-white text-[#1C1C1C] border-[#E8E5DC] hover:bg-[#F8F6F0]'
+                }">Cancelled</button>
               </div>
 
-              <div class="p-4 bg-[#F8F6F0] rounded-xl border border-[#E8E5DC] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#1C1C1C]">
-                <div>
-                  <strong>Order items:</strong> ${activeOrder.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}
-                </div>
-                <button data-view-order="${activeOrder.id}" class="px-4 py-2 bg-[#12372A] text-white rounded-lg hover:bg-[#1F4D3A] font-semibold text-xs shrink-0">
-                  View Full Receipt
-                </button>
-              </div>
-            </div>
-          `
-              : `
-            <div class="bg-white rounded-xl border border-[#E8E5DC] p-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-              <div>
-                <h3 class="font-serif font-bold text-base text-[#12372A]">No Active Kitchen Orders</h3>
-                <p class="text-xs text-[#6B6B6B] mt-0.5">Explore our menu to place a delicious lunch or dinner order.</p>
-              </div>
-              <a href="/menu.html" class="px-5 py-2.5 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A]">
-                Browse Menu
+              <a href="./reserve.html" class="text-xs text-[#12372A] hover:underline font-semibold flex items-center gap-1">
+                <span>Reserve another table</span>
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               </a>
             </div>
-          `
-          }
 
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            <!-- Order History (7 cols) -->
-            <div class="lg:col-span-7 space-y-4">
-              <h2 class="text-xl font-serif font-bold text-[#12372A]">Order History</h2>
+            <!-- Reservations List -->
+            ${
+              filteredReservations.length === 0
+                ? `
+              <div class="p-10 bg-white rounded-2xl border border-[#E8E5DC] text-center space-y-3">
+                <div class="w-12 h-12 rounded-full bg-[#12372A]/10 text-[#12372A] flex items-center justify-center mx-auto">
+                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+                <h3 class="font-serif font-bold text-base text-[#12372A]">No reservations found</h3>
+                <p class="text-xs text-[#6B6B6B]">You don't have any table reservations matching this filter.</p>
+                <div class="pt-2">
+                  <a href="./reserve.html" class="px-5 py-2.5 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A] inline-block">
+                    Book a Table
+                  </a>
+                </div>
+              </div>
+            `
+                : `
+              <div class="space-y-4">
+                ${filteredReservations
+                  .map((r) => {
+                    const isCancelled = r.status === 'cancelled';
+                    const isRejected = r.payment.status === 'rejected';
+                    const isVerified = r.payment.status === 'verified';
+                    const isPending = r.payment.status === 'pending_verification' && !isCancelled;
 
-              ${
-                orders.length === 0
-                  ? `<div class="p-8 bg-white rounded-xl border border-[#E8E5DC] text-center text-xs text-[#6B6B6B]">You have not placed any orders yet.</div>`
-                  : `
-                <div class="space-y-3">
-                  ${orders
-                    .map(
-                      (o) => `
-                    <div class="bg-white rounded-xl border border-[#E8E5DC] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div>
-                        <div class="text-xs font-bold text-[#12372A]">
-                          ${new Date(o.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · Cash on Delivery
+                    let statusBadgeHtml = '';
+                    if (isCancelled) {
+                      statusBadgeHtml = `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-neutral-100 text-neutral-600 border border-neutral-300">Cancelled</span>`;
+                    } else if (isRejected) {
+                      statusBadgeHtml = `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-800 border border-rose-200">Payment Rejected</span>`;
+                    } else if (isVerified) {
+                      statusBadgeHtml = `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Confirmed</span>`;
+                    } else {
+                      statusBadgeHtml = `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Payment Under Review</span>`;
+                    }
+
+                    return `
+                    <div class="bg-white rounded-2xl border border-[#E8E5DC] p-5 sm:p-6 shadow-xs hover:shadow-md transition-shadow space-y-4">
+                      
+                      <!-- Header Meta -->
+                      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E8E5DC]">
+                        <div class="flex items-center gap-3">
+                          <span class="font-serif font-bold text-base text-[#12372A]">Booking #${r.id}</span>
+                          ${statusBadgeHtml}
                         </div>
-                        <div class="text-xs text-[#1C1C1C] mt-2 line-clamp-1">
-                          ${o.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}
+                        <div class="text-xs text-[#6B6B6B]">
+                          Created: ${new Date(r.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </div>
                       </div>
 
-                      <div class="flex items-center sm:flex-col sm:items-end justify-between border-t sm:border-t-0 pt-3 sm:pt-0 border-[#E8E5DC]">
-                        <div class="font-serif font-bold text-[#12372A] text-base tabular-nums">${formatPrice(o.total)}</div>
-                        <button data-view-order="${o.id}" class="text-xs text-[#12372A] hover:underline font-semibold mt-1">
-                          View Order
-                        </button>
+                      <!-- Details Grid -->
+                      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                        <div>
+                          <span class="text-[#6B6B6B] block">Reservation Date</span>
+                          <span class="font-bold text-[#12372A] text-sm">${r.reservation.date}</span>
+                        </div>
+                        <div>
+                          <span class="text-[#6B6B6B] block">Time & Duration</span>
+                          <span class="font-bold text-[#12372A] text-sm">${formatTime12h(r.reservation.startTime)} – ${formatTime12h(r.reservation.endTime)}</span>
+                          <span class="text-[11px] text-[#6B6B6B] block">${formatDurationLabel(r.reservation.durationMinutes)}</span>
+                        </div>
+                        <div>
+                          <span class="text-[#6B6B6B] block">Party Size & Tables</span>
+                          <span class="font-bold text-[#12372A] text-sm">${r.reservation.guests} Guests</span>
+                          <span class="text-[11px] text-[#6B6B6B] block">${r.reservation.tableIds.join(', ')} (${r.pricing.tableCount} Table${r.pricing.tableCount > 1 ? 's' : ''})</span>
+                        </div>
+                        <div>
+                          <span class="text-[#6B6B6B] block">Advance Required</span>
+                          <span class="font-serif font-bold text-[#12372A] text-base tabular-nums">${formatPrice(r.pricing.advanceRequired)}</span>
+                          <span class="text-[11px] text-[#6B6B6B] block capitalize">via ${r.payment.method} (${r.payment.status.replace('_', ' ')})</span>
+                        </div>
+                      </div>
+
+                      ${
+                        isRejected
+                          ? `
+                        <div class="p-3 bg-rose-50 rounded-xl border border-rose-200 text-xs text-rose-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div>
+                            <strong>Staff Rejection Reason:</strong> ${r.payment.rejectionReason || 'Transaction could not be verified in merchant records.'}
+                          </div>
+                          <button data-resubmit-payment="${r.id}" class="px-3.5 py-1.5 bg-rose-700 hover:bg-rose-800 text-white font-bold rounded-lg shrink-0">
+                            Re-submit Payment Proof
+                          </button>
+                        </div>
+                      `
+                          : ''
+                      }
+
+                      <!-- Actions -->
+                      <div class="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-[#E8E5DC]">
+                        <div class="text-[11px] text-[#6B6B6B]">
+                          Transaction ID: <span class="font-mono text-[#12372A] font-semibold">${r.payment.transactionId}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <button data-view-reservation="${r.id}" class="px-4 py-2 bg-[#12372A] text-white rounded-lg hover:bg-[#1F4D3A] text-xs font-semibold shadow-xs">
+                            View Full Details
+                          </button>
+                          ${
+                            !isCancelled && r.reservation.date >= todayStr
+                              ? `
+                            <button data-cancel-reservation="${r.id}" class="px-3 py-2 border border-[#E8E5DC] text-rose-700 hover:bg-rose-50 hover:border-rose-300 rounded-lg text-xs font-semibold">
+                              Cancel
+                            </button>
+                          `
+                              : ''
+                          }
+                        </div>
+                      </div>
+
+                    </div>
+                  `;
+                  })
+                  .join('')}
+              </div>
+            `
+            }
+          </div>
+
+          <!-- TAB 2: Food Orders Panel -->
+          <div id="tab-orders" class="${activeTab === 'orders' ? '' : 'hidden'} space-y-4">
+            ${
+              orders.length === 0
+                ? `<div class="p-8 bg-white rounded-xl border border-[#E8E5DC] text-center text-xs text-[#6B6B6B]">You have not placed any food delivery orders yet.</div>`
+                : `
+              <div class="space-y-3">
+                ${orders
+                  .map(
+                    (o) => `
+                  <div class="bg-white rounded-xl border border-[#E8E5DC] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <div class="text-xs font-bold text-[#12372A]">
+                        ${new Date(o.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · Cash on Delivery
+                      </div>
+                      <div class="text-xs text-[#1C1C1C] mt-2 line-clamp-1">
+                        ${o.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}
                       </div>
                     </div>
-                  `
-                    )
-                    .join('')}
-                </div>
-              `
-              }
-            </div>
 
-            <!-- Customer Profile (5 cols) -->
-            <div class="lg:col-span-5">
-              <div class="bg-white rounded-2xl border border-[#E8E5DC] p-6 shadow-xs space-y-5">
-                <h2 class="text-xl font-serif font-bold text-[#12372A]">Delivery Profile</h2>
-                <form id="profile-form" class="space-y-4 text-xs">
-                  <div>
-                    <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Full Name</label>
-                    <input type="text" id="prof-name" value="${user.name}" class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
+                    <div class="flex items-center sm:flex-col sm:items-end justify-between border-t sm:border-t-0 pt-3 sm:pt-0 border-[#E8E5DC]">
+                      <div class="font-serif font-bold text-[#12372A] text-base tabular-nums">${formatPrice(o.total)}</div>
+                      <button data-view-order="${o.id}" class="text-xs text-[#12372A] hover:underline font-semibold mt-1">
+                        View Order
+                      </button>
+                    </div>
                   </div>
-                  <div>
-                    <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Phone Number</label>
-                    <input type="tel" id="prof-phone" value="${user.phone}" class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
-                  </div>
-                  <div>
-                    <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Email</label>
-                    <input type="email" id="prof-email" value="${user.email}" disabled class="w-full p-2.5 rounded-lg border border-[#E8E5DC] bg-neutral-100 text-[#6B6B6B]" />
-                  </div>
-                  <div>
-                    <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Default Address</label>
-                    <input type="text" id="prof-address" value="${user.address || ''}" placeholder="House, Street, Block" class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
-                  </div>
-                  <div>
-                    <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Area / Sector</label>
-                    <input type="text" id="prof-area" value="${user.area || ''}" placeholder="Gulberg III, DHA, etc." class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
-                  </div>
-                  <div>
-                    <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Landmark</label>
-                    <input type="text" id="prof-landmark" value="${user.landmark || ''}" placeholder="Nearby market, mosque, park" class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
-                  </div>
-                  <button type="submit" class="w-full py-2.5 bg-[#12372A] text-white font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors mt-2">
-                    Save Profile Changes
-                  </button>
-                </form>
+                `
+                  )
+                  .join('')}
               </div>
+            `
+            }
+          </div>
+
+          <!-- TAB 3: Delivery Profile Panel -->
+          <div id="tab-profile" class="${activeTab === 'profile' ? '' : 'hidden'}">
+            <div class="bg-white rounded-2xl border border-[#E8E5DC] p-6 max-w-xl space-y-5">
+              <h2 class="text-xl font-serif font-bold text-[#12372A]">Saved Delivery Profile</h2>
+              <form id="profile-form" class="space-y-4 text-xs">
+                <div>
+                  <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Full Name</label>
+                  <input type="text" id="prof-name" value="${user.name}" class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
+                </div>
+                <div>
+                  <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Phone Number</label>
+                  <input type="tel" id="prof-phone" value="${user.phone}" class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
+                </div>
+                <div>
+                  <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Email</label>
+                  <input type="email" id="prof-email" value="${user.email}" disabled class="w-full p-2.5 rounded-lg border border-[#E8E5DC] bg-neutral-100 text-[#6B6B6B]" />
+                </div>
+                <div>
+                  <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Default Address</label>
+                  <input type="text" id="prof-address" value="${user.address || ''}" placeholder="House, Street, Block" class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
+                </div>
+                <div>
+                  <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Area / Sector</label>
+                  <input type="text" id="prof-area" value="${user.area || ''}" placeholder="Gulberg III, DHA, etc." class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
+                </div>
+                <div>
+                  <label class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">Landmark</label>
+                  <input type="text" id="prof-landmark" value="${user.landmark || ''}" placeholder="Nearby market, mosque, park" class="w-full p-2.5 rounded-lg border border-[#E8E5DC] focus:border-[#12372A] focus:outline-hidden" />
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-[#12372A] text-white font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors mt-2">
+                  Save Profile Changes
+                </button>
+              </form>
             </div>
           </div>
         `;
+
+        // Tab Switching
+        root.querySelectorAll('.account-tab-btn').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            activeTab = e.currentTarget.getAttribute('data-tab');
+            renderAccount();
+          });
+        });
+
+        // Filter Switching
+        root.querySelectorAll('[data-res-filter]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            reservationFilter = e.currentTarget.getAttribute('data-res-filter');
+            renderAccount();
+          });
+        });
 
         // Profile update
         const profileForm = document.getElementById('profile-form');
@@ -433,6 +670,7 @@
         }
 
         attachOrderViewListeners();
+        attachReservationViewListeners();
       }
 
       function attachOrderViewListeners() {
@@ -440,11 +678,215 @@
           btn.addEventListener('click', (e) => {
             const id = e.currentTarget.getAttribute('data-view-order');
             const order = getOrderById(id);
-            if (order) {
-              openOrderModal(order);
+            if (order) openOrderModal(order);
+          });
+        });
+      }
+
+      function attachReservationViewListeners() {
+        // View Details Modal
+        document.querySelectorAll('[data-view-reservation]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            const id = e.currentTarget.getAttribute('data-view-reservation');
+            const res = getReservationById(id);
+            if (res) openReservationModal(res);
+          });
+        });
+
+        // Cancel Reservation
+        document.querySelectorAll('[data-cancel-reservation]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            const id = e.currentTarget.getAttribute('data-cancel-reservation');
+            if (confirm(`Are you sure you want to cancel booking #${id}?`)) {
+              cancelReservation(id, 'Cancelled via customer account');
+              showToast(`Reservation #${id} has been cancelled.`);
+              renderAccount();
             }
           });
         });
+
+        // Re-submit Payment
+        document.querySelectorAll('[data-resubmit-payment]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            const id = e.currentTarget.getAttribute('data-resubmit-payment');
+            const res = getReservationById(id);
+            if (res) openResubmitPaymentModal(res);
+          });
+        });
+      }
+
+      function openReservationModal(res) {
+        modalContent.innerHTML = `
+          <div class="space-y-5">
+            <div class="flex items-center justify-between pb-3 border-b border-[#E8E5DC]">
+              <div>
+                <span class="text-xs uppercase font-semibold text-[#D4A72C]">Dine-In Table Reservation</span>
+                <h3 class="text-2xl font-serif font-bold text-[#12372A] mt-0.5">Booking #${res.id}</h3>
+              </div>
+              <div>
+                ${
+                  res.payment.status === 'verified'
+                    ? '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">Confirmed</span>'
+                    : res.status === 'cancelled'
+                    ? '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-neutral-100 text-neutral-600 border border-neutral-300">Cancelled</span>'
+                    : '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">Payment Under Review</span>'
+                }
+              </div>
+            </div>
+
+            <!-- Timing & Guest Specs -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs p-4 bg-[#F8F6F0] rounded-xl border border-[#E8E5DC]">
+              <div>
+                <span class="text-[#6B6B6B] block">Date</span>
+                <strong class="text-[#12372A] text-sm">${res.reservation.date}</strong>
+              </div>
+              <div>
+                <span class="text-[#6B6B6B] block">Time Slot</span>
+                <strong class="text-[#12372A] text-sm">${formatTime12h(res.reservation.startTime)} – ${formatTime12h(res.reservation.endTime)}</strong>
+              </div>
+              <div>
+                <span class="text-[#6B6B6B] block">Duration</span>
+                <strong class="text-[#12372A] text-sm">${formatDurationLabel(res.reservation.durationMinutes)}</strong>
+              </div>
+              <div>
+                <span class="text-[#6B6B6B] block">Party Size</span>
+                <strong class="text-[#12372A] text-sm">${res.reservation.guests} Guests</strong>
+              </div>
+              <div>
+                <span class="text-[#6B6B6B] block">Assigned Tables</span>
+                <strong class="text-[#12372A] text-sm">${res.reservation.tableIds.join(', ')} (${res.pricing.tableCount} table${res.pricing.tableCount > 1 ? 's' : ''})</strong>
+              </div>
+              <div>
+                <span class="text-[#6B6B6B] block">Section</span>
+                <strong class="text-[#12372A] text-sm">${res.reservation.sectionId}</strong>
+              </div>
+            </div>
+
+            <!-- Authoritative Pricing Calculation (Strictly Read-Only) -->
+            <div class="border-t border-b border-[#E8E5DC] py-4 space-y-2 text-xs">
+              <h4 class="font-bold text-[#12372A] uppercase tracking-wider text-[11px]">System Price Calculation (Read-Only)</h4>
+              <div class="flex justify-between text-[#6B6B6B]">
+                <span>Rate per 30 minutes</span>
+                <span>PKR ${res.pricing.ratePerTablePerUnit} / table</span>
+              </div>
+              <div class="flex justify-between text-[#6B6B6B]">
+                <span>Number of Reserved Tables</span>
+                <span>${res.pricing.tableCount} Table${res.pricing.tableCount > 1 ? 's' : ''}</span>
+              </div>
+              <div class="flex justify-between text-[#6B6B6B]">
+                <span>30-minute Billing Units</span>
+                <span>${res.pricing.billingUnits} units (${formatDurationLabel(res.reservation.durationMinutes)})</span>
+              </div>
+              <div class="flex justify-between text-sm font-bold text-[#12372A] pt-1 border-t border-[#E8E5DC]">
+                <span>Total Advance Paid</span>
+                <span class="tabular-nums font-serif text-base">${formatPrice(res.pricing.advanceRequired)}</span>
+              </div>
+            </div>
+
+            <!-- Payment Evidence Details -->
+            <div class="text-xs space-y-2">
+              <h4 class="font-bold text-[#12372A] uppercase tracking-wider text-[11px]">Payment Submission Evidence</h4>
+              <div class="flex justify-between"><span>Payment Method:</span> <strong class="capitalize text-[#12372A]">${res.payment.method}</strong></div>
+              <div class="flex justify-between"><span>Transaction ID / Ref:</span> <span class="font-mono text-[#12372A] font-semibold">${res.payment.transactionId}</span></div>
+              <div class="flex justify-between"><span>Sender Name:</span> <span>${res.payment.customerName}</span></div>
+              <div class="flex justify-between"><span>Sender Phone:</span> <span>${res.payment.customerPhone}</span></div>
+              <div class="flex justify-between"><span>Verification Status:</span> <strong class="capitalize">${res.payment.status.replace('_', ' ')}</strong></div>
+              
+              ${
+                res.payment.receiptImage
+                  ? `
+                <div class="pt-2">
+                  <span class="block text-[#6B6B6B] mb-1 font-semibold">Payment Receipt Screenshot:</span>
+                  <div class="max-h-48 rounded-lg overflow-hidden border border-[#E8E5DC] bg-neutral-100 flex items-center justify-center">
+                    <img src="${res.payment.receiptImage}" alt="Receipt" class="max-h-48 object-contain cursor-pointer" onclick="window.open('${res.payment.receiptImage}', '_blank')" />
+                  </div>
+                  <span class="text-[10px] text-[#6B6B6B] mt-0.5 block">Tap to open full-size image</span>
+                </div>
+              `
+                  : ''
+              }
+            </div>
+
+            ${
+              res.specialOccasion || res.specialRequests
+                ? `
+              <div class="p-3 bg-neutral-50 rounded-lg text-xs space-y-1">
+                ${res.specialOccasion ? `<div><strong>Occasion:</strong> ${res.specialOccasion}</div>` : ''}
+                ${res.specialRequests ? `<div><strong>Requests:</strong> ${res.specialRequests}</div>` : ''}
+              </div>
+            `
+                : ''
+            }
+          </div>
+        `;
+        modal.classList.remove('hidden');
+      }
+
+      function openResubmitPaymentModal(res) {
+        modalContent.innerHTML = `
+          <div class="space-y-4 text-xs">
+            <h3 class="text-xl font-serif font-bold text-[#12372A]">Re-submit Payment Proof</h3>
+            <p class="text-[#6B6B6B]">Please provide updated transaction reference and screenshot for Booking #${res.id}.</p>
+            
+            <form id="resubmit-form" class="space-y-3">
+              <div>
+                <label class="block font-semibold mb-1">Payment Method</label>
+                <select id="resub-method" class="w-full p-2.5 rounded-lg border border-[#E8E5DC]">
+                  <option value="jazzcash" ${res.payment.method === 'jazzcash' ? 'selected' : ''}>JazzCash</option>
+                  <option value="easypaisa" ${res.payment.method === 'easypaisa' ? 'selected' : ''}>EasyPaisa</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-semibold mb-1">Transaction ID / Reference *</label>
+                <input type="text" id="resub-txnid" required value="${res.payment.transactionId}" class="w-full p-2.5 rounded-lg border border-[#E8E5DC]" />
+              </div>
+              <div>
+                <label class="block font-semibold mb-1">Upload New Receipt Screenshot *</label>
+                <input type="file" id="resub-file" accept="image/*" class="w-full text-xs" />
+              </div>
+              <button type="submit" class="w-full py-2.5 bg-[#12372A] text-white font-bold rounded-lg hover:bg-[#1F4D3A] transition-colors mt-2">
+                Submit for Verification
+              </button>
+            </form>
+          </div>
+        `;
+
+        const resubForm = document.getElementById('resubmit-form');
+        const resubFile = document.getElementById('resub-file');
+        let newReceiptBase64 = res.payment.receiptImage;
+
+        if (resubFile) {
+          resubFile.onchange = (e) => {
+            const f = e.target.files[0];
+            if (f) {
+              const r = new FileReader();
+              r.onload = (evt) => {
+                newReceiptBase64 = evt.target.result;
+              };
+              r.readAsDataURL(f);
+            }
+          };
+        }
+
+        resubForm.onsubmit = (e) => {
+          e.preventDefault();
+          const method = document.getElementById('resub-method').value;
+          const tid = document.getElementById('resub-txnid').value.trim();
+
+          resubmitPayment(res.id, {
+            method,
+            transactionId: tid,
+            customerName: res.customer.name,
+            customerPhone: res.customer.phone,
+            receiptImage: newReceiptBase64,
+          });
+
+          showToast('Payment resubmitted! Pending staff review.');
+          modal.classList.add('hidden');
+          renderAccount();
+        };
+
+        modal.classList.remove('hidden');
       }
 
       function openOrderModal(order) {
@@ -456,7 +898,6 @@
               Placed on ${new Date(order.date).toLocaleString()} · Cash on Delivery
             </div>
 
-            <!-- Itemized List -->
             <div class="mt-6 border-t border-b border-[#E8E5DC] py-4 space-y-3">
               ${order.items
                 .map(
@@ -474,11 +915,6 @@
                         ? `<div class="text-[11px] text-[#6B6B6B]">Add-ons: ${item.addOns.map((a) => a.name).join(', ')}</div>`
                         : ''
                     }
-                    ${
-                      item.specialInstructions
-                        ? `<div class="text-[11px] text-[#12372A] italic">"${item.specialInstructions}"</div>`
-                        : ''
-                    }
                   </div>
                   <div class="font-semibold text-[#12372A] tabular-nums">
                     ${formatPrice(item.totalPrice)}
@@ -489,7 +925,6 @@
                 .join('')}
             </div>
 
-            <!-- Financials -->
             <div class="py-4 space-y-2 text-xs border-b border-[#E8E5DC]">
               <div class="flex justify-between text-[#6B6B6B]">
                 <span>Subtotal</span>
@@ -507,13 +942,10 @@
               </div>
             </div>
 
-            <!-- Delivery & Payment Meta -->
             <div class="pt-4 text-xs space-y-1.5 text-[#6B6B6B]">
               <div>Recipient: <strong class="text-[#1C1C1C]">${order.customer.name}</strong> (${order.customer.phone})</div>
               <div>Address: <strong class="text-[#1C1C1C]">${order.customer.address}, ${order.customer.area}</strong></div>
-              ${order.customer.landmark ? `<div>Landmark: <span class="text-[#1C1C1C]">${order.customer.landmark}</span></div>` : ''}
               <div>Payment: <strong class="text-[#12372A]">Cash on Delivery</strong></div>
-              ${order.notes ? `<div>Instructions: <em class="text-[#1C1C1C]">"${order.notes}"</em></div>` : ''}
             </div>
           </div>
         `;
@@ -531,6 +963,10 @@
           modal.classList.add('hidden');
         }
       };
+
+      // Listen to external reservation changes
+      window.addEventListener('crust:reservation-created', renderAccount);
+      window.addEventListener('crust:reservation-updated', renderAccount);
 
       renderAccount();
     </script>

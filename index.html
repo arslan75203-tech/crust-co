@@ -54,11 +54,12 @@
 
         <!-- Zone 2: Navigation Links with Elastic Underline Animation -->
         <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-[#1C1C1C]">
-          <a href="/index.html" class="nav-elastic-link active-nav whitespace-nowrap shrink-0">Home</a>
-          <a href="/menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
-          <a href="/deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
-          <a href="/about.html" class="nav-elastic-link whitespace-nowrap shrink-0">About</a>
-          <a href="/contact.html" class="nav-elastic-link whitespace-nowrap shrink-0">Contact</a>
+          <a href="./index.html" class="nav-elastic-link active-nav whitespace-nowrap shrink-0">Home</a>
+          <a href="./menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
+          <a href="./deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
+          <a href="./reserve.html" class="nav-elastic-link whitespace-nowrap shrink-0 text-[#12372A] font-medium">Reserve Table</a>
+          <a href="./about.html" class="nav-elastic-link whitespace-nowrap shrink-0">About</a>
+          <a href="./contact.html" class="nav-elastic-link whitespace-nowrap shrink-0">Contact</a>
         </nav>
 
         <!-- Live Search Bar (Desktop) -->
@@ -139,12 +140,16 @@
       <div class="auth-slot py-4 border-b border-[#E8E5DC]"></div>
 
       <nav class="flex flex-col gap-4 py-6 text-base font-medium">
-        <a href="/index.html" class="text-[#12372A] font-semibold">Home</a>
-        <a href="/menu.html" class="text-[#1C1C1C] hover:text-[#12372A]">Menu</a>
-        <a href="/deals.html" class="text-[#1C1C1C] hover:text-[#12372A]">Deals</a>
-        <a href="/about.html" class="text-[#1C1C1C] hover:text-[#12372A]">About</a>
-        <a href="/contact.html" class="text-[#1C1C1C] hover:text-[#12372A]">Contact</a>
-        <a href="/account.html" class="text-[#1C1C1C] hover:text-[#12372A]">My Account & Orders</a>
+        <a href="./index.html" class="text-[#12372A] font-semibold">Home</a>
+        <a href="./menu.html" class="text-[#1C1C1C] hover:text-[#12372A]">Menu</a>
+        <a href="./deals.html" class="text-[#1C1C1C] hover:text-[#12372A]">Deals</a>
+        <a href="./reserve.html" class="text-[#12372A] font-medium flex items-center justify-between">
+          <span>Reserve a Table</span>
+          <span class="text-[10px] bg-[#D4A72C] text-[#12372A] px-2 py-0.5 rounded font-bold">New</span>
+        </a>
+        <a href="./about.html" class="text-[#1C1C1C] hover:text-[#12372A]">About</a>
+        <a href="./contact.html" class="text-[#1C1C1C] hover:text-[#12372A]">Contact</a>
+        <a href="./account.html" class="text-[#1C1C1C] hover:text-[#12372A]">My Account & Orders</a>
       </nav>
 
       <div class="mt-auto pt-6 border-t border-[#E8E5DC]">
@@ -161,7 +166,7 @@
       <section class="relative min-h-[580px] lg:min-h-[660px] flex items-center justify-center text-white overflow-hidden">
         <!-- Whole Background Image -->
         <img
-          src="/assets/images/hero_crust_co_spread_1792406742006.jpg"
+          src="./images/hero-spread.jpg"
           alt="Crust & Co spread"
           class="absolute inset-0 w-full h-full object-cover scale-102 filter brightness-95"
           referrerpolicy="no-referrer"
@@ -232,6 +237,145 @@
 
         <div id="featured-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <!-- Populated by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Reserve Your Table Section (Promoted Table Booking) -->
+      <section class="py-16 sm:py-20 bg-white border-y border-[#E8E5DC] relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            
+            <!-- Left Narrative & Details -->
+            <div class="lg:col-span-6 space-y-5">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#12372A]/10 text-[#12372A] text-xs font-semibold uppercase tracking-wider">
+                <span class="w-2 h-2 rounded-full bg-[#D4A72C]"></span>
+                <span>Dine-In Table Reservation</span>
+              </div>
+
+              <h2 class="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#12372A] tracking-tight leading-tight">
+                Reserve Your Table
+              </h2>
+
+              <p class="text-sm sm:text-base text-[#6B6B6B] leading-relaxed">
+                Planning a meal with family or friends? Reserve your table in advance. Choose your date, time, party size and duration — we’ll automatically arrange the ideal seating for your group.
+              </p>
+
+              <!-- Payment & Pricing Transparency Callout -->
+              <div class="p-4 rounded-xl bg-[#F8F6F0] border border-[#E8E5DC] space-y-2 text-xs">
+                <div class="flex items-center gap-2 font-bold text-[#12372A]">
+                  <svg class="w-4 h-4 text-[#D4A72C]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                  <span>Pay advance securely via JazzCash or EasyPaisa</span>
+                </div>
+                <p class="text-[#6B6B6B] leading-normal">
+                  Starting from <strong class="text-[#12372A]">PKR 50 / 30 minutes per table*</strong>. Standard 4-seater tables across our <strong>Family Hall</strong> & <strong>Open Dining</strong> sections with real-time floor availability check.
+                </p>
+                <span class="text-[10px] text-[#6B6B6B]/80 block italic">*Final reservation amount depends on the number of tables (PKR 50 per table for each 30-min unit).</span>
+              </div>
+
+              <div class="pt-2 flex flex-wrap items-center gap-4">
+                <a
+                  href="./reserve.html"
+                  class="px-7 py-3.5 bg-[#12372A] hover:bg-[#1F4D3A] text-white text-xs sm:text-sm font-bold rounded-lg transition-all shadow-md hover:shadow-lg active:scale-98 inline-flex items-center gap-2"
+                >
+                  <span>Book a Table Now</span>
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+                <span class="text-xs text-[#6B6B6B]">Family & Open Dining · Live Floor Status</span>
+              </div>
+            </div>
+
+            <!-- Right Interactive Quick Reservation Card -->
+            <div class="lg:col-span-6">
+              <div class="p-6 sm:p-8 bg-[#F8F6F0] rounded-2xl border border-[#E8E5DC] shadow-sm space-y-5">
+                <div class="flex items-center justify-between pb-3 border-b border-[#E8E5DC]">
+                  <div>
+                    <h3 class="font-serif font-bold text-lg text-[#12372A]">Quick Table Finder</h3>
+                    <p class="text-[11px] text-[#6B6B6B]">Check available slots for your preferred date & section</p>
+                  </div>
+                  <span id="home-badge-rate" class="text-xs font-bold text-[#D4A72C] bg-[#12372A] px-2.5 py-1 rounded-md">PKR 50 / table / 30m</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label for="home-res-date" class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">
+                      Date
+                    </label>
+                    <input
+                      type="date"
+                      id="home-res-date"
+                      class="w-full p-2.5 rounded-lg border border-[#E8E5DC] bg-white font-medium focus:outline-hidden focus:border-[#12372A]"
+                    />
+                  </div>
+
+                  <div>
+                    <label for="home-res-guests" class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">
+                      Party Size (4 Seats / Table)
+                    </label>
+                    <select
+                      id="home-res-guests"
+                      class="w-full p-2.5 rounded-lg border border-[#E8E5DC] bg-white font-medium focus:outline-hidden focus:border-[#12372A]"
+                    >
+                      <option value="2">2 Guests (1 Table · 4 Seats)</option>
+                      <option value="4">4 Guests (1 Table · 4 Seats)</option>
+                      <option value="5" selected>5 Guests (2 Tables · 8 Seats)</option>
+                      <option value="8">8 Guests (2 Tables · 8 Seats)</option>
+                      <option value="12">12 Guests (3 Tables · 12 Seats)</option>
+                      <option value="16">16 Guests (4 Tables · 16 Seats)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label for="home-res-time" class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">
+                      Preferred Time
+                    </label>
+                    <select
+                      id="home-res-time"
+                      class="w-full p-2.5 rounded-lg border border-[#E8E5DC] bg-white font-medium focus:outline-hidden focus:border-[#12372A]"
+                    >
+                      <option value="13:00">1:00 PM (Lunch)</option>
+                      <option value="19:00" selected>7:00 PM (Dinner)</option>
+                      <option value="20:00">8:00 PM (Dinner)</option>
+                      <option value="21:00">9:00 PM (Dinner)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label for="home-res-tables" class="block font-semibold uppercase tracking-wider text-[#12372A] mb-1">
+                      Tables to Reserve
+                    </label>
+                    <select
+                      id="home-res-tables"
+                      class="w-full p-2.5 rounded-lg border border-[#E8E5DC] bg-white font-medium focus:outline-hidden focus:border-[#12372A]"
+                    >
+                      <option value="1">1 Table (4 Seats · PKR 50 / 30m)</option>
+                      <option value="2" selected>2 Tables (8 Seats · PKR 100 / 30m)</option>
+                      <option value="3">3 Tables (12 Seats · PKR 150 / 30m)</option>
+                      <option value="4">4 Tables (16 Seats · PKR 200 / 30m)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Live Per-Table Price Calculation Callout -->
+                <div class="p-3 bg-white rounded-lg border border-[#E8E5DC] flex items-center justify-between text-xs">
+                  <span class="text-[#6B6B6B]">Advance Rate per 30 min:</span>
+                  <span id="home-price-badge" class="font-bold text-[#12372A] bg-amber-50 px-2.5 py-1 rounded border border-amber-200">
+                    2 Tables = PKR 100 / 30m
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  id="home-find-table-btn"
+                  class="w-full py-3 bg-[#D4A72C] hover:bg-yellow-400 text-[#12372A] font-bold text-xs sm:text-sm rounded-lg transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Check Table Availability & Reserve →</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
         </div>
       </section>
 
@@ -568,6 +712,55 @@
             reviewsSlider.scrollBy({ left: 340, behavior: 'smooth' });
           };
         }
+      }
+
+      // 4. Quick Table Reservation Form on Home
+      const homeDateInput = document.getElementById('home-res-date');
+      const homeGuestsInput = document.getElementById('home-res-guests');
+      const homeTimeInput = document.getElementById('home-res-time');
+      const homeTablesInput = document.getElementById('home-res-tables');
+      const homePriceBadge = document.getElementById('home-price-badge');
+      const homeFindBtn = document.getElementById('home-find-table-btn');
+
+      function updateHomePrice() {
+        if (!homeTablesInput || !homePriceBadge) return;
+        const tables = Number(homeTablesInput.value) || 1;
+        const rate = 50;
+        const per30m = tables * rate;
+        homePriceBadge.textContent = `${tables} Table${tables > 1 ? 's' : ''} = PKR ${per30m} / 30m`;
+      }
+
+      if (homeTablesInput) {
+        homeTablesInput.addEventListener('change', updateHomePrice);
+      }
+
+      if (homeGuestsInput) {
+        homeGuestsInput.addEventListener('change', () => {
+          const g = Number(homeGuestsInput.value);
+          if (homeTablesInput) {
+            if (g > 8) homeTablesInput.value = '3';
+            else if (g > 4) homeTablesInput.value = '2';
+            else homeTablesInput.value = '1';
+            updateHomePrice();
+          }
+        });
+      }
+
+      if (homeDateInput) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        homeDateInput.value = tomorrow.toISOString().split('T')[0];
+        homeDateInput.min = new Date().toISOString().split('T')[0];
+      }
+
+      if (homeFindBtn) {
+        homeFindBtn.addEventListener('click', () => {
+          const d = homeDateInput ? homeDateInput.value : '';
+          const g = homeGuestsInput ? homeGuestsInput.value : '4';
+          const t = homeTimeInput ? homeTimeInput.value : '19:00';
+          const tbl = homeTablesInput ? homeTablesInput.value : '1';
+          window.location.href = `./reserve.html?date=${encodeURIComponent(d)}&guests=${encodeURIComponent(g)}&time=${encodeURIComponent(t)}&tables=${encodeURIComponent(tbl)}`;
+        });
       }
     </script>
   </body>

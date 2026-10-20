@@ -1,0 +1,2749 @@
+You are working on the existing **Crust & Co restaurant website/frontend project**.
+
+I need you to implement/fix the **complete customer table reservation module**, not just create a reservation form.
+
+Before changing anything, inspect the existing project structure, existing table-booking page, customer account/user panel, authentication, localStorage/data services, navigation, control-panel/admin structures, and existing styling.
+
+Do not redesign or rebuild unrelated parts of the website.
+
+The goal is to create a **realistic, backend-compatible restaurant table reservation system** that works now on the frontend/mock data layer but is structured correctly so it can later connect to the restaurant's PHP/MySQL + POS backend without rewriting the module.
+
+---
+
+# 1. CORE CONCEPT
+
+This is a **paid table reservation system**.
+
+The customer:
+
+1. Selects reservation date
+2. Selects start time
+3. Selects reservation duration
+4. Selects number of guests
+5. System determines how many tables are required
+6. System finds available table combinations
+7. Customer selects/accepts available table arrangement
+8. System calculates reservation price automatically
+9. Customer selects JazzCash or EasyPaisa
+10. Customer submits transaction/reference information
+11. Customer uploads payment receipt
+12. Reservation enters payment verification
+13. Control-panel staff verifies/rejects payment
+14. Only after successful verification does the reservation become confirmed
+
+The customer must NEVER manually enter the reservation price.
+
+---
+
+# 2. EXISTING WEBSITE MUST BE PRESERVED
+
+Do NOT:
+
+- redesign the website
+- replace the existing design
+- create a second navigation
+- create a second authentication system
+- create a duplicate My Account system
+- create a separate unrelated booking page
+- create fake/static admin data
+- create an independent reservation system beside the existing one
+
+Instead:
+
+- inspect the current implementation
+- reuse existing components
+- reuse existing auth
+- reuse existing customer profile
+- reuse existing localStorage/data-service patterns where appropriate
+- integrate the reservation system into the existing website
+
+The existing frontend is already designed.
+
+Make the booking functionality fit the existing visual system.
+
+---
+
+# 3. HOME PAGE MUST CLEARLY PROMOTE TABLE RESERVATION
+
+The Home page must have a clearly visible **Book a Table / Reserve a Table** section.
+
+This should not be hidden inside the account page.
+
+Add an attractive section that fits the existing homepage design.
+
+Conceptually:
+
+```text
+Reserve Your Table
+
+Planning a meal with family or friends?
+Reserve your table in advance.
+
+[ Book a Table ]
+```
+
+The CTA must open the actual working reservation flow.
+
+Do not create a dead/static button.
+
+The homepage should also make it clear that table reservation requires advance payment.
+
+For example:
+
+```text
+Reserve your table
+Pay the reservation advance securely via JazzCash or EasyPaisa.
+```
+
+Use the existing design language rather than inventing a completely new visual style.
+
+---
+
+# 4. RESTAURANT BUSINESS HOURS
+
+Table reservations must respect restaurant opening/closing hours.
+
+Create a configurable business-hours structure.
+
+Example:
+
+```js
+restaurantHours: {
+    timezone: "Asia/Karachi",
+
+    monday: {
+        open: "11:00",
+        close: "23:00"
+    },
+
+    tuesday: {
+        open: "11:00",
+        close: "23:00"
+    }
+}
+```
+
+Do not assume these example hours are the actual restaurant hours.
+
+They are configuration examples only.
+
+The real values must eventually come from backend/control-panel settings.
+
+---
+
+# 5. BOOKING AVAILABILITY MUST RESPECT OPENING HOURS
+
+The website must not allow a customer to submit a reservation outside the configured booking hours.
+
+Example:
+
+Restaurant opens at:
+
+```text
+11:00 AM
+```
+
+At:
+
+```text
+9:00 AM
+```
+
+the customer must NOT be able to place a website reservation.
+
+Show something like:
+
+```text
+Table reservations are currently closed.
+
+Reservations open at 11:00 AM.
+```
+
+The customer should not be able to bypass this simply by manipulating frontend controls.
+
+The eventual backend must enforce the same rule server-side.
+
+---
+
+# 6. FUTURE RESERVATIONS
+
+Do not incorrectly assume that customers can only reserve immediately.
+
+The system should support future dates/times.
+
+For example, if today is Monday and the restaurant is currently open:
+
+```text
+Customer can reserve:
+
+Tuesday 7:00 PM
+Wednesday 8:00 PM
+Saturday 6:30 PM
+```
+
+The system checks the selected date's restaurant hours and table availability.
+
+The exact advance-booking window should be configurable later.
+
+Example:
+
+```js
+bookingSettings: {
+    minimumAdvanceMinutes: 0,
+    maximumAdvanceDays: 30
+}
+```
+
+Do not hard-code these values as permanent business rules.
+
+---
+
+# 7. IMPORTANT: START TIME + DURATION
+
+The current implementation incorrectly has only a start-time field.
+
+That is not sufficient.
+
+The customer must select:
+
+```text
+Date
+Start Time
+Duration
+```
+
+Example:
+
+```text
+Date:
+24 October 2026
+
+Start Time:
+7:00 PM
+
+Duration:
+2 Hours
+```
+
+The system automatically calculates:
+
+```text
+End Time:
+9:00 PM
+```
+
+The customer does NOT manually enter the end time.
+
+---
+
+# 8. DURATION MUST USE 30-MINUTE INCREMENTS
+
+Because pricing is based on:
+
+```text
+PKR 50 per 30 minutes
+```
+
+reservation duration should support 30-minute increments.
+
+Examples:
+
+```text
+30 Minutes
+1 Hour
+1 Hour 30 Minutes
+2 Hours
+2 Hours 30 Minutes
+3 Hours
+```
+
+Do not allow arbitrary values such as 17 minutes unless the business configuration explicitly supports them.
+
+Create configurable settings:
+
+```js
+bookingPricing: {
+    billingUnitMinutes: 30,
+    ratePerUnit: 50,
+    currency: "PKR"
+}
+```
+
+The values must be backend/configuration-ready.
+
+---
+
+# 9. AUTOMATIC END TIME
+
+The relationship is:
+
+```text
+Start Time + Duration = End Time
+```
+
+Example:
+
+```text
+Start:
+7:00 PM
+
+Duration:
+2 Hours
+
+End:
+9:00 PM
+```
+
+Store all three:
+
+```js
+startTime: "19:00",
+endTime: "21:00",
+durationMinutes: 120
+```
+
+Do not store only the displayed text.
+
+Use machine-readable values.
+
+---
+
+# 10. RESERVATION CANNOT CROSS CLOSING TIME
+
+If restaurant closes at:
+
+```text
+11:00 PM
+```
+
+the customer cannot create:
+
+```text
+Start:
+10:00 PM
+
+Duration:
+2 Hours
+
+End:
+12:00 AM
+```
+
+The system must reject it.
+
+Show:
+
+```text
+This reservation would extend beyond restaurant closing time.
+Please select an earlier time or shorter duration.
+```
+
+This rule must eventually also be enforced by the backend.
+
+---
+
+# 11. GUEST COUNT DETERMINES REQUIRED TABLES
+
+This is one of the most important parts of this module.
+
+Do NOT assume one booking = one table.
+
+A reservation can require multiple tables.
+
+Example table configuration:
+
+```text
+T-01 → Capacity 4
+T-02 → Capacity 4
+T-03 → Capacity 4
+T-04 → Capacity 4
+```
+
+Then:
+
+```text
+1–4 guests
+→ 1 table required
+
+5–8 guests
+→ 2 tables required
+
+9–12 guests
+→ 3 tables required
+```
+
+For example:
+
+```text
+Guests:
+5
+
+Available tables:
+T-01 → 4 seats
+T-02 → 4 seats
+
+Required:
+2 tables
+
+Combined capacity:
+8
+
+Unused capacity:
+3
+```
+
+The system must automatically determine the minimum number of tables required while providing enough capacity for the guest count.
+
+---
+
+# 12. TABLE ASSIGNMENT ALGORITHM
+
+Do not simply select the first two tables.
+
+The system should prefer an efficient combination.
+
+Example:
+
+Customer:
+
+```text
+5 guests
+```
+
+Available:
+
+```text
+T-01 → 4 seats
+T-02 → 4 seats
+T-03 → 6 seats
+```
+
+Possible:
+
+```text
+T-03
+```
+
+is enough by itself, so prefer:
+
+```text
+1 table
+```
+
+over:
+
+```text
+T-01 + T-02
+```
+
+If there is no single 6-seat table:
+
+```text
+T-01 + T-02
+```
+
+can satisfy 5 guests.
+
+The general goal:
+
+1. Find enough total capacity
+2. Prefer fewer tables
+3. Prefer the smallest sufficient combined capacity
+4. Respect table availability
+5. Respect table status
+6. Respect section restrictions/preferences
+7. Never use blocked/occupied/unavailable tables
+
+---
+
+# 13. MULTI-TABLE RESERVATION MUST BE A SINGLE BOOKING
+
+If 5 guests require:
+
+```text
+T-01
++
+T-02
+```
+
+do NOT create two separate bookings.
+
+Create:
+
+```text
+Booking:
+BK-10245
+
+Tables:
+[
+    T-01,
+    T-02
+]
+```
+
+The customer has one reservation.
+
+The control panel sees one reservation containing multiple assigned tables.
+
+This is important for future POS/dine-in integration.
+
+---
+
+# 14. TABLE DATA MODEL
+
+Each table should support:
+
+```js
+{
+    id: "T-04",
+    name: "Table 04",
+    capacity: 4,
+    sectionId: "MAIN",
+    status: "available",
+    active: true
+}
+```
+
+Supported operational statuses:
+
+```text
+Available
+Reserved
+Occupied
+Cleaning
+Blocked
+```
+
+The existing project specification already defines these table statuses and requires checking table capacity, existing reservations, date/time availability, and current table status.
+
+Customer-facing UI does not need to expose every internal status.
+
+Normally show:
+
+```text
+Available
+Unavailable
+```
+
+while the control panel can show detailed operational status.
+
+---
+
+# 15. TABLE RESERVATION PRICE
+
+The default business example for this implementation is:
+
+```text
+PKR 50 per table per 30 minutes
+```
+
+BUT:
+
+**Do not hard-code this permanently.**
+
+It must be configurable.
+
+Example:
+
+```js
+bookingPricing: {
+    ratePerTable: 50,
+    billingUnitMinutes: 30,
+    currency: "PKR"
+}
+```
+
+Later the POS/control panel should be able to change:
+
+```text
+50 PKR / 30 minutes
+```
+
+to:
+
+```text
+75 PKR / 30 minutes
+```
+
+or any other configured rate.
+
+---
+
+# 16. PRICE CALCULATION
+
+Price must be calculated from:
+
+```text
+Number of Tables
+×
+Number of 30-Minute Billing Units
+×
+Rate Per Table Per Unit
+```
+
+Example:
+
+```text
+Guests:
+5
+
+Required Tables:
+2
+
+Duration:
+2 Hours
+
+Billing Units:
+4 × 30 minutes
+
+Rate:
+PKR 50 / table / 30 minutes
+```
+
+Calculation:
+
+```text
+2 tables
+×
+4 units
+×
+PKR 50
+
+=
+PKR 400
+```
+
+Therefore:
+
+```text
+Reservation Charge:
+PKR 400
+
+Advance Required:
+PKR 400
+```
+
+The exact rate is configurable.
+
+---
+
+# 17. CUSTOMER CANNOT EDIT PRICE
+
+There must NOT be an editable:
+
+```text
+Amount Paid
+```
+
+field.
+
+There must NOT be an editable:
+
+```text
+Reservation Amount
+```
+
+field.
+
+There must NOT be an editable:
+
+```text
+Hourly Rate
+```
+
+field.
+
+There must NOT be an editable:
+
+```text
+Advance Required
+```
+
+field.
+
+These are system-controlled values.
+
+Customer can only see them.
+
+---
+
+# 18. PRICE MUST UPDATE AUTOMATICALLY
+
+If customer changes:
+
+```text
+4 guests
+→
+5 guests
+```
+
+and the system changes:
+
+```text
+1 table
+→
+2 tables
+```
+
+the price must automatically update.
+
+Example:
+
+```text
+1 table × 4 units × PKR 50
+= PKR 200
+```
+
+becomes:
+
+```text
+2 tables × 4 units × PKR 50
+= PKR 400
+```
+
+If duration changes:
+
+```text
+2 Hours
+→
+3 Hours
+```
+
+the calculation becomes:
+
+```text
+2 tables × 6 units × PKR 50
+= PKR 600
+```
+
+Everything updates immediately.
+
+---
+
+# 19. TABLE SELECTION UI
+
+The customer should be shown the available table arrangement.
+
+For example:
+
+```text
+Available for 5 Guests
+
+Recommended Table Arrangement
+
+Table 01
+4 Seats
+
+Table 02
+4 Seats
+
+Combined Capacity:
+8 Guests
+
+Reservation Rate:
+PKR 50 / 30 min / table
+
+[ Select These Tables ]
+```
+
+If a single table can accommodate the group:
+
+```text
+Table 05
+Capacity: 6
+
+[ Select Table ]
+```
+
+Prefer the simplest valid arrangement.
+
+---
+
+# 20. SECTION SUPPORT
+
+Tables belong to sections.
+
+Examples:
+
+```text
+Main Dining
+Family Area
+Outdoor
+Private
+```
+
+The customer may optionally choose a section preference if the existing UI supports it.
+
+The availability engine must respect it.
+
+If the customer chooses:
+
+```text
+Outdoor
+```
+
+do not return tables from:
+
+```text
+Main Dining
+```
+
+unless the customer explicitly allows alternatives.
+
+---
+
+# 21. TIME-BASED AVAILABILITY
+
+Availability must be calculated using:
+
+```text
+Date
++
+Start Time
++
+End Time
++
+Required Table Count/Combination
+```
+
+Example:
+
+Existing:
+
+```text
+T-01
+7:00 PM – 9:00 PM
+```
+
+Customer requests:
+
+```text
+T-01
+8:00 PM – 10:00 PM
+```
+
+Reject due to overlap.
+
+But:
+
+```text
+T-01
+9:00 PM – 11:00 PM
+```
+
+may be valid.
+
+Use proper interval overlap logic.
+
+Conceptually:
+
+```js
+existingStart < requestedEnd &&
+existingEnd > requestedStart
+```
+
+---
+
+# 22. TABLE STATUS + RESERVATION OVERLAP
+
+Do not rely only on the current static table status.
+
+For example:
+
+A table can currently be:
+
+```text
+Available
+```
+
+but already have a reservation:
+
+```text
+8:00 PM – 10:00 PM
+```
+
+for the selected future date.
+
+Therefore availability must consider both:
+
+```text
+Current Table Status
++
+Reservation Schedule
+```
+
+This is critical.
+
+---
+
+# 23. RESERVATION STATUS MODEL
+
+Use separate concepts for reservation status and payment status.
+
+Do NOT combine everything into one ambiguous status.
+
+Reservation status can support:
+
+```text
+Pending
+Confirmed
+Seated
+Completed
+Cancelled
+No Show
+```
+
+These are consistent with the existing project specification.
+
+Payment status should separately support:
+
+```text
+Unpaid
+Payment Submitted
+Pending Verification
+Verified
+Rejected
+Refunded
+```
+
+The combination determines the customer-facing state.
+
+---
+
+# 24. RECOMMENDED INITIAL STATE FLOW
+
+When customer submits a reservation with receipt:
+
+```text
+Reservation Status:
+Pending
+
+Payment Status:
+Pending Verification
+```
+
+Customer-facing display:
+
+```text
+Payment Under Review
+```
+
+After admin verifies:
+
+```text
+Reservation Status:
+Confirmed
+
+Payment Status:
+Verified
+```
+
+Customer-facing display:
+
+```text
+Confirmed
+```
+
+If payment is rejected:
+
+```text
+Reservation Status:
+Pending
+
+Payment Status:
+Rejected
+```
+
+Customer sees:
+
+```text
+Payment Rejected
+```
+
+with the admin's rejection reason.
+
+Do not automatically confirm a reservation merely because the customer uploaded a receipt.
+
+---
+
+# 25. JAZZCASH + EASYPAISA
+
+Support these payment methods:
+
+```text
+JazzCash
+EasyPaisa
+```
+
+Payment account details must be configurable.
+
+Example:
+
+```js
+paymentSettings: {
+    jazzcash: {
+        enabled: true,
+        accountName: "Crust & Co",
+        accountNumber: "CONFIGURED_BY_ADMIN"
+    },
+
+    easypaisa: {
+        enabled: true,
+        accountName: "Crust & Co",
+        accountNumber: "CONFIGURED_BY_ADMIN"
+    }
+}
+```
+
+Do NOT invent real account numbers.
+
+---
+
+# 26. PAYMENT SCREEN
+
+After price calculation:
+
+```text
+Reservation Advance
+
+PKR 400
+
+Pay using:
+
+○ JazzCash
+○ EasyPaisa
+```
+
+Then display the configured payment account.
+
+Customer enters:
+
+```text
+Transaction ID / Reference Number
+Customer Name
+Customer Mobile Number
+Payment Receipt
+```
+
+Do NOT show:
+
+```text
+Amount Paid [ editable ]
+```
+
+Instead:
+
+```text
+Amount to Pay:
+PKR 400
+```
+
+This value is read-only and comes directly from the reservation calculation.
+
+---
+
+# 27. PAYMENT RECEIPT
+
+Customer must upload proof of payment.
+
+Required:
+
+```text
+Payment Method
+Transaction ID
+Customer Name
+Customer Phone
+Receipt Image
+```
+
+The receipt must belong to the reservation.
+
+Example:
+
+```js
+payment: {
+    method: "jazzcash",
+    transactionId: "TXN123456",
+    customerName: "Ali Khan",
+    customerPhone: "03XXXXXXXXX",
+    requiredAmount: 400,
+    receiptImage: "...",
+    status: "pending_verification",
+    submittedAt: "..."
+}
+```
+
+The system-derived `requiredAmount` cannot be changed by the customer.
+
+---
+
+# 28. PAYMENT VERIFICATION IN CONTROL PANEL
+
+The control panel must contain a complete reservation management module.
+
+Example:
+
+```text
+Table Reservations
+
+Booking ID
+Customer
+Date
+Time
+Guests
+Tables
+Amount
+Payment Status
+Reservation Status
+Actions
+```
+
+Admin opens a reservation and sees:
+
+### Customer
+
+```text
+Name
+Phone
+Email
+```
+
+### Reservation
+
+```text
+Booking ID
+Date
+Start Time
+End Time
+Duration
+Guests
+Section
+Assigned Tables
+```
+
+### Pricing
+
+```text
+Rate
+Billing Unit
+Number of Tables
+Duration
+Reservation Charge
+Advance Required
+```
+
+### Payment
+
+```text
+Method
+Transaction ID
+Customer Name
+Customer Phone
+Required Amount
+Receipt
+Payment Status
+Submitted At
+```
+
+---
+
+# 29. ADMIN PAYMENT ACTIONS
+
+Control panel must provide:
+
+```text
+Verify Payment
+Reject Payment
+```
+
+When verifying:
+
+```text
+Payment Status:
+Verified
+
+Reservation Status:
+Confirmed
+```
+
+When rejecting:
+
+```text
+Payment Status:
+Rejected
+```
+
+Allow optional rejection reason.
+
+Example:
+
+```text
+Incorrect transaction ID
+Incorrect payment amount
+Receipt unclear
+Payment not found
+```
+
+Do not automatically claim that a JazzCash/EasyPaisa transaction is real unless an actual API integration exists.
+
+This is a **manual verification workflow** initially.
+
+---
+
+# 30. CUSTOMER MY ACCOUNT / USER PANEL
+
+Integrate into the existing My Account page.
+
+Add:
+
+```text
+My Reservations
+```
+
+Do NOT create a second customer dashboard.
+
+Show:
+
+### Upcoming Reservations
+
+```text
+Booking #BK-10245
+
+24 October 2026
+
+7:00 PM – 9:00 PM
+2 Hours
+
+4 Guests
+
+Tables:
+T-01, T-02
+
+Reservation Charge:
+PKR 400
+
+Advance Required:
+PKR 400
+
+Payment:
+JazzCash
+
+Payment Status:
+Pending Verification
+
+Reservation Status:
+Payment Under Review
+
+[ View Details ]
+```
+
+---
+
+# 31. RESERVATION DETAILS IN CUSTOMER PANEL
+
+Show:
+
+```text
+Booking ID
+Customer
+Date
+Start Time
+End Time
+Duration
+Guests
+Section
+Assigned Tables
+
+Rate per 30 minutes
+Number of tables
+Billing units
+Reservation charge
+Advance required
+
+Payment method
+Transaction ID
+Payment status
+Receipt
+
+Reservation status
+Special occasion
+Special requests
+Created at
+Updated at
+```
+
+The customer should not be able to edit system-calculated financial fields.
+
+---
+
+# 32. CUSTOMER RESERVATION HISTORY
+
+My Account should have:
+
+```text
+Upcoming Reservations
+Past Reservations
+Cancelled Reservations
+```
+
+Past records should not disappear.
+
+The reservation should remain in history.
+
+This is important for customer history and future reporting.
+
+---
+
+# 33. RESERVATION MODIFICATION
+
+If modification is allowed by business rules, changing:
+
+- date
+- time
+- duration
+- guest count
+- section
+
+must trigger a fresh availability calculation.
+
+If guest count changes:
+
+```text
+Required tables
+```
+
+must be recalculated.
+
+If duration changes:
+
+```text
+End time
+Billing units
+Reservation charge
+Advance required
+```
+
+must be recalculated.
+
+Never preserve stale pricing after modifying the reservation.
+
+---
+
+# 34. IMPORTANT PAYMENT MODIFICATION RULE
+
+If a reservation modification increases the required payment:
+
+Example:
+
+```text
+Original:
+PKR 400
+
+New:
+PKR 600
+```
+
+the customer must see:
+
+```text
+Additional Amount Required:
+PKR 200
+```
+
+Do not silently mark the old payment as fully sufficient.
+
+The backend should eventually determine the final payment state.
+
+If the business later supports refunds/partial adjustments, the payment system can handle them.
+
+Do not invent refund rules now.
+
+---
+
+# 35. CUSTOMER CANCELLATION
+
+Cancellation should NOT delete the reservation.
+
+Set:
+
+```text
+reservation.status = "cancelled"
+```
+
+Keep payment/history information.
+
+Actual refund behavior should remain configurable/backend-controlled because the current business specification does not define a refund policy.
+
+---
+
+# 36. CONTROL PANEL TABLE CALENDAR / TIMELINE
+
+The eventual control panel should support a calendar/timeline view.
+
+The project specification explicitly calls for a POS calendar/timeline view for table bookings.
+
+The frontend structure should therefore support:
+
+```text
+Date
+ ↓
+Time
+ ↓
+Table
+ ↓
+Reservation blocks
+```
+
+Example:
+
+```text
+Table T-01
+
+18:00 ─ Available
+19:00 ─ BOOKING #10245
+20:00 ─ BOOKING #10245
+21:00 ─ Available
+```
+
+For multi-table bookings, the same booking should appear across all assigned tables.
+
+---
+
+# 37. BOOKING → DINE-IN FUTURE INTEGRATION
+
+The reservation must be designed so that later a dine-in order can reference:
+
+```text
+bookingId
+```
+
+The existing restaurant architecture already expects dine-in orders to support:
+
+```text
+Table
+Booking
+Customer
+Waiter
+Number of guests
+Items
+KOT
+Bill
+Payment
+```
+
+
+
+Therefore do not build the reservation as an isolated object with no future POS relationship.
+
+---
+
+# 38. RESERVATION DATA MODEL
+
+Use the existing project's naming conventions, but conceptually the data structure should support:
+
+```js
+{
+    id: "BK-10245",
+
+    externalId: "WEB-BK-10245",
+
+    userId: "USER-123",
+
+    customer: {
+        name: "Ali Khan",
+        phone: "03001234567",
+        email: "ali@example.com"
+    },
+
+    reservation: {
+        date: "2026-10-24",
+
+        startTime: "19:00",
+
+        endTime: "21:00",
+
+        durationMinutes: 120,
+
+        guests: 5,
+
+        sectionId: "MAIN",
+
+        tableIds: [
+            "T-01",
+            "T-02"
+        ]
+    },
+
+    pricing: {
+        billingUnitMinutes: 30,
+
+        ratePerTablePerUnit: 50,
+
+        tableCount: 2,
+
+        billingUnits: 4,
+
+        reservationCharge: 400,
+
+        advanceRequired: 400,
+
+        currency: "PKR"
+    },
+
+    payment: {
+        method: "jazzcash",
+
+        transactionId: "TXN123456",
+
+        customerName: "Ali Khan",
+
+        customerPhone: "03001234567",
+
+        requiredAmount: 400,
+
+        receiptImage: "...",
+
+        status: "pending_verification",
+
+        submittedAt: "..."
+    },
+
+    status: "pending",
+
+    specialOccasion: "",
+
+    specialRequests: "",
+
+    createdAt: "...",
+
+    updatedAt: "..."
+}
+```
+
+The exact implementation should follow the existing project's conventions.
+
+---
+
+# 39. IMPORTANT: CUSTOMER MUST NOT CONTROL AUTHORITATIVE PRICE
+
+The frontend can calculate and display the price for UX.
+
+But the architecture must assume that the backend will eventually recalculate:
+
+```text
+table availability
+guest capacity
+duration
+rate
+number of tables
+reservation amount
+advance required
+```
+
+The backend/POS will become the authoritative source.
+
+The browser must never be trusted as the final financial authority.
+
+---
+
+# 40. BACKEND-COMPATIBLE SERVICE ARCHITECTURE
+
+Do not scatter reservation logic throughout random UI event handlers.
+
+Create/reuse a dedicated reservation service layer.
+
+Conceptually:
+
+```js
+reservationService
+    ├── getAvailableTables()
+    ├── calculateRequiredTables()
+    ├── calculateEndTime()
+    ├── calculatePricing()
+    ├── validateBusinessHours()
+    ├── validateAvailability()
+    ├── createReservation()
+    ├── getReservation()
+    ├── getCustomerReservations()
+    ├── updateReservation()
+    ├── cancelReservation()
+    ├── submitPayment()
+    └── getPaymentStatus()
+```
+
+If the project already has a service architecture, integrate with it rather than creating duplicate services.
+
+---
+
+# 41. FUTURE API CONTRACT
+
+The module should be structured so it can eventually use endpoints similar to:
+
+```text
+GET  /api/reservations/availability
+POST /api/reservations
+GET  /api/reservations/:id
+GET  /api/customer/reservations
+PATCH /api/reservations/:id
+POST /api/reservations/:id/cancel
+
+POST /api/reservations/:id/payment
+GET  /api/reservations/:id/payment
+
+GET  /api/admin/reservations
+GET  /api/admin/reservations/:id
+POST /api/admin/reservations/:id/verify-payment
+POST /api/admin/reservations/:id/reject-payment
+```
+
+These are conceptual contracts, not instructions to build the backend now.
+
+Keep API integration isolated so the frontend can switch from mock/localStorage to REST without rewriting the UI.
+
+---
+
+# 42. IDEMPOTENCY / DUPLICATE PREVENTION
+
+The reservation module must be designed for duplicate protection.
+
+For example:
+
+```text
+externalId:
+WEB-BK-10245
+```
+
+or an equivalent stable client/request identifier.
+
+If the same reservation request is accidentally submitted twice because of:
+
+- double-click
+- browser retry
+- network retry
+- API retry
+
+the backend must eventually recognize the same request rather than creating duplicate reservations.
+
+The overall project architecture requires idempotency for external operations and duplicate prevention.
+
+---
+
+# 43. POS SOURCE OF TRUTH
+
+Do not design the final architecture around the website being the permanent source of truth.
+
+The restaurant POS/backend should eventually own authoritative:
+
+- tables
+- table status
+- table availability
+- reservation records
+- pricing configuration
+- operational reservation state
+- payment verification state
+- customer operational data
+
+The website is the customer-facing channel.
+
+The project architecture explicitly defines the POS as the source of truth for operational restaurant data and external systems communicating through secure APIs.
+
+For the current frontend-only stage, mock/localStorage data is acceptable, but the service boundary must be clean.
+
+---
+
+# 44. DO NOT USE LOCALSTORAGE AS FINAL SECURITY
+
+If localStorage is currently used for the prototype:
+
+Fine.
+
+But do not treat it as secure or authoritative.
+
+The future backend must validate:
+
+- authenticated customer
+- customer ownership of reservation
+- table availability
+- table capacity
+- business hours
+- pricing
+- payment amount
+- payment state
+- reservation status
+
+---
+
+# 45. STORE OPENING/CLOSING LOGIC
+
+Implement reusable functions conceptually like:
+
+```js
+isRestaurantOpen(dateTime)
+```
+
+and:
+
+```js
+isReservationTimeValid({
+    date,
+    startTime,
+    endTime
+})
+```
+
+These should validate:
+
+1. Correct restaurant day
+2. Opening time
+3. Closing time
+4. Reservation duration
+5. Future booking limits
+6. Current booking cutoff if configured
+
+Do not duplicate these checks in multiple pages.
+
+---
+
+# 46. SAME-DAY BOOKING BEHAVIOR
+
+If the restaurant is currently closed:
+
+```text
+Today
+10:00 AM
+Restaurant opens:
+11:00 AM
+```
+
+do not allow a reservation submission that would sit in an unresolved payment state before opening.
+
+Show:
+
+```text
+Online table reservations are currently closed.
+
+Reservations open at 11:00 AM.
+```
+
+Once the configured booking window opens, customers can reserve valid future slots.
+
+If business rules later require a different cutoff, make it configurable.
+
+---
+
+# 47. RESERVATION SUMMARY
+
+Before payment, show a complete summary:
+
+```text
+Reservation Summary
+
+Date:
+24 October 2026
+
+Start:
+7:00 PM
+
+End:
+9:00 PM
+
+Duration:
+2 Hours
+
+Guests:
+5
+
+Tables:
+T-01 + T-02
+
+Combined Capacity:
+8 Guests
+
+Rate:
+PKR 50 / 30 minutes / table
+
+Tables:
+2
+
+Billing Units:
+4
+
+Reservation Charge:
+PKR 400
+
+Advance Required:
+PKR 400
+```
+
+Everything financial is read-only.
+
+---
+
+# 48. HOME PAGE BOOKING SECTION
+
+The homepage section should communicate the actual business model clearly.
+
+Example:
+
+```text
+Reserve Your Table
+
+Choose your date, time, guests and reservation duration.
+We'll find the best available table arrangement for you.
+
+From PKR 50 / 30 minutes per table*
+
+[ Reserve a Table ]
+
+*Final reservation amount depends on the number of tables and selected duration.
+```
+
+Do not hard-code "from PKR 50" if pricing is loaded dynamically from backend/config.
+
+If backend/config is available, display the actual configured rate.
+
+---
+
+# 49. EMPTY / ERROR STATES
+
+Handle:
+
+### No tables available
+
+```text
+No tables are available for this time.
+
+Try another time or reduce/increase your selected duration.
+```
+
+### Not enough combined capacity
+
+```text
+We couldn't find enough available table capacity for 7 guests at this time.
+```
+
+### Outside opening hours
+
+```text
+Table reservations are currently closed.
+```
+
+### Payment rejected
+
+```text
+Your payment could not be verified.
+
+Reason:
+Incorrect transaction/reference number.
+
+Please update your payment information.
+```
+
+### Receipt upload failure
+
+```text
+We couldn't upload your receipt.
+Please try again.
+```
+
+---
+
+# 50. CUSTOMER RESERVATION CONFIRMATION
+
+After submitting payment:
+
+```text
+Reservation Submitted
+
+Booking #BK-10245
+
+24 October 2026
+
+7:00 PM – 9:00 PM
+
+5 Guests
+
+Tables:
+T-01, T-02
+
+Reservation Charge:
+PKR 400
+
+Payment:
+JazzCash
+
+Payment Status:
+Pending Verification
+
+Reservation Status:
+Payment Under Review
+```
+
+Clearly explain:
+
+```text
+Your reservation will be confirmed after the payment is verified by our team.
+```
+
+Do not say "Confirmed" at this stage.
+
+---
+
+# 51. ADMIN NOTIFICATION
+
+When a new reservation/payment receipt is submitted, the control panel should show a notification/badge such as:
+
+```text
+New Table Reservation
+```
+
+and:
+
+```text
+Payment Verification Required
+```
+
+The existing project specification already includes notifications for new bookings and booking reminders.
+
+---
+
+# 52. AUDIT TRAIL
+
+Important control-panel actions should eventually be auditable:
+
+```text
+Reservation created
+Reservation modified
+Reservation cancelled
+Payment verified
+Payment rejected
+Table assignment changed
+Price/configuration changed
+```
+
+Record conceptually:
+
+```text
+User
+Action
+Date/Time
+Module
+Record ID
+Old Value
+New Value
+```
+
+The project specification already requires audit logging for important operational changes.
+
+---
+
+# 53. SECURITY REQUIREMENTS
+
+Even though this is currently frontend-first:
+
+Do not expose sensitive POS credentials.
+
+Do not trust:
+
+```text
+customerId from arbitrary URL
+```
+
+Do not trust:
+
+```text
+price from browser
+```
+
+Do not trust:
+
+```text
+table availability from browser
+```
+
+Do not trust:
+
+```text
+payment amount from browser
+```
+
+The future backend must independently validate everything.
+
+The project architecture requires secure API authentication, server-side validation, HTTPS, and no exposed POS credentials.
+
+---
+
+# 54. CUSTOMER OWNERSHIP
+
+A customer can only view their own reservations.
+
+Example:
+
+```text
+User A
+→ sees User A reservations
+
+User B
+→ sees User B reservations
+```
+
+The control panel can see all reservations according to permissions.
+
+Do not use frontend-only filtering as the eventual security mechanism.
+
+Backend authorization must enforce ownership later.
+
+---
+
+# 55. MULTI-TABLE BOOKING AND PRICE EXAMPLE
+
+This exact example must work:
+
+Configuration:
+
+```text
+Rate:
+PKR 50 / table / 30 minutes
+```
+
+Tables:
+
+```text
+T-01 = 4 seats
+T-02 = 4 seats
+T-03 = 4 seats
+T-04 = 4 seats
+```
+
+Customer:
+
+```text
+Guests:
+5
+
+Start:
+7:00 PM
+
+Duration:
+2 Hours
+```
+
+System:
+
+```text
+Required capacity:
+5
+
+One 4-seat table:
+Not enough
+
+Two 4-seat tables:
+Capacity = 8
+
+Tables required:
+2
+
+Billing units:
+4
+
+Calculation:
+2 × 4 × PKR 50
+
+Total:
+PKR 400
+```
+
+End time:
+
+```text
+9:00 PM
+```
+
+Customer cannot change:
+
+```text
+PKR 400
+```
+
+Customer submits:
+
+```text
+JazzCash
+Transaction ID
+Name
+Phone
+Receipt
+```
+
+Payment becomes:
+
+```text
+Pending Verification
+```
+
+Admin sees the same booking and verifies it.
+
+Then:
+
+```text
+Payment:
+Verified
+
+Reservation:
+Confirmed
+```
+
+---
+
+# 56. SECOND EXAMPLE
+
+Customer:
+
+```text
+Guests:
+3
+
+Start:
+8:00 PM
+
+Duration:
+90 Minutes
+```
+
+Required tables:
+
+```text
+1 × 4-seat table
+```
+
+Billing units:
+
+```text
+90 / 30 = 3
+```
+
+Price:
+
+```text
+1 × 3 × PKR 50
+=
+PKR 150
+```
+
+End:
+
+```text
+9:30 PM
+```
+
+---
+
+# 57. THIRD EXAMPLE
+
+Customer:
+
+```text
+Guests:
+9
+
+Start:
+6:00 PM
+
+Duration:
+3 Hours
+```
+
+If available tables are:
+
+```text
+T-01 = 4
+T-02 = 4
+T-03 = 4
+```
+
+System assigns:
+
+```text
+3 tables
+```
+
+Billing units:
+
+```text
+6
+```
+
+Price:
+
+```text
+3 × 6 × PKR 50
+=
+PKR 900
+```
+
+End:
+
+```text
+9:00 PM
+```
+
+---
+
+# 58. CONTROL PANEL RESERVATION LIST
+
+The admin table should include:
+
+```text
+Booking ID
+Customer
+Phone
+Date
+Start
+End
+Duration
+Guests
+Tables
+Section
+Reservation Amount
+Payment Method
+Payment Status
+Reservation Status
+Created At
+Actions
+```
+
+Filtering:
+
+```text
+Today
+Tomorrow
+Upcoming
+Pending Payment
+Payment Verification
+Confirmed
+Cancelled
+Completed
+No Show
+```
+
+---
+
+# 59. CONTROL PANEL RESERVATION DETAIL
+
+Admin must see the entire record in one place.
+
+Include:
+
+```text
+Customer Information
+Reservation Information
+Table Assignment
+Capacity
+Pricing Calculation
+Payment Information
+Receipt
+Reservation Status
+Payment Status
+Admin Notes
+Audit History
+```
+
+Admin actions:
+
+```text
+Verify Payment
+Reject Payment
+Assign/Change Tables
+Change Reservation Status
+Cancel Reservation
+Add Internal Note
+```
+
+Permissions should eventually determine which staff roles can perform each action.
+
+---
+
+# 60. DO NOT CREATE FAKE DUPLICATE ADMIN DATA
+
+This is very important.
+
+When a customer creates:
+
+```text
+BK-10245
+```
+
+the control panel must display:
+
+```text
+BK-10245
+```
+
+not another fake record such as:
+
+```text
+ADMIN-BK-001
+```
+
+Both sides must reference the same reservation record.
+
+---
+
+# 61. FUTURE POS INTEGRATION
+
+Later:
+
+```text
+Customer Website
+      ↓
+Core PHP API
+      ↓
+POS API
+      ↓
+POS Database
+```
+
+The POS will become authoritative for:
+
+```text
+Tables
+Table availability
+Reservations
+Pricing configuration
+Payment verification
+Operational reservation state
+```
+
+The website should receive updates through API/webhook/polling as appropriate.
+
+The overall system specification explicitly expects the POS to remain the source of truth and supports external REST APIs/webhooks.
+
+---
+
+# 62. RESERVATION ↔ ORDER LINK
+
+Do not create a dine-in order at reservation creation time.
+
+Reservation and order are separate entities.
+
+Later, when the customer arrives:
+
+```text
+Reservation
+↓
+Customer Arrival
+↓
+Table Assigned
+↓
+Seated
+↓
+Dine-In Order
+↓
+KOT
+↓
+Bill
+↓
+Payment
+```
+
+This matches the intended restaurant workflow.
+
+The future order should be able to reference:
+
+```text
+bookingId
+tableIds
+customerId
+```
+
+---
+
+# 63. RESPONSIVE CUSTOMER EXPERIENCE
+
+The entire booking process must work properly on:
+
+- Mobile
+- Tablet
+- Desktop
+
+Especially:
+
+- date selection
+- time selection
+- duration
+- table selection
+- payment instructions
+- receipt upload
+- reservation summary
+- My Reservations
+- reservation details
+
+Do not create desktop-only controls.
+
+---
+
+# 64. ACCESSIBILITY
+
+Use:
+
+- proper labels
+- keyboard-accessible controls
+- accessible buttons
+- visible focus states
+- semantic HTML
+- clear error messages
+- readable contrast
+
+Follow the existing website's accessibility patterns.
+
+---
+
+# 65. IMPLEMENTATION APPROACH
+
+Before editing:
+
+### Step 1
+Inspect the existing booking implementation.
+
+### Step 2
+Inspect existing table data.
+
+### Step 3
+Inspect existing customer authentication/account.
+
+### Step 4
+Inspect existing control-panel implementation.
+
+### Step 5
+Inspect existing data/localStorage/service layer.
+
+### Step 6
+Identify what can be reused.
+
+### Step 7
+Implement the reservation domain/service logic.
+
+### Step 8
+Integrate the UI.
+
+### Step 9
+Integrate My Account.
+
+### Step 10
+Integrate Control Panel.
+
+### Step 11
+Test all calculation and availability cases.
+
+Do not immediately start rewriting files without understanding the current architecture.
+
+---
+
+# 66. REQUIRED FUNCTIONS / LOGIC
+
+The final implementation should have reusable logic equivalent to:
+
+```js
+calculateEndTime(startTime, durationMinutes)
+
+calculateBillingUnits(durationMinutes, billingUnitMinutes)
+
+calculateRequiredTables(guests, availableTables)
+
+findAvailableTableCombinations(
+    guests,
+    date,
+    startTime,
+    endTime,
+    sectionId
+)
+
+calculateReservationPrice(
+    tableIds,
+    durationMinutes,
+    pricingConfig
+)
+
+validateRestaurantHours(
+    date,
+    startTime,
+    endTime,
+    restaurantHours
+)
+
+validateReservationAvailability(
+    date,
+    startTime,
+    endTime,
+    tableIds
+)
+```
+
+Use the project's existing architecture if equivalent utilities already exist.
+
+Do not duplicate logic.
+
+---
+
+# 67. VALIDATION RULES
+
+Before allowing submission, validate:
+
+- user is authenticated if booking requires login
+- date is valid
+- date is within allowed booking window
+- start time is valid
+- duration is valid
+- end time is calculated
+- end time does not exceed closing time
+- guests > 0
+- available tables exist
+- combined table capacity is sufficient
+- tables are not blocked
+- tables are not already reserved during requested interval
+- pricing can be calculated
+- payment method selected
+- transaction/reference number supplied
+- customer name supplied
+- customer phone supplied
+- receipt supplied
+- payment amount is system-calculated
+
+---
+
+# 68. NO MANUAL AMOUNT FIELD
+
+This deserves explicit emphasis.
+
+REMOVE any customer-editable:
+
+```text
+Amount Paid
+```
+
+input.
+
+The only financial values the customer should see are calculated:
+
+```text
+Rate
+Number of Tables
+Duration
+Billing Units
+Reservation Charge
+Advance Required
+```
+
+They are read-only.
+
+The customer provides payment evidence, not the amount calculation.
+
+---
+
+# 69. FINAL END-TO-END CUSTOMER FLOW
+
+The final experience should be:
+
+```text
+HOME
+ ↓
+Reserve Your Table section
+ ↓
+Book a Table
+ ↓
+Select Date
+ ↓
+Select Start Time
+ ↓
+Select Duration
+ ↓
+Select Number of Guests
+ ↓
+Select Section / Preference
+ ↓
+System Calculates Required Tables
+ ↓
+System Checks Availability
+ ↓
+Show Available Table Arrangement
+ ↓
+Customer Selects Arrangement
+ ↓
+System Calculates:
+    End Time
+    Billing Units
+    Number of Tables
+    Reservation Charge
+    Advance Required
+ ↓
+Customer Reviews
+ ↓
+JazzCash / EasyPaisa
+ ↓
+Transaction ID
+ ↓
+Customer Name
+ ↓
+Customer Phone
+ ↓
+Receipt Upload
+ ↓
+Submit
+ ↓
+Payment Pending Verification
+ ↓
+Reservation appears in My Account
+ ↓
+Same Reservation appears in Control Panel
+ ↓
+Admin opens reservation
+ ↓
+Admin views receipt
+ ↓
+Admin verifies/rejects payment
+ ↓
+If verified:
+    Payment = Verified
+    Reservation = Confirmed
+ ↓
+Customer My Account updates
+```
+
+---
+
+# 70. FINAL TEST MATRIX
+
+Test at minimum:
+
+### Guest capacity
+
+```text
+1 guest → 1 table
+4 guests → 1 × 4-seat table
+5 guests → 2 × 4-seat tables
+8 guests → 2 × 4-seat tables
+9 guests → 3 × 4-seat tables
+```
+
+### Duration
+
+```text
+30 min
+60 min
+90 min
+120 min
+180 min
+```
+
+### Pricing
+
+```text
+1 table × 30 min × 50 = 50
+1 table × 60 min × 50 = 100
+2 tables × 60 min × 50 = 200
+2 tables × 120 min × 50 = 400
+```
+
+### Time
+
+```text
+7:00 → 8:00
+7:00 → 9:00
+7:30 → 9:00
+```
+
+### Closing
+
+```text
+10:00 → 11:00 = valid
+10:00 → 12:00 = invalid if restaurant closes 11:00
+```
+
+### Overlap
+
+```text
+7–9 existing
+8–10 requested
+→ reject
+
+7–9 existing
+9–11 requested
+→ potentially valid
+```
+
+### Payment
+
+```text
+No receipt → cannot submit
+
+No transaction ID → cannot submit
+
+Customer tries changing amount → impossible
+
+Payment submitted → Pending Verification
+
+Admin verifies → Confirmed
+
+Admin rejects → Rejected
+```
+
+### Account
+
+```text
+Customer creates reservation
+→ My Reservations shows it
+
+Admin changes status
+→ Customer sees updated status
+```
+
+---
+
+# 71. MOST IMPORTANT FINAL REQUIREMENTS
+
+The implementation is NOT complete unless all of these work together:
+
+1. **Home page has a clear Reserve a Table section**
+2. **Date/time/duration based booking**
+3. **Start time + duration automatically produces end time**
+4. **30-minute billing increments**
+5. **Default configurable rate = PKR 50 per 30 minutes per table**
+6. **Rate is configurable and not hard-coded**
+7. **Guest count automatically determines required table capacity**
+8. **5 guests can require 2 × 4-seat tables**
+9. **Multiple tables are stored under ONE reservation**
+10. **Table availability is checked against the complete time interval**
+11. **Table operational status is respected**
+12. **Reservation cannot exceed restaurant closing time**
+13. **Website booking is unavailable before configured opening/booking time**
+14. **Future reservations are supported**
+15. **Reservation price is automatically calculated**
+16. **Customer cannot edit Amount Paid**
+17. **Customer cannot edit Reservation Charge**
+18. **Customer cannot edit Advance Required**
+19. **JazzCash supported**
+20. **EasyPaisa supported**
+21. **Transaction/reference number required**
+22. **Customer name required**
+23. **Customer phone required**
+24. **Receipt upload required**
+25. **Manual payment verification in Control Panel**
+26. **Payment and reservation status are separate**
+27. **Customer sees reservation inside existing My Account**
+28. **Admin sees the exact same reservation in Control Panel**
+29. **Admin can view receipt**
+30. **Admin can verify/reject payment**
+31. **Reservation becomes Confirmed only after verification**
+32. **Customer receives updated status**
+33. **Reservation history is preserved**
+34. **Reservation can later link to dine-in order through bookingId**
+35. **Architecture is API/backend compatible**
+36. **No duplicate authentication**
+37. **No duplicate reservation systems**
+38. **No fake customer/admin data separation**
+39. **No redesign of unrelated existing frontend**
+40. **No static/demo-only implementation**
+
+The final implementation should feel like a real restaurant reservation module, not a generic contact/reservation form.
+
+**Inspect the existing project first. Reuse what already exists. Fix the current implementation rather than building a parallel system.**
