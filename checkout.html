@@ -368,12 +368,19 @@
               </div>
             </div>
 
-            <div class="flex flex-wrap items-center justify-center gap-4">
-              <a href="/index.html" class="px-6 py-3 bg-[#12372A] text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors">
-                Back to Home
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              <a href="./account.html?orderId=${order.id}&tab=orders" class="px-6 py-3 bg-[#12372A] text-white text-xs sm:text-sm font-bold rounded-lg hover:bg-[#1F4D3A] transition-colors flex items-center gap-2 shadow-xs">
+                <svg class="w-4 h-4 text-[#D4A72C]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>Track Order Live →</span>
               </a>
-              <a href="/menu.html" class="px-6 py-3 border border-[#E8E5DC] text-[#1C1C1C] text-xs sm:text-sm font-semibold rounded-lg hover:bg-[#F8F6F0] transition-colors">
+              <a href="./menu.html" class="px-6 py-3 border border-[#E8E5DC] text-[#1C1C1C] text-xs sm:text-sm font-semibold rounded-lg hover:bg-[#F8F6F0] transition-colors">
                 Order More Food
+              </a>
+              <a href="./index.html" class="px-6 py-3 border border-[#E8E5DC] text-[#6B6B6B] text-xs sm:text-sm font-semibold rounded-lg hover:bg-[#F8F6F0] transition-colors">
+                Home
               </a>
             </div>
           </div>

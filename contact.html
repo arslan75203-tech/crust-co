@@ -40,13 +40,13 @@
 
     <!-- Top Navigation Bar -->
     <header class="sticky top-0 z-50 bg-[#F8F6F0]/95 backdrop-blur-md border-b border-[#E8E5DC]">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
-        <a href="/index.html" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-2 sm:gap-4 lg:gap-8">
+        <a href="./index.html" class="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0 hover:opacity-90 transition-opacity">
           Crust & Co
         </a>
 
         <!-- Zone 2: Navigation Links with Elastic Underline Animation -->
-        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-[#1C1C1C]">
+        <nav class="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-[#1C1C1C]">
           <a href="./index.html" class="nav-elastic-link whitespace-nowrap shrink-0">Home</a>
           <a href="./menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
           <a href="./deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
@@ -55,33 +55,30 @@
           <a href="./contact.html" class="nav-elastic-link active-nav whitespace-nowrap shrink-0">Contact</a>
         </nav>
 
-        <!-- Live Search Bar (Desktop) -->
-        <div class="search-wrapper relative hidden lg:block w-52 xl:w-64 shrink-0">
+        <!-- Live Search Bar: directly visible across mobile, tablet, and desktop -->
+        <div class="search-wrapper relative flex-1 min-w-0 max-w-[190px] xs:max-w-[240px] sm:max-w-xs md:max-w-sm lg:max-w-xs xl:max-w-sm mx-1 sm:mx-2">
           <div class="relative flex items-center">
-            <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-[#6B6B6B] absolute left-2.5 sm:left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
               type="text"
-              placeholder="Search pizza, burger, deal..."
-              class="live-search-input w-full pl-9 pr-8 py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A] focus:ring-1 focus:ring-[#12372A] transition-all"
+              placeholder="Search dishes..."
+              class="live-search-input w-full pl-8 sm:pl-9 pr-6 sm:pr-8 py-1.5 sm:py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
             />
-            <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] hover:text-[#1C1C1C] p-0.5" aria-label="Clear search">
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
           </div>
           <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
         </div>
 
-        <div class="flex items-center gap-3 sm:gap-5 shrink-0">
+        <div class="flex items-center gap-2 sm:gap-4 shrink-0">
           <div class="auth-slot hidden sm:block"></div>
-          <a href="/cart.html" class="relative p-2 text-[#12372A] hover:opacity-80 transition-opacity" aria-label="Shopping Cart">
+          <a href="./cart.html" class="relative p-2 text-[#12372A] hover:opacity-80 transition-opacity" aria-label="Shopping Cart">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
             <span class="cart-badge hidden absolute top-0 right-0 w-5 h-5 bg-[#D4A72C] text-[#12372A] text-xs font-bold rounded-full flex items-center justify-center">0</span>
           </a>
-          <a href="/menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 bg-[#12372A] text-white text-sm font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
+          <a href="./menu.html" class="hidden sm:inline-flex items-center justify-center px-4 py-2 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
             Order Now
           </a>
           <button id="mobile-menu-toggle" class="md:hidden p-2 text-[#12372A]" aria-label="Open Navigation Menu">
@@ -105,23 +102,6 @@
         </button>
       </div>
 
-      <!-- Live Search Bar (Mobile) -->
-      <div class="search-wrapper relative py-4 border-b border-[#E8E5DC]">
-        <div class="relative flex items-center">
-          <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search pizza, burger, deals..."
-            class="live-search-input w-full pl-9 pr-8 py-2.5 text-xs rounded-lg border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
-          />
-          <button type="button" class="search-clear-btn hidden absolute right-2.5 text-[#6B6B6B] p-1" aria-label="Clear search">
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
-        </div>
-        <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
-      </div>
       <div class="auth-slot py-4 border-b border-[#E8E5DC]"></div>
       <nav class="flex flex-col gap-4 py-6 text-base font-medium">
         <a href="./index.html" class="text-[#1C1C1C]">Home</a>

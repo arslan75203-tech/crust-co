@@ -8,6 +8,46 @@
   --color-crust-border: #e8e5dc;
 }
 
+/* ==========================================================================
+   Modern Custom Scrollbar - Crust & Co Theme
+   ========================================================================== */
+
+/* Standards-compliant browsers (Firefox) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1f4d3a #f0ece1;
+}
+
+/* WebKit browsers (Chrome, Edge, Safari, Opera) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f4f1e8;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1f4d3a;
+  border-radius: 9999px;
+  border: 2px solid #f4f1e8;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #12372a;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #0d261d;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -188,5 +228,20 @@ h1, h2, h3, .font-editorial {
 
 .modal-backdrop {
   backdrop-filter: blur(4px);
-  background-color: rgba(18, 55, 42, 0.45);
+  background-color: rgba(18, 55, 42, 0.55);
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal-enter {
+  animation: modalEnter 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }

@@ -41,15 +41,15 @@
 
     <!-- Top Navigation Bar -->
     <header class="sticky top-0 z-50 bg-[#F8F6F0]/95 backdrop-blur-md border-b border-[#E8E5DC] transition-all">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-2 sm:gap-4 lg:gap-8">
         
         <!-- Brand wordmark -->
-        <a href="./index.html" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0 hover:opacity-90 transition-opacity">
+        <a href="./index.html" class="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0 hover:opacity-90 transition-opacity">
           Crust & Co
         </a>
 
         <!-- Navigation Links with Elastic Underline Animation -->
-        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-[#1C1C1C]">
+        <nav class="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-[#1C1C1C]">
           <a href="./index.html" class="nav-elastic-link whitespace-nowrap shrink-0">Home</a>
           <a href="./menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
           <a href="./deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
@@ -58,22 +58,22 @@
           <a href="./contact.html" class="nav-elastic-link whitespace-nowrap shrink-0">Contact</a>
         </nav>
 
-        <!-- Live Search Bar -->
-        <div class="search-wrapper relative hidden lg:block w-52 xl:w-60 shrink-0">
+        <!-- Live Search Bar: directly visible across mobile, tablet, and desktop -->
+        <div class="search-wrapper relative flex-1 min-w-0 max-w-[190px] xs:max-w-[240px] sm:max-w-xs md:max-w-sm lg:max-w-xs xl:max-w-sm mx-1 sm:mx-2">
           <div class="relative flex items-center">
-            <svg class="w-4 h-4 text-[#6B6B6B] absolute left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-[#6B6B6B] absolute left-2.5 sm:left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
               type="text"
-              placeholder="Search pizza, burger..."
-              class="live-search-input w-full pl-9 pr-8 py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
+              placeholder="Search dishes..."
+              class="live-search-input w-full pl-8 sm:pl-9 pr-6 sm:pr-8 py-1.5 sm:py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
             />
           </div>
           <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
         </div>
 
-        <div class="flex items-center gap-3 sm:gap-4 shrink-0">
+        <div class="flex items-center gap-2 sm:gap-4 shrink-0">
           <div class="auth-slot hidden sm:block"></div>
 
           <a href="./cart.html" class="relative p-2 text-[#12372A] hover:opacity-80 transition-opacity" aria-label="Shopping Cart">
@@ -630,6 +630,7 @@
       let currentUploadedReceiptBase64 = '';
       let currentSelectedArrangement = null;
       let currentCalculatedPricing = null;
+      let userChosenTableIds = [];
 
       // Initialize Date restrictions (min today, max +30 days)
       const now = new Date();
@@ -752,7 +753,7 @@
                   <strong class="text-xs uppercase tracking-wider text-[#12372A]">Real-Time Floor Table Status (100% 4-Seater Tables)</strong>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 text-[11px] text-[#6B6B6B]">
-                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-600"></span> Free & Available</span>
+                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-600"></span> Free & Clickable</span>
                   <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Physically Seated</span>
                   <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Reserved in DB</span>
                 </div>
@@ -764,13 +765,16 @@
                     const isAssigned = assignedIds.includes(r.table.id);
                     let badge = '';
                     let cardStyle = '';
+                    let actionAttr = '';
 
                     if (isAssigned) {
-                      cardStyle = 'border-2 border-emerald-600 bg-emerald-50/90 ring-2 ring-emerald-600/20';
-                      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-700 text-white">✓ Selected (4 Seats)</span>`;
+                      cardStyle = 'border-2 border-[#12372A] bg-emerald-50/95 ring-2 ring-[#12372A]/20 cursor-pointer shadow-xs';
+                      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#12372A] text-white flex items-center gap-1">✓ Chosen (4 Seats)</span>`;
+                      actionAttr = `data-select-table-id="${r.table.id}" role="button" tabindex="0"`;
                     } else if (r.isAvailable) {
-                      cardStyle = 'border border-emerald-200 bg-white hover:border-emerald-500';
-                      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">● Available (4 Seats)</span>`;
+                      cardStyle = 'border border-emerald-300 bg-white hover:border-[#12372A] hover:bg-emerald-50/50 cursor-pointer transition-all shadow-2xs';
+                      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">● Free (Click to pick)</span>`;
+                      actionAttr = `data-select-table-id="${r.table.id}" role="button" tabindex="0"`;
                     } else if (r.reason === 'occupied_physical') {
                       cardStyle = 'border border-amber-300 bg-amber-50/70 opacity-90 cursor-not-allowed';
                       badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900 flex items-center gap-1">⚠️ Diners Seated</span>`;
@@ -786,7 +790,7 @@
                     }
 
                     return `
-                    <div class="p-2.5 rounded-lg text-xs flex flex-col justify-between transition-all ${cardStyle}" title="${r.reasonLabel}">
+                    <div ${actionAttr} class="p-2.5 rounded-lg text-xs flex flex-col justify-between transition-all ${cardStyle}" title="${r.reasonLabel}">
                       <div class="flex items-center justify-between gap-1 mb-1">
                         <strong class="font-bold text-[#12372A] truncate text-[11px] sm:text-xs">${r.table.name}</strong>
                         <span class="text-[10px] font-mono font-semibold px-1 py-0.5 rounded bg-black/5">4s</span>
@@ -830,52 +834,219 @@
           submitBtn.disabled = true;
           submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
           currentSelectedArrangement = null;
+          userChosenTableIds = [];
           return;
         }
 
-        // Arrangement Found!
+        // Arrangement and Available Tables Found!
         submitBtn.disabled = false;
         submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        currentSelectedArrangement = comboResult.recommended;
 
-        // Render Table Arrangement Cards
+        const availableTables = comboResult.dbResult?.availableTables || [];
+        const minTablesNeeded = Math.max(1, Math.ceil(guests / 4));
+        const targetCount = requestedTables > 0 ? requestedTables : minTablesNeeded;
+
+        // Synchronize or initialize userChosenTableIds
+        const availableIdSet = new Set(availableTables.map((t) => t.id));
+        const areChosenValid =
+          userChosenTableIds.length === targetCount &&
+          userChosenTableIds.every((id) => availableIdSet.has(id));
+
+        if (!areChosenValid) {
+          // Initialize with recommended tables
+          userChosenTableIds = (comboResult.recommended?.tableIds || []).slice(0, targetCount);
+          if (userChosenTableIds.length < targetCount) {
+            for (const t of availableTables) {
+              if (!userChosenTableIds.includes(t.id)) {
+                userChosenTableIds.push(t.id);
+                if (userChosenTableIds.length === targetCount) break;
+              }
+            }
+          }
+        }
+
+        // Active selected table objects
+        const chosenTables = availableTables.filter((t) => userChosenTableIds.includes(t.id));
+        currentSelectedArrangement = {
+          tables: chosenTables,
+          tableIds: chosenTables.map((t) => t.id),
+          tableNames: chosenTables.map((t) => `${t.name} (4 seats)`),
+          combinedCapacity: chosenTables.length * 4,
+          tableCount: chosenTables.length,
+          isSingleTable: chosenTables.length === 1,
+        };
+
+        // Render Comprehensive Table Selection UI
         availResult.innerHTML = `
-          <div class="p-4 sm:p-5 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-950 space-y-3">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
-                <strong class="text-sm font-serif font-bold text-emerald-950">
-                  ${currentSelectedArrangement.isSingleTable ? 'Single Table Reserved (4 Seats)' : `${currentSelectedArrangement.tableCount} Tables Combined (${currentSelectedArrangement.combinedCapacity} Seats Total)`}
-                </strong>
-              </div>
-              <span class="text-emerald-800 font-medium">Combined Capacity: <strong>${currentSelectedArrangement.combinedCapacity} Guests</strong> (party of ${guests})</span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
-              ${currentSelectedArrangement.tables
-                .map(
-                  (t) => `
-                <div class="p-3 bg-white rounded-lg border-2 border-emerald-500 shadow-2xs flex items-center justify-between">
-                  <div>
-                    <div class="font-bold text-[#12372A]">${t.name}</div>
-                    <div class="text-[11px] text-[#6B6B6B]">${t.sectionName}</div>
-                  </div>
-                  <span class="px-2.5 py-1 rounded bg-[#12372A]/10 text-[#12372A] font-semibold text-xs">
-                    4 Seats
-                  </span>
-                </div>
-              `
-                )
-                .join('')}
-            </div>
+          <div class="p-4 sm:p-6 rounded-2xl bg-white border border-[#E8E5DC] shadow-xs space-y-5">
             
-            <p class="text-[11px] text-emerald-800 pt-1">
-              ${currentSelectedArrangement.tableCount > 1 ? `Multi-table reservation: ${currentSelectedArrangement.tableCount} standard 4-seater tables will be joined together for your party.` : `Comfortable dedicated 4-seater table with prompt table-side service.`}
-            </p>
+            <!-- Selection Heading & Live Summary Badge -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E8E5DC]">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                  <h3 class="text-base font-serif font-bold text-[#12372A]">
+                    Select Your Desired Table (${targetCount} Table${targetCount > 1 ? 's' : ''} Needed)
+                  </h3>
+                </div>
+                <p class="text-xs text-[#6B6B6B] mt-0.5">
+                  ${
+                    targetCount === 1
+                      ? 'Click on any available table card below to choose your favorite spot:'
+                      : `Click on tables to choose your ${targetCount} tables (${chosenTables.length} of ${targetCount} selected · ${chosenTables.length * 4} seats total):`
+                  }
+                </p>
+              </div>
 
-            ${renderTableStatusMatrix(currentSelectedArrangement.tableIds)}
+              <!-- Active Selection Callout -->
+              <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-50 border border-emerald-300 text-xs font-semibold text-emerald-950 shrink-0">
+                <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span>Selected by You: <strong class="text-[#12372A]">${chosenTables.map((t) => t.name).join(' + ')}</strong> (${chosenTables.length * 4} Seats)</span>
+              </div>
+            </div>
+
+            <!-- Quick Recommended Pairings (if multiple tables are needed) -->
+            ${
+              targetCount > 1 && comboResult.arrangements.length > 1
+                ? `
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-semibold uppercase tracking-wider text-[11px] text-[#12372A]">Suggested Pairings (1-Click Selection):</span>
+                  <span class="text-[#6B6B6B] text-[11px]">Tables will be arranged side-by-side</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  ${comboResult.arrangements
+                    .slice(0, 4)
+                    .map((arr) => {
+                      const isArrSelected =
+                        arr.tableIds.length === userChosenTableIds.length &&
+                        arr.tableIds.every((id) => userChosenTableIds.includes(id));
+                      return `
+                      <button
+                        type="button"
+                        class="quick-pair-btn px-3 py-1.5 text-xs rounded-lg font-medium transition-all ${
+                          isArrSelected
+                            ? 'bg-[#12372A] text-white font-bold ring-2 ring-[#12372A]/20 shadow-xs'
+                            : 'bg-[#F8F6F0] border border-[#E8E5DC] text-[#1C1C1C] hover:border-[#12372A]'
+                        }"
+                        data-quick-combo-ids="${arr.tableIds.join(',')}"
+                      >
+                        ${arr.tables.map((t) => t.name).join(' + ')} (${arr.combinedCapacity} Seats) ${isArrSelected ? '✓' : ''}
+                      </button>
+                    `;
+                    })
+                    .join('')}
+                </div>
+              </div>
+            `
+                : ''
+            }
+
+            <!-- Available Tables Grid: Click to Select -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs text-[#6B6B6B]">
+                <span class="font-semibold uppercase tracking-wider text-[11px] text-[#12372A]">
+                  Available Tables (${availableTables.length} Free Now)
+                </span>
+                <span class="text-[11px]">Click any card to select</span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                ${availableTables
+                  .map((t) => {
+                    const isSelected = userChosenTableIds.includes(t.id);
+                    return `
+                    <div
+                      role="button"
+                      tabindex="0"
+                      data-select-table-id="${t.id}"
+                      class="p-4 rounded-xl transition-all cursor-pointer select-none text-left flex flex-col justify-between ${
+                        isSelected
+                          ? 'border-2 border-[#12372A] bg-emerald-50/95 shadow-xs ring-2 ring-[#12372A]/20'
+                          : 'border border-[#E8E5DC] bg-white hover:border-[#12372A] hover:bg-[#F8F6F0]/60 hover:shadow-2xs'
+                      }"
+                    >
+                      <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                          <span class="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                            isSelected ? 'bg-[#12372A] text-white' : 'border-2 border-[#6B6B6B]/40 text-transparent'
+                          }">
+                            ${isSelected ? '✓' : ''}
+                          </span>
+                          <strong class="font-serif font-bold text-sm ${isSelected ? 'text-[#12372A]' : 'text-[#1C1C1C]'}">${t.name}</strong>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[11px] font-semibold ${
+                          isSelected ? 'bg-[#12372A] text-white' : 'bg-emerald-100 text-emerald-800'
+                        }">
+                          ${isSelected ? 'Selected' : 'Available'}
+                        </span>
+                      </div>
+
+                      <div class="mt-2.5 pt-2 border-t ${isSelected ? 'border-emerald-200' : 'border-[#E8E5DC]/60'} flex items-center justify-between text-xs">
+                        <span class="text-[#6B6B6B]">${t.sectionName}</span>
+                        <span class="font-semibold text-[#12372A]">4 Seats</span>
+                      </div>
+
+                      <div class="mt-2 text-[11px] font-semibold ${
+                        isSelected ? 'text-emerald-800' : 'text-[#6B6B6B] hover:text-[#12372A]'
+                      }">
+                        ${isSelected ? '✓ Confirmed for your booking' : 'Tap to select this table →'}
+                      </div>
+                    </div>
+                  `;
+                  })
+                  .join('')}
+              </div>
+            </div>
+
+            <!-- Real-Time Floor Matrix with Interactive Table Clicks -->
+            ${renderTableStatusMatrix(userChosenTableIds)}
           </div>
         `;
+
+        // Wire Up Interactive Table Selection Handlers
+        availResult.querySelectorAll('[data-select-table-id]').forEach((card) => {
+          const handler = (e) => {
+            e.preventDefault();
+            const tid = card.getAttribute('data-select-table-id');
+            if (!tid) return;
+
+            if (targetCount === 1) {
+              userChosenTableIds = [tid];
+            } else {
+              if (userChosenTableIds.includes(tid)) {
+                if (userChosenTableIds.length > 1) {
+                  userChosenTableIds = userChosenTableIds.filter((id) => id !== tid);
+                }
+              } else {
+                if (userChosenTableIds.length >= targetCount) {
+                  userChosenTableIds.shift();
+                }
+                userChosenTableIds.push(tid);
+              }
+            }
+            recalculate();
+            const selTable = availableTables.find((t) => t.id === tid);
+            showToast(`Table ${selTable ? selTable.name : tid} selected!`);
+          };
+
+          card.addEventListener('click', handler);
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              handler(e);
+            }
+          });
+        });
+
+        // Wire Up Quick Pairing Buttons
+        availResult.querySelectorAll('[data-quick-combo-ids]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const ids = btn.getAttribute('data-quick-combo-ids').split(',');
+            userChosenTableIds = ids;
+            recalculate();
+            showToast(`Selected tables: ${ids.join(' & ')}!`);
+          });
+        });
 
         // 4. Calculate Financials (Strictly Read-Only, Per-table Per-30m)
         currentCalculatedPricing = calculateReservationPrice(
@@ -950,13 +1121,21 @@
 
       // Event Listeners for Recalculation
       dateInput.addEventListener('change', () => {
+        userChosenTableIds = [];
         populateTimeSlots();
         recalculate();
       });
-      timeSelect.addEventListener('change', recalculate);
+      timeSelect.addEventListener('change', () => {
+        userChosenTableIds = [];
+        recalculate();
+      });
       durationSelect.addEventListener('change', recalculate);
-      tablesSelect.addEventListener('change', recalculate);
+      tablesSelect.addEventListener('change', () => {
+        userChosenTableIds = [];
+        recalculate();
+      });
       guestsSelect.addEventListener('change', () => {
+        userChosenTableIds = [];
         const g = Number(guestsSelect.value);
         const t = Number(tablesSelect.value);
         if (t === 1 && g > 4) {
@@ -966,7 +1145,10 @@
         }
         recalculate();
       });
-      sectionSelect.addEventListener('change', recalculate);
+      sectionSelect.addEventListener('change', () => {
+        userChosenTableIds = [];
+        recalculate();
+      });
 
       // Form Submission
       form.addEventListener('submit', (e) => {
