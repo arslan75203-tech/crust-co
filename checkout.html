@@ -41,7 +41,7 @@
     <!-- Top Navigation Bar -->
     <header class="sticky top-0 z-50 bg-[#F8F6F0]/95 backdrop-blur-md border-b border-[#E8E5DC]">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
-        <a href="/index.html" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0">
+        <a href="./index.html" class="text-2xl sm:text-3xl font-serif font-bold text-[#12372A] tracking-tight whitespace-nowrap shrink-0 hover:opacity-90 transition-opacity">
           Crust & Co
         </a>
 
@@ -54,7 +54,7 @@
         </div>
 
         <div class="flex items-center gap-4 shrink-0">
-          <a href="/cart.html" class="text-xs font-semibold text-[#12372A] hover:underline">
+          <a href="./cart.html" class="text-xs font-semibold text-[#12372A] hover:underline">
             Back to Cart
           </a>
         </div>
@@ -82,24 +82,62 @@
       import { createOrder } from './js/orders.js';
       import { formatPrice } from './js/products.js';
       import { showToast } from './js/ui.js';
+      import {
+        getAppliedCoupon,
+        setAppliedCoupon,
+        removeAppliedCoupon,
+        validateCouponWithBackend,
+        revalidateAppliedCoupon,
+      } from './js/coupons.js';
 
       const root = document.getElementById('checkout-root');
       const currentUser = getCurrentUser();
-      const summary = getCartSummary();
 
-      function initCheckoutView() {
+      function getFormValues() {
+        const form = document.getElementById('checkout-form');
+        if (!form) return null;
+        return {
+          name: document.getElementById('cust-name')?.value || '',
+          phone: document.getElementById('cust-phone')?.value || '',
+          address: document.getElementById('cust-address')?.value || '',
+          area: document.getElementById('cust-area')?.value || '',
+          landmark: document.getElementById('cust-landmark')?.value || '',
+          notes: document.getElementById('order-notes')?.value || '',
+        };
+      }
+
+      async function initCheckoutView(preservedForm = null) {
+        const summary = getCartSummary();
+
         if (summary.items.length === 0) {
           root.innerHTML = `
             <div class="py-20 bg-white rounded-2xl border border-[#E8E5DC] text-center p-8 max-w-lg mx-auto">
               <h2 class="text-2xl font-serif font-bold text-[#12372A]">No items in cart</h2>
               <p class="text-xs text-[#6B6B6B] mt-2">Your cart is empty. Please add items before checking out.</p>
-              <a href="/menu.html" class="inline-block mt-5 px-6 py-3 bg-[#12372A] text-white text-xs font-semibold rounded-lg">
+              <a href="./menu.html" class="inline-block mt-5 px-6 py-3 bg-[#12372A] text-white text-xs font-semibold rounded-lg">
                 Explore Menu
               </a>
             </div>
           `;
           return;
         }
+
+        // Automatic revalidation of any existing session coupon against current items
+        const reval = await revalidateAppliedCoupon(summary.items, summary.subtotal, currentUser?.id || 'guest');
+        if (reval && reval.removed) {
+          showToast(reval.message, 'info');
+        }
+
+        const appliedCoupon = getAppliedCoupon();
+        const discountAmount = appliedCoupon ? Math.min(summary.subtotal, Number(appliedCoupon.discountAmount) || 0) : 0;
+        const grandTotal = Math.max(0, summary.subtotal - discountAmount + summary.deliveryCharge);
+
+        const formName = preservedForm ? preservedForm.name : (currentUser?.name || '');
+        const formPhone = preservedForm ? preservedForm.phone : (currentUser?.phone || '');
+        const formAddress = preservedForm ? preservedForm.address : (currentUser?.address || '');
+        const formArea = preservedForm ? preservedForm.area : (currentUser?.area || 'Gulberg III, Lahore');
+        const formLandmark = preservedForm ? preservedForm.landmark : (currentUser?.landmark || '');
+        const formNotes = preservedForm ? preservedForm.notes : '';
 
         root.innerHTML = `
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -128,7 +166,7 @@
                       type="text"
                       id="cust-name"
                       required
-                      value="${currentUser?.name || ''}"
+                      value="${formName}"
                       placeholder="e.g. Tariq Khan"
                       class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
                     />
@@ -141,7 +179,7 @@
                       type="tel"
                       id="cust-phone"
                       required
-                      value="${currentUser?.phone || ''}"
+                      value="${formPhone}"
                       placeholder="e.g. 0300 1234567"
                       class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
                     />
@@ -156,7 +194,7 @@
                     type="text"
                     id="cust-address"
                     required
-                    value="${currentUser?.address || ''}"
+                    value="${formAddress}"
                     placeholder="e.g. House 42, Street 8, Block G"
                     class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
                   />
@@ -171,7 +209,7 @@
                       type="text"
                       id="cust-area"
                       required
-                      value="${currentUser?.area || 'Gulberg III, Lahore'}"
+                      value="${formArea}"
                       placeholder="e.g. Gulberg III / DHA Phase 5"
                       class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
                     />
@@ -183,7 +221,7 @@
                     <input
                       type="text"
                       id="cust-landmark"
-                      value="${currentUser?.landmark || ''}"
+                      value="${formLandmark}"
                       placeholder="e.g. Opposite City Hospital"
                       class="w-full text-xs sm:text-sm p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A]"
                     />
@@ -199,7 +237,7 @@
                     rows="2"
                     placeholder="e.g. Call when outside, leave with guard, extra ketchup..."
                     class="w-full text-xs p-3 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-white resize-none"
-                  ></textarea>
+                  >${formNotes}</textarea>
                 </div>
 
                 <!-- Payment Method Section -->
@@ -224,10 +262,10 @@
                 <div class="pt-2">
                   <button
                     type="submit"
-                    class="w-full py-4 bg-[#12372A] hover:bg-[#1F4D3A] text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+                    class="w-full py-4 bg-[#12372A] hover:bg-[#1F4D3A] text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
                   >
                     <span>Place Order (Cash on Delivery)</span>
-                    <span class="text-[#D4A72C] font-bold tabular-nums">· ${formatPrice(summary.grandTotal)}</span>
+                    <span class="text-[#D4A72C] font-bold tabular-nums">· ${formatPrice(grandTotal)}</span>
                   </button>
                 </div>
 
@@ -239,7 +277,7 @@
               <div class="bg-white rounded-2xl border border-[#E8E5DC] p-6 shadow-xs sticky top-28 space-y-5">
                 <h2 class="font-serif font-bold text-lg text-[#12372A]">Your Order (${summary.itemCount} items)</h2>
                 
-                <div class="space-y-3 max-h-72 overflow-y-auto pr-1 text-xs">
+                <div class="space-y-3 max-h-64 overflow-y-auto pr-1 text-xs">
                   ${summary.items
                     .map(
                       (item) => `
@@ -266,11 +304,91 @@
                     .join('')}
                 </div>
 
-                <div class="space-y-2 text-xs pt-2">
+                <!-- Coupon Code Section -->
+                <div class="border-t border-[#E8E5DC] pt-4">
+                  ${
+                    appliedCoupon
+                      ? `
+                    <div class="p-3.5 bg-emerald-50 rounded-xl border border-emerald-200">
+                      <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-start gap-2 min-w-0">
+                          <div class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mt-0.5">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                              <span class="font-mono font-bold text-xs text-emerald-950 uppercase tracking-wider">${appliedCoupon.code}</span>
+                              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-200 text-emerald-900">Applied</span>
+                            </div>
+                            <div class="text-xs text-emerald-800 font-semibold mt-0.5">
+                              You saved ${formatPrice(discountAmount)}
+                            </div>
+                            ${appliedCoupon.description ? `<div class="text-[11px] text-emerald-700 mt-0.5">${appliedCoupon.description}</div>` : ''}
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          id="btn-remove-coupon"
+                          class="text-xs font-semibold text-rose-700 hover:text-rose-900 underline shrink-0 cursor-pointer pt-0.5"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  `
+                      : `
+                    <div>
+                      <label for="coupon-code-input" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                        Have a Coupon Code?
+                      </label>
+                      <div class="flex gap-2">
+                        <input
+                          type="text"
+                          id="coupon-code-input"
+                          placeholder="e.g. CRUST10"
+                          autocomplete="off"
+                          autocapitalize="characters"
+                          class="w-full text-xs font-mono uppercase p-2.5 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-[#F8F6F0] focus:bg-white placeholder:normal-case placeholder:font-sans"
+                        />
+                        <button
+                          type="button"
+                          id="btn-apply-coupon"
+                          class="px-4 py-2.5 bg-[#12372A] hover:bg-[#1F4D3A] text-white text-xs font-semibold rounded-lg transition-colors shrink-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[70px] cursor-pointer"
+                        >
+                          <span>Apply</span>
+                        </button>
+                      </div>
+                      <div id="coupon-error-container" class="mt-2 text-xs hidden"></div>
+                    </div>
+                  `
+                  }
+                </div>
+
+                <!-- Price Calculations -->
+                <div class="space-y-2 text-xs pt-2 border-t border-[#E8E5DC]">
                   <div class="flex justify-between text-[#6B6B6B]">
                     <span>Subtotal</span>
                     <span class="text-[#1C1C1C] font-medium tabular-nums">${formatPrice(summary.subtotal)}</span>
                   </div>
+
+                  ${
+                    discountAmount > 0
+                      ? `
+                  <div class="flex justify-between text-emerald-700 font-medium">
+                    <span class="flex items-center gap-1.5">
+                      <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                      </svg>
+                      <span>Discount (${appliedCoupon.code})</span>
+                    </span>
+                    <span class="tabular-nums font-semibold">- ${formatPrice(discountAmount)}</span>
+                  </div>
+                  `
+                      : ''
+                  }
+
                   <div class="flex justify-between text-[#6B6B6B]">
                     <span>Delivery Charges</span>
                     <span class="text-[#1C1C1C] font-medium tabular-nums">
@@ -279,7 +397,7 @@
                   </div>
                   <div class="flex justify-between text-base font-bold text-[#12372A] border-t border-[#E8E5DC] pt-3">
                     <span>Grand Total</span>
-                    <span class="tabular-nums font-serif text-lg">${formatPrice(summary.grandTotal)}</span>
+                    <span class="tabular-nums font-serif text-lg">${formatPrice(grandTotal)}</span>
                   </div>
                 </div>
 
@@ -288,6 +406,106 @@
 
           </div>
         `;
+
+        // Wire Coupon Apply / Remove Handlers
+        const applyBtn = document.getElementById('btn-apply-coupon');
+        const couponInput = document.getElementById('coupon-code-input');
+        const errorContainer = document.getElementById('coupon-error-container');
+
+        if (applyBtn && couponInput) {
+          const handleApply = async () => {
+            const rawCode = couponInput.value.trim().toUpperCase();
+
+            if (!rawCode) {
+              if (errorContainer) {
+                errorContainer.className = 'mt-2 text-xs p-2.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg flex items-start gap-1.5';
+                errorContainer.innerHTML = `
+                  <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Please enter a coupon code.</span>
+                `;
+                errorContainer.classList.remove('hidden');
+              }
+              couponInput.focus();
+              return;
+            }
+
+            // Applying state
+            applyBtn.disabled = true;
+            couponInput.disabled = true;
+            const originalHtml = applyBtn.innerHTML;
+            applyBtn.innerHTML = `
+              <svg class="animate-spin h-3.5 w-3.5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            `;
+            if (errorContainer) errorContainer.classList.add('hidden');
+
+            try {
+              const res = await validateCouponWithBackend({
+                code: rawCode,
+                subtotal: summary.subtotal,
+                items: summary.items,
+                customerId: currentUser?.id || 'guest',
+              });
+
+              if (res.valid && res.coupon) {
+                setAppliedCoupon(res.coupon);
+                showToast(res.message || `Coupon "${rawCode}" applied!`, 'success');
+                const currentVals = getFormValues();
+                initCheckoutView(currentVals);
+              } else {
+                applyBtn.disabled = false;
+                couponInput.disabled = false;
+                applyBtn.innerHTML = originalHtml;
+                if (errorContainer) {
+                  errorContainer.className = 'mt-2 text-xs p-2.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg flex items-start gap-1.5';
+                  errorContainer.innerHTML = `
+                    <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>${res.message}</span>
+                  `;
+                  errorContainer.classList.remove('hidden');
+                }
+              }
+            } catch (err) {
+              applyBtn.disabled = false;
+              couponInput.disabled = false;
+              applyBtn.innerHTML = originalHtml;
+              if (errorContainer) {
+                errorContainer.className = 'mt-2 text-xs p-2.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg flex items-start gap-1.5';
+                errorContainer.innerHTML = `
+                  <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Network error connecting to coupon service. Please try again.</span>
+                `;
+                errorContainer.classList.remove('hidden');
+              }
+            }
+          };
+
+          applyBtn.onclick = handleApply;
+          couponInput.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleApply();
+            }
+          };
+        }
+
+        const removeBtn = document.getElementById('btn-remove-coupon');
+        if (removeBtn) {
+          removeBtn.onclick = () => {
+            removeAppliedCoupon();
+            showToast('Coupon removed');
+            const currentVals = getFormValues();
+            initCheckoutView(currentVals);
+          };
+        }
 
         // Handle form submit
         document.getElementById('checkout-form').onsubmit = (e) => {
@@ -305,21 +523,28 @@
             return;
           }
 
+          const currentCoupon = getAppliedCoupon();
+          const currentDiscount = currentCoupon ? Math.min(summary.subtotal, Number(currentCoupon.discountAmount) || 0) : 0;
+          const finalTotal = Math.max(0, summary.subtotal - currentDiscount + summary.deliveryCharge);
+
           const newOrder = createOrder({
             items: summary.items,
             subtotal: summary.subtotal,
+            discount: currentDiscount,
+            couponCode: currentCoupon ? currentCoupon.code : null,
             deliveryCharge: summary.deliveryCharge,
-            total: summary.grandTotal,
+            total: finalTotal,
             customer: { name, phone, address, area, landmark },
             notes,
             userId: currentUser?.id || 'guest',
           });
 
-          // Clear cart
+          // Clear coupon session and cart
+          removeAppliedCoupon();
           clearCart();
           showToast('Order confirmed! Arriving in 30–40 minutes');
 
-          // Render simple, clean confirmation view (No complex cycle bar, simple ETA time)
+          // Render simple, clean confirmation view
           renderConfirmation(newOrder);
         };
       }
@@ -362,6 +587,11 @@
               <div>Recipient: <strong>${order.customer.name}</strong> (${order.customer.phone})</div>
               <div>Address: <strong>${order.customer.address}, ${order.customer.area}</strong></div>
               ${order.notes ? `<div>Notes: <em>"${order.notes}"</em></div>` : ''}
+              ${
+                order.discount && order.discount > 0
+                  ? `<div class="text-emerald-800 font-semibold pt-1">Coupon <strong>${order.couponCode}</strong> applied: - ${formatPrice(order.discount)}</div>`
+                  : ''
+              }
               
               <div class="pt-3 border-t border-[#E8E5DC] text-[11px] text-[#6B6B6B]">
                 Items ordered: ${order.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}
@@ -387,7 +617,6 @@
         `;
       }
 
-      initCheckoutView();
     </script>
   </body>
 </html>

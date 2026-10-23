@@ -706,14 +706,14 @@ export function updateHeaderState() {
   authSlots.forEach((slot) => {
     if (user) {
       slot.innerHTML = `
-        <div class="flex items-center gap-2 sm:gap-3">
-          <a href="./account.html" class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium text-[#1C1C1C] hover:text-[#12372A] transition-colors whitespace-nowrap">
+        <div class="flex items-center gap-1.5 sm:gap-2.5">
+          <a href="./account.html" class="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#1C1C1C] hover:text-[#12372A] transition-colors whitespace-nowrap" title="My Account">
             <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#12372A] text-white flex items-center justify-center text-xs font-serif font-bold">
               ${user.name.charAt(0).toUpperCase()}
             </span>
-            <span class="hidden lg:inline">${user.name.split(' ')[0]}</span>
+            <span class="hidden xl:inline">${user.name.split(' ')[0]}</span>
           </a>
-          <button id="logout-btn" class="text-[11px] sm:text-xs text-[#6B6B6B] hover:text-[#1C1C1C] transition-colors underline whitespace-nowrap cursor-pointer">
+          <button id="logout-btn" class="text-[11px] text-[#6B6B6B] hover:text-[#1C1C1C] transition-colors underline whitespace-nowrap cursor-pointer">
             Logout
           </button>
         </div>
@@ -721,7 +721,7 @@ export function updateHeaderState() {
     } else {
       slot.innerHTML = `
         <a href="./login.html" class="text-xs sm:text-sm font-medium text-[#1C1C1C] hover:text-[#12372A] transition-colors whitespace-nowrap">
-          Login / Sign Up
+          Login
         </a>
       `;
     }

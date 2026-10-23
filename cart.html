@@ -87,7 +87,7 @@
             <span class="cart-badge hidden absolute top-0 right-0 w-4 h-4 sm:w-5 sm:h-5 bg-[#D4A72C] text-[#12372A] text-[10px] sm:text-xs font-bold rounded-full flex items-center justify-center">0</span>
           </a>
 
-          <a href="./menu.html" class="hidden sm:inline-flex items-center justify-center px-4 py-2 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
+          <a href="./menu.html" class="hidden xl:inline-flex items-center justify-center px-4 py-2 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
             Order Food
           </a>
 
@@ -162,11 +162,11 @@
           <div>
             <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Quick Links</h4>
             <ul class="space-y-2.5 text-xs text-white/80">
-              <li><a href="/index.html" class="hover:text-white">Home</a></li>
-              <li><a href="/menu.html" class="hover:text-white">Our Menu</a></li>
-              <li><a href="/deals.html" class="hover:text-white">Exclusive Deals</a></li>
-              <li><a href="/about.html" class="hover:text-white">Our Story & Craft</a></li>
-              <li><a href="/account.html" class="hover:text-white">My Account & Orders</a></li>
+              <li><a href="./index.html" class="hover:text-white">Home</a></li>
+              <li><a href="./menu.html" class="hover:text-white">Our Menu</a></li>
+              <li><a href="./deals.html" class="hover:text-white">Exclusive Deals</a></li>
+              <li><a href="./about.html" class="hover:text-white">Our Story & Craft</a></li>
+              <li><a href="./account.html" class="hover:text-white">My Account & Orders</a></li>
             </ul>
           </div>
           <div>
@@ -196,17 +196,27 @@
     <script type="module" src="./js/app.js"></script>
     <script type="module">
       import { getCart, updateQuantity, removeFromCart, clearCart, getCartSummary, FREE_DELIVERY_THRESHOLD } from './js/cart.js';
+      import { getCurrentUser } from './js/auth.js';
       import { formatPrice } from './js/products.js';
       import { showToast } from './js/ui.js';
+      import {
+        getAppliedCoupon,
+        setAppliedCoupon,
+        removeAppliedCoupon,
+        validateCouponWithBackend,
+        revalidateAppliedCoupon,
+      } from './js/coupons.js';
 
       const cartContent = document.getElementById('cart-content');
       const clearBtn = document.getElementById('clear-cart-btn');
 
-      function renderCart() {
+      async function renderCart() {
         const summary = getCartSummary();
         const items = summary.items;
+        const currentUser = getCurrentUser();
 
         if (items.length === 0) {
+          removeAppliedCoupon();
           clearBtn.classList.add('hidden');
           cartContent.innerHTML = `
             <div class="col-span-12 py-20 bg-white rounded-2xl border border-[#E8E5DC] text-center p-8">
@@ -220,7 +230,7 @@
                 Explore our stone-oven pizzas, crunchy zinger burgers, and family deals to get started.
               </p>
               <div class="mt-6">
-                <a href="/menu.html" class="inline-flex items-center px-6 py-3 bg-[#12372A] text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors">
+                <a href="./menu.html" class="inline-flex items-center px-6 py-3 bg-[#12372A] text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors">
                   Browse Restaurant Menu
                 </a>
               </div>
@@ -230,6 +240,16 @@
         }
 
         clearBtn.classList.remove('hidden');
+
+        // Automatic revalidation of applied coupon against updated cart contents
+        const reval = await revalidateAppliedCoupon(items, summary.subtotal, currentUser?.id || 'guest');
+        if (reval && reval.removed) {
+          showToast(reval.message, 'info');
+        }
+
+        const appliedCoupon = getAppliedCoupon();
+        const discountAmount = appliedCoupon ? Math.min(summary.subtotal, Number(appliedCoupon.discountAmount) || 0) : 0;
+        const grandTotal = Math.max(0, summary.subtotal - discountAmount + summary.deliveryCharge);
 
         const remainingForFree = Math.max(0, FREE_DELIVERY_THRESHOLD - summary.subtotal);
         const freeProgress = Math.min(100, Math.round((summary.subtotal / FREE_DELIVERY_THRESHOLD) * 100));
@@ -278,13 +298,13 @@
                 <div class="flex items-center justify-between sm:justify-end gap-6 pt-3 sm:pt-0 border-t sm:border-t-0 border-[#E8E5DC]">
                   <!-- Quantity Stepper -->
                   <div class="flex items-center border border-[#E8E5DC] rounded-lg bg-[#F8F6F0]">
-                    <button data-qty-dec="${item.id}" class="w-8 h-8 flex items-center justify-center text-[#1C1C1C] hover:bg-[#E8E5DC] rounded-l-lg font-bold text-xs">
+                    <button data-qty-dec="${item.id}" class="w-8 h-8 flex items-center justify-center text-[#1C1C1C] hover:bg-[#E8E5DC] rounded-l-lg font-bold text-xs cursor-pointer">
                       –
                     </button>
                     <span class="w-8 text-center text-xs font-semibold tabular-nums text-[#12372A]">
                       ${item.quantity}
                     </span>
-                    <button data-qty-inc="${item.id}" class="w-8 h-8 flex items-center justify-center text-[#1C1C1C] hover:bg-[#E8E5DC] rounded-r-lg font-bold text-xs">
+                    <button data-qty-inc="${item.id}" class="w-8 h-8 flex items-center justify-center text-[#1C1C1C] hover:bg-[#E8E5DC] rounded-r-lg font-bold text-xs cursor-pointer">
                       +
                     </button>
                   </div>
@@ -294,7 +314,7 @@
                     <div class="text-base font-serif font-bold text-[#12372A] tabular-nums">
                       ${formatPrice(item.totalPrice)}
                     </div>
-                    <button data-remove-item="${item.id}" class="text-[11px] text-rose-700 hover:text-rose-900 underline mt-0.5">
+                    <button data-remove-item="${item.id}" class="text-[11px] text-rose-700 hover:text-rose-900 underline mt-0.5 cursor-pointer">
                       Remove
                     </button>
                   </div>
@@ -327,12 +347,91 @@
                 }
               </div>
 
+              <!-- Coupon Code Box -->
+              <div class="border-t border-[#E8E5DC] pt-4">
+                ${
+                  appliedCoupon
+                    ? `
+                  <div class="p-3.5 bg-emerald-50 rounded-xl border border-emerald-200">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="flex items-start gap-2 min-w-0">
+                        <div class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mt-0.5">
+                          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <div>
+                          <div class="flex items-center gap-2 flex-wrap">
+                            <span class="font-mono font-bold text-xs text-emerald-950 uppercase tracking-wider">${appliedCoupon.code}</span>
+                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-200 text-emerald-900">Applied</span>
+                          </div>
+                          <div class="text-xs text-emerald-800 font-semibold mt-0.5">
+                            You saved ${formatPrice(discountAmount)}
+                          </div>
+                          ${appliedCoupon.description ? `<div class="text-[11px] text-emerald-700 mt-0.5">${appliedCoupon.description}</div>` : ''}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        id="cart-btn-remove-coupon"
+                        class="text-xs font-semibold text-rose-700 hover:text-rose-900 underline shrink-0 cursor-pointer pt-0.5"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                `
+                    : `
+                  <div>
+                    <label for="cart-coupon-input" class="block text-xs font-semibold uppercase tracking-wider text-[#12372A] mb-1.5">
+                      Coupon Code
+                    </label>
+                    <div class="flex gap-2">
+                      <input
+                        type="text"
+                        id="cart-coupon-input"
+                        placeholder="Enter coupon code"
+                        autocomplete="off"
+                        autocapitalize="characters"
+                        class="w-full text-xs font-mono uppercase p-2.5 rounded-lg border border-[#E8E5DC] focus:outline-hidden focus:border-[#12372A] bg-[#F8F6F0] focus:bg-white placeholder:normal-case placeholder:font-sans"
+                      />
+                      <button
+                        type="button"
+                        id="cart-btn-apply-coupon"
+                        class="px-4 py-2.5 bg-[#12372A] hover:bg-[#1F4D3A] text-white text-xs font-semibold rounded-lg transition-colors shrink-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[70px] cursor-pointer"
+                      >
+                        <span>Apply</span>
+                      </button>
+                    </div>
+                    <div id="cart-coupon-feedback" class="mt-2 text-xs hidden"></div>
+                  </div>
+                `
+                }
+              </div>
+
               <!-- Price calculations -->
               <div class="space-y-3 text-xs sm:text-sm border-t border-[#E8E5DC] pt-4">
                 <div class="flex justify-between text-[#6B6B6B]">
                   <span>Subtotal (${summary.itemCount} items)</span>
                   <span class="text-[#1C1C1C] font-medium tabular-nums">${formatPrice(summary.subtotal)}</span>
                 </div>
+
+                ${
+                  discountAmount > 0
+                    ? `
+                <div class="flex justify-between text-emerald-700 font-medium">
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    <span>Discount (${appliedCoupon.code})</span>
+                  </span>
+                  <span class="tabular-nums font-semibold">- ${formatPrice(discountAmount)}</span>
+                </div>
+                `
+                    : ''
+                }
+
                 <div class="flex justify-between text-[#6B6B6B]">
                   <span>Delivery Charges</span>
                   <span class="text-[#1C1C1C] font-medium tabular-nums">
@@ -341,13 +440,13 @@
                 </div>
                 <div class="flex justify-between text-base font-bold text-[#12372A] border-t border-[#E8E5DC] pt-3">
                   <span>Grand Total</span>
-                  <span class="tabular-nums font-serif text-lg">${formatPrice(summary.grandTotal)}</span>
+                  <span class="tabular-nums font-serif text-lg">${formatPrice(grandTotal)}</span>
                 </div>
               </div>
 
               <div class="pt-2">
                 <a
-                  href="/checkout.html"
+                  href="./checkout.html"
                   class="w-full py-3.5 bg-[#12372A] hover:bg-[#1F4D3A] text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
                 >
                   Proceed to Checkout
@@ -364,45 +463,143 @@
           </div>
         `;
 
-        // Wire event listeners
+        // Wire Coupon Apply / Remove Handlers in Cart
+        const cartApplyBtn = document.getElementById('cart-btn-apply-coupon');
+        const cartCouponInput = document.getElementById('cart-coupon-input');
+        const cartFeedback = document.getElementById('cart-coupon-feedback');
+
+        if (cartApplyBtn && cartCouponInput) {
+          const handleCartApply = async () => {
+            const rawCode = cartCouponInput.value.trim().toUpperCase();
+
+            if (!rawCode) {
+              if (cartFeedback) {
+                cartFeedback.className = 'mt-2 text-xs p-2.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg flex items-start gap-1.5';
+                cartFeedback.innerHTML = `
+                  <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Please enter a coupon code.</span>
+                `;
+                cartFeedback.classList.remove('hidden');
+              }
+              cartCouponInput.focus();
+              return;
+            }
+
+            cartApplyBtn.disabled = true;
+            cartCouponInput.disabled = true;
+            const originalHtml = cartApplyBtn.innerHTML;
+            cartApplyBtn.innerHTML = `
+              <svg class="animate-spin h-3.5 w-3.5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            `;
+            if (cartFeedback) cartFeedback.classList.add('hidden');
+
+            try {
+              const res = await validateCouponWithBackend({
+                code: rawCode,
+                subtotal: summary.subtotal,
+                items: summary.items,
+                customerId: currentUser?.id || 'guest',
+              });
+
+              if (res.valid && res.coupon) {
+                setAppliedCoupon(res.coupon);
+                showToast(res.message || `Coupon "${rawCode}" applied!`, 'success');
+                await renderCart();
+              } else {
+                cartApplyBtn.disabled = false;
+                cartCouponInput.disabled = false;
+                cartApplyBtn.innerHTML = originalHtml;
+                if (cartFeedback) {
+                  cartFeedback.className = 'mt-2 text-xs p-2.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg flex items-start gap-1.5';
+                  cartFeedback.innerHTML = `
+                    <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>${res.message}</span>
+                  `;
+                  cartFeedback.classList.remove('hidden');
+                }
+              }
+            } catch (err) {
+              cartApplyBtn.disabled = false;
+              cartCouponInput.disabled = false;
+              cartApplyBtn.innerHTML = originalHtml;
+              if (cartFeedback) {
+                cartFeedback.className = 'mt-2 text-xs p-2.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg flex items-start gap-1.5';
+                cartFeedback.innerHTML = `
+                  <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Network error connecting to coupon service. Please try again.</span>
+                `;
+                cartFeedback.classList.remove('hidden');
+              }
+            }
+          };
+
+          cartApplyBtn.onclick = handleCartApply;
+          cartCouponInput.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleCartApply();
+            }
+          };
+        }
+
+        const cartRemoveBtn = document.getElementById('cart-btn-remove-coupon');
+        if (cartRemoveBtn) {
+          cartRemoveBtn.onclick = async () => {
+            removeAppliedCoupon();
+            showToast('Coupon removed');
+            await renderCart();
+          };
+        }
+
+        // Wire event listeners for quantity stepper & removal
         cartContent.querySelectorAll('[data-qty-dec]').forEach((btn) => {
-          btn.addEventListener('click', (e) => {
+          btn.addEventListener('click', async (e) => {
             const id = e.currentTarget.getAttribute('data-qty-dec');
             const item = items.find((i) => i.id === id);
             if (item) {
               updateQuantity(id, item.quantity - 1);
-              renderCart();
+              await renderCart();
             }
           });
         });
 
         cartContent.querySelectorAll('[data-qty-inc]').forEach((btn) => {
-          btn.addEventListener('click', (e) => {
+          btn.addEventListener('click', async (e) => {
             const id = e.currentTarget.getAttribute('data-qty-inc');
             const item = items.find((i) => i.id === id);
             if (item) {
               updateQuantity(id, item.quantity + 1);
-              renderCart();
+              await renderCart();
             }
           });
         });
 
         cartContent.querySelectorAll('[data-remove-item]').forEach((btn) => {
-          btn.addEventListener('click', (e) => {
+          btn.addEventListener('click', async (e) => {
             const id = e.currentTarget.getAttribute('data-remove-item');
             removeFromCart(id);
             showToast('Item removed from cart');
-            renderCart();
+            await renderCart();
           });
         });
       }
 
       if (clearBtn) {
-        clearBtn.addEventListener('click', () => {
+        clearBtn.addEventListener('click', async () => {
           if (confirm('Are you sure you want to clear your cart?')) {
+            removeAppliedCoupon();
             clearCart();
             showToast('Cart cleared');
-            renderCart();
+            await renderCart();
           }
         });
       }

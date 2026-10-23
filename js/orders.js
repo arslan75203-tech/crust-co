@@ -242,7 +242,17 @@ export function findOrdersByQuery(query) {
   });
 }
 
-export function createOrder({ items, subtotal, deliveryCharge, total, customer, notes, userId = 'guest' }) {
+export function createOrder({
+  items,
+  subtotal,
+  deliveryCharge,
+  total,
+  customer,
+  notes,
+  userId = 'guest',
+  discount = 0,
+  couponCode = null,
+}) {
   const orders = getAllOrders();
   const nextNum = 1030 + orders.length;
   const orderId = `CC-${nextNum}`;
@@ -257,6 +267,8 @@ export function createOrder({ items, subtotal, deliveryCharge, total, customer, 
     rider: null, // assigned when entering preparing / out_for_delivery
     items: JSON.parse(JSON.stringify(items)),
     subtotal: Number(subtotal),
+    discount: Number(discount) || 0,
+    couponCode: couponCode || null,
     deliveryCharge: Number(deliveryCharge),
     total: Number(total),
     customer: {

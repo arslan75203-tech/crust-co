@@ -49,7 +49,7 @@
         </a>
 
         <!-- Navigation Links with Elastic Underline Animation -->
-        <nav class="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-[#1C1C1C]">
+        <nav class="hidden xl:flex items-center gap-6 text-sm font-medium text-[#1C1C1C]">
           <a href="./index.html" class="nav-elastic-link whitespace-nowrap shrink-0">Home</a>
           <a href="./menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
           <a href="./deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
@@ -59,7 +59,7 @@
         </nav>
 
         <!-- Live Search Bar: directly visible across mobile, tablet, and desktop -->
-        <div class="search-wrapper relative flex-1 min-w-0 max-w-[190px] xs:max-w-[240px] sm:max-w-xs md:max-w-sm lg:max-w-xs xl:max-w-sm mx-1 sm:mx-2">
+        <div class="search-wrapper relative flex-1 min-w-0 max-w-[190px] sm:max-w-xs md:max-w-sm lg:max-w-xs xl:max-w-sm mx-1 sm:mx-2">
           <div class="relative flex items-center">
             <svg class="w-4 h-4 text-[#6B6B6B] absolute left-2.5 sm:left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -70,11 +70,11 @@
               class="live-search-input w-full pl-8 sm:pl-9 pr-6 sm:pr-8 py-1.5 sm:py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
             />
           </div>
-          <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+          <div class="search-dropdown hidden absolute left-0 right-0 sm:left-auto sm:right-0 sm:w-96 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden min-w-[260px] max-w-[95vw]"></div>
         </div>
 
-        <div class="flex items-center gap-2 sm:gap-4 shrink-0">
-          <div class="auth-slot hidden sm:block"></div>
+        <div class="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0">
+          <div class="auth-slot hidden md:block"></div>
 
           <a href="./cart.html" class="relative p-2 text-[#12372A] hover:opacity-80 transition-opacity" aria-label="Shopping Cart">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -83,11 +83,11 @@
             <span class="cart-badge hidden absolute top-0 right-0 w-5 h-5 bg-[#D4A72C] text-[#12372A] text-xs font-bold rounded-full flex items-center justify-center">0</span>
           </a>
 
-          <a href="./menu.html" class="hidden sm:inline-flex items-center justify-center px-4 py-2 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm">
+          <a href="./menu.html" class="hidden xl:inline-flex items-center justify-center px-4 py-2 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm">
             Order Food
           </a>
 
-          <button id="mobile-menu-toggle" class="md:hidden p-2 text-[#12372A]" aria-label="Open Navigation Menu">
+          <button id="mobile-menu-toggle" class="xl:hidden p-2 text-[#12372A]" aria-label="Open Navigation Menu">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -881,15 +881,15 @@
           <div class="p-4 sm:p-6 rounded-2xl bg-white border border-[#E8E5DC] shadow-xs space-y-5">
             
             <!-- Selection Heading & Live Summary Badge -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E8E5DC]">
-              <div>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-[#E8E5DC]">
+              <div class="flex-1 min-w-[220px]">
                 <div class="flex items-center gap-2">
-                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
-                  <h3 class="text-base font-serif font-bold text-[#12372A]">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse shrink-0"></span>
+                  <h3 class="text-base sm:text-lg font-serif font-bold text-[#12372A]">
                     Select Your Desired Table (${targetCount} Table${targetCount > 1 ? 's' : ''} Needed)
                   </h3>
                 </div>
-                <p class="text-xs text-[#6B6B6B] mt-0.5">
+                <p class="text-xs text-[#6B6B6B] mt-1">
                   ${
                     targetCount === 1
                       ? 'Click on any available table card below to choose your favorite spot:'
@@ -898,10 +898,10 @@
                 </p>
               </div>
 
-              <!-- Active Selection Callout -->
-              <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-50 border border-emerald-300 text-xs font-semibold text-emerald-950 shrink-0">
+              <!-- Active Selection Callout (Responsive wrap, no horizontal squeezing) -->
+              <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-300 text-xs font-semibold text-emerald-950 self-start md:self-auto max-w-full">
                 <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                <span>Selected by You: <strong class="text-[#12372A]">${chosenTables.map((t) => t.name).join(' + ')}</strong> (${chosenTables.length * 4} Seats)</span>
+                <span>Selected: <strong class="text-[#12372A]">${chosenTables.map((t) => t.name).join(' + ')}</strong> (${chosenTables.length * 4} Seats)</span>
               </div>
             </div>
 

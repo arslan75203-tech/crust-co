@@ -46,7 +46,7 @@
         </a>
 
         <!-- Zone 2: Navigation Links with Elastic Underline Animation -->
-        <nav class="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-[#1C1C1C]">
+        <nav class="hidden xl:flex items-center gap-6 text-sm font-medium text-[#1C1C1C]">
           <a href="./index.html" class="nav-elastic-link whitespace-nowrap shrink-0">Home</a>
           <a href="./menu.html" class="nav-elastic-link whitespace-nowrap shrink-0">Menu</a>
           <a href="./deals.html" class="nav-elastic-link whitespace-nowrap shrink-0">Deals</a>
@@ -56,7 +56,7 @@
         </nav>
 
         <!-- Live Search Bar: directly visible across mobile, tablet, and desktop -->
-        <div class="search-wrapper relative flex-1 min-w-0 max-w-[190px] xs:max-w-[240px] sm:max-w-xs md:max-w-sm lg:max-w-xs xl:max-w-sm mx-1 sm:mx-2">
+        <div class="search-wrapper relative flex-1 min-w-0 max-w-[190px] sm:max-w-xs md:max-w-sm lg:max-w-xs xl:max-w-sm mx-1 sm:mx-2">
           <div class="relative flex items-center">
             <svg class="w-4 h-4 text-[#6B6B6B] absolute left-2.5 sm:left-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -67,21 +67,21 @@
               class="live-search-input w-full pl-8 sm:pl-9 pr-6 sm:pr-8 py-1.5 sm:py-2 text-xs rounded-full border border-[#E8E5DC] bg-white focus:outline-hidden focus:border-[#12372A]"
             />
           </div>
-          <div class="search-dropdown hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden"></div>
+          <div class="search-dropdown hidden absolute left-0 right-0 sm:left-auto sm:right-0 sm:w-96 top-full mt-2 bg-white rounded-xl border border-[#E8E5DC] shadow-xl z-50 overflow-hidden min-w-[260px] max-w-[95vw]"></div>
         </div>
 
-        <div class="flex items-center gap-2 sm:gap-4 shrink-0">
-          <div class="auth-slot hidden sm:block"></div>
+        <div class="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0">
+          <div class="auth-slot hidden md:block"></div>
           <a href="./cart.html" class="relative p-2 text-[#12372A] hover:opacity-80 transition-opacity" aria-label="Shopping Cart">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
             <span class="cart-badge hidden absolute top-0 right-0 w-5 h-5 bg-[#D4A72C] text-[#12372A] text-xs font-bold rounded-full flex items-center justify-center">0</span>
           </a>
-          <a href="./menu.html" class="hidden sm:inline-flex items-center justify-center px-4 py-2 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
-            Order Now
+          <a href="./menu.html" class="hidden xl:inline-flex items-center justify-center px-4 py-2 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
+            Order Food
           </a>
-          <button id="mobile-menu-toggle" class="md:hidden p-2 text-[#12372A]" aria-label="Open Navigation Menu">
+          <button id="mobile-menu-toggle" class="xl:hidden p-2 text-[#12372A]" aria-label="Open Navigation Menu">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -113,7 +113,7 @@
         <a href="./account.html" class="text-[#1C1C1C]">My Account & Orders</a>
       </nav>
       <div class="mt-auto pt-6 border-t border-[#E8E5DC]">
-        <a href="/menu.html" class="w-full flex items-center justify-center px-4 py-3 bg-[#12372A] text-white text-sm font-semibold rounded-lg shadow-sm">
+        <a href="./menu.html" class="w-full flex items-center justify-center px-4 py-3 bg-[#12372A] text-white text-sm font-semibold rounded-lg shadow-sm">
           Browse Restaurant Menu
         </a>
       </div>
@@ -179,7 +179,7 @@
             Upon order, it gets dredged by hand in our proprietary 11-spice flour coating and dropped into pure high-smoke vegetable oil for an ultra-crunchy, jagged golden exterior.
           </p>
           <div class="pt-2">
-            <a href="/menu.html?cat=burgers" class="inline-flex items-center gap-2 text-xs font-semibold text-[#12372A] hover:underline">
+            <a href="./menu.html?cat=burgers" class="inline-flex items-center gap-2 text-xs font-semibold text-[#12372A] hover:underline">
               Explore Our Burger Lineup →
             </a>
           </div>
@@ -201,7 +201,7 @@
           Taste the difference patience, premium ingredients, and artisan baking make. Order straight to your door with Cash on Delivery.
         </p>
         <div class="pt-2">
-          <a href="/menu.html" class="inline-block px-7 py-3 bg-[#D4A72C] text-[#12372A] font-semibold text-xs sm:text-sm rounded-lg hover:bg-yellow-400 transition-colors">
+          <a href="./menu.html" class="inline-block px-7 py-3 bg-[#D4A72C] text-[#12372A] font-semibold text-xs sm:text-sm rounded-lg hover:bg-yellow-400 transition-colors">
             Order Online Now
           </a>
         </div>
@@ -221,11 +221,11 @@
           <div>
             <h4 class="text-sm font-semibold uppercase tracking-wider text-[#D4A72C] mb-4">Quick Links</h4>
             <ul class="space-y-2.5 text-xs text-white/80">
-              <li><a href="/index.html" class="hover:text-white">Home</a></li>
-              <li><a href="/menu.html" class="hover:text-white">Our Menu</a></li>
-              <li><a href="/deals.html" class="hover:text-white">Exclusive Deals</a></li>
-              <li><a href="/about.html" class="hover:text-white">Our Story & Craft</a></li>
-              <li><a href="/account.html" class="hover:text-white">My Account & Orders</a></li>
+              <li><a href="./index.html" class="hover:text-white">Home</a></li>
+              <li><a href="./menu.html" class="hover:text-white">Our Menu</a></li>
+              <li><a href="./deals.html" class="hover:text-white">Exclusive Deals</a></li>
+              <li><a href="./about.html" class="hover:text-white">Our Story & Craft</a></li>
+              <li><a href="./account.html" class="hover:text-white">My Account & Orders</a></li>
             </ul>
           </div>
           <div>

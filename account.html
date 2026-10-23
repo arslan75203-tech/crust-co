@@ -87,7 +87,7 @@
             <span class="cart-badge hidden absolute top-0 right-0 w-4 h-4 sm:w-5 sm:h-5 bg-[#D4A72C] text-[#12372A] text-[10px] sm:text-xs font-bold rounded-full flex items-center justify-center">0</span>
           </a>
 
-          <a href="./menu.html" class="hidden sm:inline-flex items-center justify-center px-4 py-2 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
+          <a href="./menu.html" class="hidden xl:inline-flex items-center justify-center px-4 py-2 bg-[#12372A] text-white text-xs font-semibold rounded-lg hover:bg-[#1F4D3A] transition-colors shadow-sm whitespace-nowrap">
             Order Food
           </a>
 
@@ -493,6 +493,11 @@
                       <div class="flex items-center sm:flex-col sm:items-end justify-between border-t sm:border-t-0 pt-3 sm:pt-0 border-[#E8E5DC] shrink-0 gap-3">
                         <div class="text-right">
                           <div class="font-serif font-bold text-lg text-[#12372A] tabular-nums">${formatPrice(o.total)}</div>
+                          ${
+                            o.discount && o.discount > 0
+                              ? `<span class="text-[10px] text-emerald-700 font-semibold block">Saved ${formatPrice(o.discount)}${o.couponCode ? ` (${o.couponCode})` : ''}</span>`
+                              : ''
+                          }
                           <span class="text-[10px] text-[#6B6B6B] block">Cash on Delivery</span>
                         </div>
 
@@ -1075,6 +1080,16 @@
                   <span>Subtotal</span>
                   <span class="tabular-nums font-semibold text-[#1C1C1C]">${formatPrice(order.subtotal)}</span>
                 </div>
+                ${
+                  order.discount && order.discount > 0
+                    ? `
+                <div class="flex justify-between text-emerald-700 font-medium">
+                  <span>Coupon Discount (${order.couponCode || 'Promo'})</span>
+                  <span class="tabular-nums font-semibold">- ${formatPrice(order.discount)}</span>
+                </div>
+                `
+                    : ''
+                }
                 <div class="flex justify-between text-[#6B6B6B]">
                   <span>Delivery Charges</span>
                   <span class="tabular-nums font-semibold text-[#1C1C1C]">${order.deliveryCharge === 0 ? '<span class="text-emerald-700 font-bold">FREE</span>' : formatPrice(order.deliveryCharge)}</span>
